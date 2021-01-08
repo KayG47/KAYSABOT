@@ -1,0 +1,5718 @@
+/*
+TRIMAKASIH SUDAH DOWNLOAD SCRIPT INI
+DAN KALO ADA YG GA TAU BISA DI TANYAKAN DE SAYA
+CREDIT BY KAYSA
+
+KAYSABOT V 3.0.0
+*/
+require('dotenv').config()
+const { decryptMedia } = require('@open-wa/wa-decrypt')
+const fs = require('fs-extra')
+const ffmpeg = require('fluent-ffmpeg')
+const axios = require('axios')
+const moment = require('moment-timezone')
+const getYouTubeID = require('get-youtube-id')
+const os = require('os')
+const get = require('got')
+const speed = require('performance-now')
+const fetch = require('node-fetch')
+const { spawn, exec } = require('child_process')
+const nhentai = require('nhentai-js')
+const { API } = require('nhentai-api')
+const google = require('google-it')
+const translatte = require('translatte')
+const { stdout } = require('process')
+const translate = require('translatte')
+const Math_js = require('mathjs');
+const imageToBase64 = require('image-to-base64')
+const canvas = require('canvacord')
+const getemo = require('emoji-unicode')
+const bent = require('bent')
+const request = require('request')
+
+const { getStickerMaker } = require('./lib/ttp')
+const quotedd = require('./lib/quote')
+const color = require('./lib/color')
+const urlShortener = require('./lib/shortener')
+const { addFilter, isFiltered } = require('./lib/msgFilter')
+const cariKasar = require('./lib/kataKotor')
+
+const { 
+    downloader,
+    liriklagu,
+    quotemaker,
+    randomNimek,
+    sleep,
+    jadwalTv,
+    processTime,
+    nulis
+    } = require('./lib/functions')
+    
+const truth = require('./lib/truth')
+const dare = require('./lib/dare')
+const nsfww = require('./lib/nsfww')
+
+const { 
+    help,
+    admincmd,
+    ownercmd,
+    nsfwcmd,
+    kerangcmd,
+    mediacmd,
+    animecmd,
+    othercmd,
+    downloadcmd,
+    praycmd,
+    groupcmd,
+    funcmd,
+    bahasalist,
+    VIPcmd,
+    sewa,
+    snk, 
+    info, 
+    sumbang, 
+    readme, 
+    listChannel,
+    commandArray
+    } = require('./lib/help')
+
+const {
+    instagram,
+    tiktok,
+    facebook,
+    smule,
+    starmaker,
+    twitter,
+    joox
+    } = require('./lib/downloader')
+
+const {
+    stickerburn,
+    stickerlight
+    } = require('./lib/sticker')
+
+const { 
+    uploadImages, 
+    custom
+    } = require('./lib/fetcher')
+
+// LOAD FILE
+let banned = JSON.parse(fs.readFileSync('./lib/database/banned.json'))
+let nsfw_ = JSON.parse(fs.readFileSync('./lib/database/nsfwz.json'))
+let simi_ = JSON.parse(fs.readFileSync('./lib/database/Simsimi.json'))
+let limit = JSON.parse(fs.readFileSync('./lib/database/limit.json'))
+let welkom = JSON.parse(fs.readFileSync('./lib/database/welcome.json'))
+let left = JSON.parse(fs.readFileSync('./lib/database/left.json'))
+let muted = JSON.parse(fs.readFileSync('./lib/database/muted.json'))
+let setting = JSON.parse(fs.readFileSync('./lib/database/setting.json'))
+let msgLimit = JSON.parse(fs.readFileSync('./lib/database/msgLimit.json'))
+let adminNumber = JSON.parse(fs.readFileSync('./lib/database/admin.json'))
+let owner2Number = JSON.parse(fs.readFileSync('./lib/database/owner2.json'))
+
+
+// PROTECT
+let antilink = JSON.parse(fs.readFileSync('./lib/database/antilink.json'))
+let antibadword = JSON.parse(fs.readFileSync('./lib/database/antibadword.json'))
+let antisticker = JSON.parse(fs.readFileSync('./lib/database/antisticker.json'))
+let msgBadword = JSON.parse(fs.readFileSync('./lib/database/msgBadword.json'))
+let dbbadword = JSON.parse(fs.readFileSync('./lib/database/katakasar.json'))
+let badword = JSON.parse(fs.readFileSync('./lib/database/badword.json'))
+let pendaftar = JSON.parse(fs.readFileSync('./lib/database/user.json'))
+let stickerspam = JSON.parse(fs.readFileSync('./lib/database/stickerspam.json'))
+
+//LEVEL
+const errorImg = 'https://i.imgur.com/UxvMPUz.png'
+const _leveling = JSON.parse(fs.readFileSync('./lib/database/leveling.json'))
+const _level = JSON.parse(fs.readFileSync('./lib/database/level.json'))
+
+ const getInfoXp = (userId) => {
+            let position = false
+            Object.keys(_level).forEach((i) => {
+                if (_level[i].id === userId) {
+                    position = i
+                }
+            })
+            if (position !== false) {
+                return _level[position].xp
+            }
+        }
+
+        const getInfoLevel = (userId) => {
+            let position = false
+            Object.keys(_level).forEach((i) => {
+                if (_level[i].id === userId) {
+                    position = i
+                }
+            })
+            if (position !== false) {
+                return _level[position].level
+            }
+        }
+
+        const getInfoId = (userId) => {
+            let position = false
+            Object.keys(_level).forEach((i) => {
+                if (_level[i].id === userId) {
+                    position = i
+                }
+            })
+            if (position !== false) {
+                return _level[position].id
+            }
+        }
+
+        const addUserXp = (userId, amount) => {
+            let position = false
+            Object.keys(_level).forEach((i) => {
+                if (_level[i].id === userId) {
+                    position = i
+                }
+            })
+            if (position !== false) {
+                _level[position].xp += amount
+                fs.writeFileSync('./lib/database/level.json', JSON.stringify(_level))
+            }
+        }
+
+        const addUserLevel = (userId, amount) => {
+            let position = false
+            Object.keys(_level).forEach((i) => {
+                if (_level[i].id === userId) {
+                    position = i
+                }
+            })
+            if (position !== false) {
+                _level[position].level += amount
+                fs.writeFileSync('./lib/database/level.json', JSON.stringify(_level))
+            }
+        }
+
+        const addUserId = (userId) => {
+            let obj = {id: `${userId}`, xp: 1, level: 1}
+            _level.push(obj)
+            fs.writeFileSync('./lib/database/level.json', JSON.stringify(_level))
+        }
+        
+        
+//AFK
+const _afk = JSON.parse(fs.readFileSync('./lib/database/afk.json'))
+
+const addAfk = (userId, time, reasone) => {
+    let obj = {id: `${userId}`, time: `${time}`, reason: `${reasone}`}
+    _afk.push(obj)
+    fs.writeFileSync('./lib/database/afk.json', JSON.stringify(_afk))
+}
+
+const getAfk = (userId) => {
+    let isAfk = false
+    Object.keys(_afk).forEach((i) => {
+        if (_afk[i].id === userId) {
+            isAfk = true
+        }
+    })
+    return isAfk
+}
+
+let { 
+    limitCount,
+    memberLimit, 
+    groupLimit,
+    banChats,
+    barbarkey,
+    vhtearkey,
+    zekskey,
+    prefix,
+    restartState: isRestart,
+    mtc: mtcState
+    } = setting
+
+let state = {
+    status: () => {
+        if(banChats){
+            return 'Nonaktif'
+        }else if(mtcState){
+            return 'Nonaktif'
+        }else if(!mtcState){
+            return 'Aktif'
+        }else{
+            return 'Aktif'
+        }
+    }
+}
+
+moment.tz.setDefault('Asia/Jakarta').locale('id')
+
+module.exports = kay = async (kay, message) => {
+    try {
+        const { type, id, from, t, sender, isGroupMsg, chat, chatId, caption, isMedia, mimetype, quotedMsg, quotedMsgObj, author, mentionedJidList } = message
+        let { body } = message
+        const { name, formattedTitle } = chat
+        let { pushname, verifiedName } = sender
+        pushname = pushname || verifiedName
+        const commands = caption || body || ''
+        const chats = (type === 'chat') ? body : (type === 'image' || type === 'video') ? caption : ''
+        const argx = commands.toLowerCase()
+        const args =  commands.split(' ')
+        const command = commands.toLowerCase().split(' ')[0] || ''
+
+        const time = moment(t * 1000).format('DD/MM HH:mm:ss')
+        const timu = moment(t * 1000).format('DD/MM/YYYY');
+        const timi = moment(t * 1000).add(30, 'days').calendar();
+        const botNumber = await kay.getHostNumber()
+        const blockNumber = await kay.getBlockedIds()
+        const groupId = isGroupMsg ? chat.groupMetadata.id : ''
+        const groupAdmins = isGroupMsg ? await kay.getGroupAdmins(groupId) : ''
+        const isGroupAdmins = isGroupMsg ? groupAdmins.includes(sender.id) : false
+        const isBotGroupAdmins = isGroupMsg ? groupAdmins.includes(botNumber + '@c.us') : false
+        const SN = GenerateSerialNumber("000000000000000000000000")
+
+        const isBanned = banned.includes(sender.id)
+        const isBlocked = blockNumber.includes(sender.id)
+        const isNsfw = isGroupMsg ? nsfw_.includes(chat.id) : false
+        const isSimi = isGroupMsg ? simi_.includes(chat.id) : false
+        const isAfkOn = getAfk(sender.id)
+        const uaOverride = 'WhatsApp/2.2029.4 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'
+        const isUrl = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)/gi)
+        const url = args.length !== 0 ? args[0] : ''
+
+
+        const isQuotedImage = quotedMsg && quotedMsg.type === 'image'
+        const isQuotedVideo = quotedMsg && quotedMsg.type === 'video'
+        const isQuotedAudio = quotedMsg && (quotedMsg.type === 'audio' || quotedMsg.type === 'ptt' || quotedMsg.type === 'ppt')
+        const isQuotedFile = quotedMsg && quotedMsg.type === 'document'
+
+        const isBadword = badword.includes(chatId)
+        body = (type === 'chat' && body.startsWith(prefix)) ? body : (((type === 'image' || type === 'video') && caption) && caption.startsWith(prefix)) ? caption : ''
+        const arg = body.substring(body.indexOf(' ') + 1)
+        const isKasar = await cariKasar(chats)
+        const GroupLinkDetector = antilink.includes(chatId)
+        const AntiStickerSpam = antisticker.includes(chatId)
+        const isPrivate = sender.id === chat.contact.id
+        const stickermsg = message.type === 'sticker'
+        const isCmd = command.startsWith(prefix)
+
+        const serial = sender.id
+        const isAdmin = adminNumber.includes(sender.id)
+        const ownerNumber = '6285648253605@c.us'
+        const isOwner = ownerNumber.includes(sender.id)
+        const isOwner2 = owner2Number.includes(sender.id)
+        const isLevelingOn = isGroupMsg ? _leveling.includes(chat.id) : false
+
+
+        if (isGroupMsg && GroupLinkDetector && !isGroupAdmins && !isAdmin && !isOwner){
+            if (chats.match(/(https:\/\/chat.whatsapp.com)/gi)) {
+                const check = await kay.inviteInfo(chats);
+                if (!check) {
+                    return
+                } else {
+                    kay.reply(from, `*「 GROUP LINK DETECTOR 」*\nKamu mengirimkan link grup chat, maaf kamu di kick dari grup :(`, id).then(() => {
+                        kay.removeParticipant(groupId, sender.id)
+                    })
+                }
+            }
+        }
+
+        if (isGroupMsg && AntiStickerSpam && !isGroupAdmins && !isAdmin && !isOwner){
+            if(stickermsg === true){
+                if(isStickerMsg(serial)) return
+                addStickerCount(serial)
+            }
+        }
+
+        if(!isCmd && isKasar && isGroupMsg && isBadword && !isGroupAdmins) { 
+            console.log(color('[BADWORD]', 'red'), color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color(`${argx}`), 'from', color(pushname), 'in', color(name || formattedTitle)) 
+            if(isBadwordMsg(serial)) return
+                addBadCount(serial)
+        }
+        
+        // [BETA] Avoid Spam Message
+        //if (isCmd && isFiltered(from) && !isGroupMsg) { return console.log(color('[SPAM]', 'red'), color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color(`${command} [${args.length}]`), 'from', color(pushname)) }
+        //if (isCmd && isFiltered(from) && isGroupMsg) { return console.log(color('[SPAM]', 'red'), color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color(`${command} [${args.length}]`), 'from', color(pushname), 'in', color(name || formattedTitle)) }
+        //
+        if (isCmd && !isGroupMsg) {console.log(color('[EXEC]'), color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color(`${command} [${args.length}]`), 'from', color(pushname))}
+        if (isCmd && isGroupMsg) {console.log(color('[EXEC]'), color(moment(t * 1000).format('DD/MM/YY HH:mm:ss'), 'yellow'), color(`${command} [${args.length}]`), 'from', color(pushname), 'in', color(name || formattedTitle))}
+
+        // FUNCTION
+        // Serial Number Generator
+        function GenerateRandomNumber(min,max){
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        // Generates a random alphanumberic character
+        function GenerateRandomChar() {
+            var chars = "1234567890ABCDEFGIJKLMNOPQRSTUVWXYZ";
+            var randomNumber = GenerateRandomNumber(0,chars.length - 1);
+            return chars[randomNumber];
+        }
+        // Generates a Serial Number, based on a certain mask
+        function GenerateSerialNumber(mask){
+            var serialNumber = "";
+            if(mask != null){
+                for(var i=0; i < mask.length; i++){
+                    var maskChar = mask[i];
+                    serialNumber += maskChar == "0" ? GenerateRandomChar() : maskChar;
+                }
+            }
+            return serialNumber;
+        }
+        
+        /*var nmr = sender.id
+        var obj = pendaftar.some((val) => {
+            return val.id === nmr
+        })
+        var cekage = pendaftar.some((val) => {
+            return val.id === nmr && val.umur >= 1
+        })
+
+        function monospace(string) {
+            return '```' + string + '```'
+        }
+
+
+        function isReg(obj){
+            if (obj === true){
+                return false
+            } else {     
+                return kay.reply(from, `Kamu belum terdaftar sebagai Teman KAY \nuntuk mendaftar kirim ${prefix}daftar |nama|umur\n\ncontoh format: ${prefix}daftar |${pushname}|17\n\ncukup gunakan nama depan/panggilan saja`, id) //if user is not registered
+            }
+        }
+
+        function cekumur(obj){
+            if (obj === true){
+                return false
+            } else {
+                return kay.reply(from, `Kamu belum cukup umur untuk menggunakan KAY , min 16 tahun\n\nKamu bisa mendaftar ulang dengan cara donasi terlebih dahulu, bales ${prefix}donasi\nHubungi Owner : wa.me/628127668234`, id) //if user is not registered
+            }
+        }*/
+
+        const apakah = [
+            'Ya',
+            'Tidak',
+            'Coba Ulangi'
+            ]
+
+        const bisakah = [
+            'Bisa',
+            'Tidak Bisa',
+            'Coba Ulangi'
+            ]
+
+        const kapankah = [
+            '1 Minggu lagi',
+            '1 Bulan lagi',
+            '1 Tahun lagi'
+            ]
+
+        const rate = [
+            '100%',
+            '95%',
+            '90%',
+            '85%',
+            '80%',
+            '75%',
+            '70%',
+            '65%',
+            '60%',
+            '55%',
+            '50%',
+            '45%',
+            '40%',
+            '35%',
+            '30%',
+            '25%',
+            '20%',
+            '15%',
+            '10%',
+            '5%'
+            ]
+
+         
+         const balas = [
+			`Nandayo ${pushname}?`,
+			`Nani Daling?`,
+			`Haik!`,
+			`Areee...?`,
+			`Arerereee...?`
+			]
+
+        const mess = {
+            wait: '[ WAIT ] Sedang di proses⏳ silahkan tunggu sebentar',
+            magernulissatu: 'Harap Tunggu, BOT Sedang Menulis Di Buku 1!',
+            error: {
+                St: '[❗] Kirim gambar dengan caption *#sticker* atau tag gambar yang sudah dikirim',
+                Ti: '[❗] Replay sticker dengan caption *#stickertoimg* atau tag sticker yang sudah dikirim',
+                Qm: '[❗] Terjadi kesalahan, mungkin themenya tidak tersedia!',
+                Yt3: '[❗] Terjadi kesalahan, tidak dapat meng konversi ke mp3!',
+                Yt4: '[❗] Terjadi kesalahan, mungkin error di sebabkan oleh sistem.',
+                Ig: '[❗] Terjadi kesalahan, mungkin karena akunnya private',
+                Ki: '[❗] Bot tidak bisa mengeluarkan Admin group!',
+                Sp: '[❗] Bot tidak bisa mengeluarkan Admin',
+                Ow: '[❗] Bot tidak bisa mengeluarkan Owner',
+                Bk: '[❗] Bot tidak bisa memblockir Owner',
+                Ad: '[❗] Tidak dapat menambahkan target, mungkin karena di private',
+                Iv: '[❗] Link yang anda kirim tidak valid!'
+            }
+        }
+
+        const tutor = 'https://i.ibb.co/Hp1XGbL/a4dec92b8922.jpg'
+        const errorurl = 'https://steamuserimages-a.akamaihd.net/ugc/954087817129084207/5B7E46EE484181A676C02DFCAD48ECB1C74BC423/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false'
+        const errorImg = 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTQcODjk7AcA4wb_9OLzoeAdpGwmkJqOYxEBA&usqp=CAU'
+        const errorurl2 = 'https://steamuserimages-a.akamaihd.net/ugc/954087817129084207/5B7E46EE484181A676C02DFCAD48ECB1C74BC423/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false'
+       
+        const isMuted = (chatId) => {
+          if(muted.includes(chatId)){
+            return false
+        }else{
+            return true
+            }
+        }
+
+        function banChat () {
+            if(banChats == true) {
+            return false
+        }else{
+            return true
+            }
+        }
+        
+        // FUNCTION
+                function isStickerMsg(id){
+                if (isAdmin) {return false;}
+                let found = false;
+                for (let i of stickerspam){
+                    if(i.id === id){
+                        if (i.msg >= 12) {
+                            found === true 
+                            kay.reply(from, `*「 𝗔𝗡𝗧𝗜 𝗦𝗣𝗔𝗠 𝗦𝗧𝗜𝗖𝗞𝗘𝗥 」*\nKamu telah SPAM STICKER di grup, kamu akan di kick otomatis oleh KAY `, id).then(() => {
+                                kay.removeParticipant(groupId, id)
+                            })
+                            return true;
+                        }else if(i.msg >= 12){
+                            found === true
+                            kay.reply(from, `*「 𝗔𝗡𝗧𝗜 𝗦𝗣𝗔𝗠 𝗦𝗧𝗜𝗖𝗞𝗘𝗥 」*\nKamu terdeteksi spam sticker!\nMohon tidak spam 5 sticker lagi atau nomor akan di kick oleh KAY !`, id)
+                            return true
+                        }else{
+                            found === true
+                            return false;
+                        }   
+                    }
+                }
+                if (found === false){
+                    let obj = {id: `${id}`, msg:1};
+                    stickerspam.push(obj);
+                    fs.writeFileSync('./lib/database/stickerspam.json',JSON.stringify(stickerspam));
+                    return false;
+                }  
+            }
+        function addStickerCount(id){
+            if (isAdmin) {return;}
+            var found = false
+            Object.keys(stickerspam).forEach((i) => {
+                if(stickerspam[i].id == id){
+                    found = i
+                }
+            })
+            if (found !== false) {
+                stickerspam[found].msg += 1;
+                fs.writeFileSync('./lib/database/stickerspam.json',JSON.stringify(stickerspam));
+            }
+        }
+
+        function isBadwordMsg(id){
+            if (isAdmin) {return false;}
+            let kasar = false;
+            for (let i of msgBadword){
+                if(i.id === id){
+                    let msg = i.msg
+                    if (msg >= 1) { // 1X BADWORD AKAN TERKENA KICK
+                        kasar === true 
+                        kay.reply(from, `*「 𝗔𝗡𝗧𝗜 𝗕𝗔𝗗𝗪𝗢𝗥𝗗 」*\nPeringatan! 2x lagi berkata kasar, KAY  akan kick kamu dari grup!`, id)
+                        }
+                    if (msg >= 3) { // 3X BADWORD AKAN TERKENA KICK
+                        kasar === true 
+                        kay.reply(from, `*「 𝗔𝗡𝗧𝗜 𝗕𝗔𝗗𝗪𝗢𝗥𝗗 」*\nKamu telah berkata kasar di grup ini, kamu akan di kick otomatis oleh KAY !`, id).then(() => {
+                            kay.removeParticipant(groupId, id)
+                        })
+                        return true;
+                    }else{
+                        kasar === true
+                        return false;
+                    }   
+                }
+            }
+            if (kasar === false){
+                let obj = {id: `${id}`, msg:1};
+                msgBadword.push(obj);
+                fs.writeFileSync('./lib/database/msgBadword.json',JSON.stringify(msgBadword));
+                return false;
+            }  
+        }
+        function addBadCount(id){
+            if (isAdmin) {return;}
+            var kasar = false
+            Object.keys(msgBadword).forEach((i) => {
+                if(msgBadword[i].id == id){
+                    kasar = i
+                }
+            })
+            if (kasar !== false) {
+                msgBadword[kasar].msg += 1;
+                fs.writeFileSync('./lib/database/msgBadword.json',JSON.stringify(msgBadword));
+            }
+        }
+
+        function isMsgLimit(id){
+                    if (isAdmin) {return false;}
+                    let found = false;
+                    for (let i of msgLimit){
+                        if(i.id === id){
+                            if (i.msg >= 8) {
+                                found === true 
+                                kay.reply(from, `*「 𝗔𝗡𝗧𝗜 𝗦𝗣𝗔𝗠 」*\nMaaf, akun anda kami blok karena SPAM, dan tidak bisa di UNBLOK!`, id)
+                                kay.contactBlock(id)
+                                banned.push(id)
+                                fs.writeFileSync('./lib/database/banned.json', JSON.stringify(banned))
+                                return true;
+                            }else if(i.msg >= 8){
+                                found === true
+                                kay.reply(from, `*「 𝗔𝗡𝗧𝗜 𝗦𝗣𝗔𝗠 」*\nNomor anda terdeteksi spam!\nMohon tidak spam 5 pesan lagi atau nomor anda AUTO BLOK!`, id)
+                                return true
+                            }else{
+                                found === true
+                                return false;
+                            }   
+                        }
+                    }
+                    if (found === false){
+                        let obj = {id: `${id}`, msg:1};
+                        msgLimit.push(obj);
+                        fs.writeFileSync('./lib/database/msgLimit.json',JSON.stringify(msgLimit));
+                        return false;
+                    }  
+                }
+        function addMsgLimit(id){
+                    if (isAdmin) {return;}
+                    var found = false
+                    Object.keys(msgLimit).forEach((i) => {
+                        if(msgLimit[i].id == id){
+                            found = i
+                        }
+                    })
+                    if (found !== false) {
+                        msgLimit[found].msg += 1;
+                        fs.writeFileSync('./lib/database/msgLimit.json',JSON.stringify(msgLimit));
+                    }
+                }
+        function isLimit(id){
+                    if (isAdmin) {return false;}
+                    let found = false;
+                    for (let i of limit){
+                        if(i.id === id){
+                            let limits = i.limit;
+                            if (limits >= limitCount) {
+                                found = true;
+                                kay.reply(from, `Perintah BOT anda sudah mencapai batas, coba esok hari :)`, id)
+                                return true;
+                            }else{
+                                limit
+                                found = true;
+                                return false;
+                            }
+                        }
+                    }
+                    if (found === false){
+                        let obj = {id: `${id}`, limit:1};
+                        limit.push(obj);
+                        fs.writeFileSync('./lib/database/limit.json',JSON.stringify(limit));
+                        return false;
+                    }  
+                }
+        function limitAdd (id) {
+                    if (isAdmin) {return;}
+                    var found = false;
+                    Object.keys(limit).forEach((i) => {
+                        if(limit[i].id == id){
+                            found = i
+                        }
+                    })
+                    if (found !== false) {
+                        limit[found].limit += 1;
+                        fs.writeFileSync('./lib/database/limit.json',JSON.stringify(limit));
+                    }
+                }
+        
+
+		if (isGroupMsg && isLevelingOn && !isCmd) {
+            const currentLevel = getInfoLevel(sender.id)
+            const checkId = getInfoId(sender.id)
+            try {
+                if (currentLevel === undefined && checkId === undefined) {
+                    addUserId(sender.id)
+                } else {
+                    const amountXp = Math.floor(Math.random() * 10) + 500
+                    const requiredXp = 5000 * (Math.pow(2, currentLevel) - 1)
+                    const getXp = getInfoXp(sender.id)
+                    addUserXp(sender.id, amountXp)
+                    if (requiredXp <= getXp) {
+                        addUserLevel(sender.id, 1)
+                        const getLevel = getInfoLevel(sender.id)
+                        await kay.sendTextWithMentions(from, `Selamat @${sender.id.replace('@c.us','')}! Kamu naik ke level ${getLevel}!`, id)
+                    }
+                }
+            } catch (err) {
+                console.error(err)
+            }
+        }
+        
+                // END HELPER FUNCTION
+        // FUNCTION DAFTAR! NEXT UPDATE
+        function monospace(string) {
+            return '```' + string + '```'
+        }
+
+        // Serial Number Generator
+        function GenerateRandomNumber(min,max){
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        // Generates a random alphanumberic character
+        function GenerateRandomChar() {
+            var chars = "1234567890ABCDEFGIJKLMNOPQRSTUVWXYZ";
+            var randomNumber = GenerateRandomNumber(0,chars.length - 1);
+            return chars[randomNumber];
+        }
+        // Generates a Serial Number, based on a certain mask
+        function GenerateSerialNumber(mask){
+            var serialNumber = "";
+            if(mask != null){
+                for(var i=0; i < mask.length; i++){
+                    var maskChar = mask[i];
+                    serialNumber += maskChar == "0" ? GenerateRandomChar() : maskChar;
+                }
+            }
+            return serialNumber;
+        }
+        
+                if(body === prefix+'mute' && isMuted(chatId) == true){
+                    if(isGroupMsg) {
+                        if (!isAdmin) return kay.reply(from, 'Maaf, perintah ini hanya dapat dilakukan oleh User VIP!', id)
+                        if(isMsgLimit(serial)){
+                            return
+                        }else{
+                            addMsgLimit(serial)
+                        }
+                        muted.push(chatId)
+                        fs.writeFileSync('./lib/database/muted.json', JSON.stringify(muted, null, 2))
+                        kay.reply(from, 'Bot telah di mute pada chat ini! #unmute untuk unmute!', id)
+                    }else{
+                        if(isMsgLimit(serial)){
+                            return
+                        }else{
+                            addMsgLimit(serial)
+                        }
+                        muted.push(chatId)
+                        fs.writeFileSync('./lib/database/muted.json', JSON.stringify(muted, null, 2))
+                        reply(from, 'Bot telah di mute pada chat ini! #unmute untuk unmute!', id)
+                    }
+                }
+                if(body === prefix+'unmute' && isMuted(chatId) == false){
+                    if(isGroupMsg) {
+                        if (!isAdmin) return kay.reply(from, 'Maaf, perintah ini hanya dapat dilakukan oleh User VIP!', id)
+                        if(isMsgLimit(serial)){
+                            return
+                        }else{
+                            addMsgLimit(serial)
+                        }
+                        let index = muted.indexOf(chatId);
+                        muted.splice(index,1)
+                        fs.writeFileSync('./lib/database/muted.json', JSON.stringify(muted, null, 2))
+                        kay.reply(from, 'Bot telah di unmute!', id)         
+                    }else{
+                        if(isMsgLimit(serial)){
+                            return
+                        }else{
+                            addMsgLimit(serial)
+                        }
+                        let index = muted.indexOf(chatId);
+                        muted.splice(index,1)
+                        fs.writeFileSync('./lib/database/muted.json', JSON.stringify(muted, null, 2))
+                        kay.reply(from, 'Bot telah di unmute!', id)                   
+                    }
+                }
+                
+                if (chats.match("KAY ") || chats.match("KAY ") || chats.match("KAY ") || chats.match("bot") || chats.match("Bot") || chats.match("BOT")) {
+					const bls = balas[Math.floor(Math.random() * (balas.length))]
+					await kay.reply(from, `*${bls}* \n\n`, id)
+				}
+				 if (args.includes('@6282244301751')) { //replace with your bot number
+            kay.reply(from, 'iya sayang ,ada apa?', id)
+        }
+                if (args.includes('@6283184023519')) { //replace with your bot number
+            kay.reply(from, 'iya sayang ,ada apa?', id)
+        }
+                if (body === prefix+'unbanchat') {
+                    if (!isOwner, !isOwner2) return kay.reply(from, 'Maaf, perintah ini hanya dapat dilakukan oleh Owner KAY !', id)
+                    if(setting.banChats === false) return
+                    setting.banChats = false
+                    banChats = false
+                    fs.writeFileSync('./lib/database/setting.json', JSON.stringify(setting, null, 2))
+                    kay.reply(from, 'Global chat has been disable!', id)
+                }
+        if (isMuted(chatId) && banChat() && !isBlocked && !isBanned || isOwner ) {
+        switch(command) {
+
+        case prefix+'banchat':
+            if (setting.banChats === true) return
+            if (!isOwner, !isOwner2) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh Owner KAY !', id)
+            setting.banChats = true
+            banChats = true
+            fs.writeFileSync('./lib/database/setting.json', JSON.stringify(setting, null, 2))
+            kay.reply(from, 'Global chat has been enable!', id)
+            break
+
+        case prefix+'unmute':
+            console.log(`Unmuted ${name}!`)
+            await kay.sendSeen(from)
+            break
+        case prefix+'unbanchat':
+            console.log(`Banchat ${name}!`)
+            await kay.sendSeen(from)
+            break
+        case prefix+'sticker':
+        case prefix+'stiker':
+            if (isMedia && type === 'image') {
+                const mediaData = await decryptMedia(message, uaOverride)
+                const imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
+                await kay.sendImageAsSticker(from, imageBase64)
+            } else if (quotedMsg && quotedMsg.type == 'image') {
+                const mediaData = await decryptMedia(quotedMsg, uaOverride)
+                const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
+                await kay.sendImageAsSticker(from, imageBase64)
+            } else if (args.length === 2) {
+                const url = args[1]
+                if (url.match(isUrl)) {
+                    await kay.sendStickerfromUrl(from, url, { method: 'get' })
+                        .catch(err => console.log('Caught exception: ', err))
+                } else {
+                    kay.reply(from, mess.error.Iv, id)
+                }
+            } else {
+                    kay.reply(from, mess.error.St, id)
+            }
+            break
+         case prefix+'afk':
+                if (!isGroupMsg) return await kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                    if (isAfkOn) return await kay.reply(from, 'Fitur AFK telah diaktifkan sebelumnya.', id)
+					const reason = body.slice(5)
+                    addAfk(sender.id, time, reason)
+                    await kay.reply(from, `Fitur AFK berhasil diaktifkan!\n\n➸ Username: ${pushname}\n➸ Alasan: ${reason}`, id)
+            break
+        case prefix+'leveling':
+                if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                if (!isGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh Admin Group!', id)
+                if (args.length === 1) return kay.reply(from, 'Pilih enable atau disable!', id)
+                if (args[1].toLowerCase() === 'enable') {
+                    if (isLevelingOn) return await kay.reply(from, 'Fitur leveling telah diaktifkan sebelumnya.', id)
+                    _leveling.push(chat.id)
+                    fs.writeFileSync('./lib/database/leveling.json', JSON.stringify(_leveling))
+                    await kay.reply(from, 'Fitur leveling berhasil *diaktifkan*!', id)
+                } else if (args[1].toLowerCase() === 'disable') {
+                    _leveling.splice(chat.id, 1)
+                    fs.writeFileSync('./lib/database/leveling.json', JSON.stringify(_leveling))
+                    await kay.reply(from, 'Fitur leveling berhasil *dinonaktifkan*!', id)
+                } else {
+                    await kay.reply(from, 'Format salah! Silakan enable atau disable*', id)
+                }
+            break
+        /*case prefix+'ceklevel':
+                if (!isLevelingOn) return await kay.reply(from, ind.levelingNotOn(), id)
+                if (!isGroupMsg) return await kay.reply(from, ind.groupOnly(), id)
+                const userLevels = getInfoLevel(sender.id)
+                const userXps = getInfoXp(sender.id)
+                if (userLevels === undefined && userXps === undefined) return await kay.reply(from, ind.levelNull(), id)
+                const ppLink = await kay.getProfilePicFromServer(sender.id)
+                if (ppLink === undefined) {
+                    var pepe = errorurl
+                } else {
+                    var pepe = ppLink
+                }
+                const requiredXp = 5000 * (Math.pow(2, userLevels) - 1)
+                const randomHexs = `#${(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')}`
+                const randomHex = `#${(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')}`
+                const rank = new canvas.Rank()
+                    .setAvatar(pepe)
+                    .setLevel(userLevels)
+                    .setRankColor('#2c2f33', '#2c2f33')
+                    .setCurrentXP(userXps)
+                    .setRequiredXP(requiredXp)
+                    .setProgressBar([randomHexs, randomHex], 'GRADIENT')
+                    .setUsername(pushname)
+                    .setDiscriminator('0001', '#FFFFFF00')
+                rank.build()
+                    .then(async (buffer) => {
+                        canvas.write(buffer, `${pushname}.png`)
+                        await kay.sendFile(from, `${pushname}.png`, `${pushname}.png`, `────「 LEVEL 」────\n\n➸ Username : ${pushname}\n➸ Xp Info : ${userXps}\n Level: ${userLevels}`, id)
+                        fs.unlinkSync(`${pushname}.png`)
+                    })
+                    .catch(async (err) => {
+                        console.error(err)
+                        await kay.reply(from, `Error!\n${err}`, id)
+                    })
+            break*/
+       case prefix+'level':
+                if (!isGroupMsg) return await kay.reply(from, 'perintah hanya bisa di gunakan di grup', id)
+                const userLevel = getInfoLevel(sender.id)
+                const userXp = getInfoXp(sender.id)
+                if (userLevel === undefined && userXp === undefined) return await kay.reply(from, 'blum ada level lu ngab', id)
+                const ppLink = await kay.getProfilePicFromServer(sender.id)
+                
+                if (ppLink === undefined) {
+                    var pepe = errorImg
+                } else {
+                    var pepe = ppLink
+                }
+                const requiredXp = 5000 * (Math.pow(2, userLevel) - 1)
+                const userId = sender.id.substring(9, 13)
+                const randomHexs = `#${(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')}`
+                const randomHex = `#${(Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0')}`
+                const rank = new canvas.Rank()
+                    .setAvatar(pepe)
+                    .setLevel(userLevel)
+                    .setRankColor('#2c2f33', '#2c2f33')
+                    .setCurrentXP(userXp)
+                    .setRequiredXP(requiredXp)
+                    .setProgressBar([randomHexs, randomHex], 'GRADIENT')
+                    .setUsername(pushname)
+                    .setDiscriminator('0001')
+                    .setBackground("IMAGE","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNaP5t48Yyu7wjxdY-fKKNzyXBB9LENoEiOQ&usqp=CAU")
+                rank.build()
+                    .then(async (buffer) => {
+                        canvas.write(buffer, `${pushname}.png`)
+                        await kay.sendFile(from, `${pushname}.png`, `${pushname}.png`, `────「 LEVEL 」────\n\n➸ Username : ${pushname}\n➸ Xp Info : ${userXp}\n➸ Level: ${userLevel}`, id)
+                            .then(() => fs.unlinkSync(`${pushname}.png`))
+                    })
+                    .catch(async (err) => {
+                        console.error(err)
+                        await kay.reply(from, `Error!\n${err}`, id)
+                    })
+            break
+            case prefix+'leaderboard':
+            if (!isLevelingOn) return await kay.reply(from, 'Fitur leveling belum diaktifkan!', id)
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                const resp = _level
+                resp.sort((a, b) => (a.xp < b.xp) ? 1 : -1)
+                let leaderboard = '-----[ *LEADERBOARD* ]----\n\n'
+                let nom = 0
+                try {
+                    for (let i = 0; i < 10; i++) {
+                        nom++
+                        leaderboard += `${nom}. @${resp[i].id.replace('@c.us', '')}\n➸ XP: *${resp[i].xp}* Level: *${resp[i].level}*\n\n`
+                    }
+                    await kay.sendTextWithMentions(from, leaderboard)
+                } catch (err) {
+                    console.error(err)
+                    await kay.reply(from, 'Perlu setidaknya *10* user yang memiliki level di database!', id)
+                }
+               break
+            
+        case prefix+'ttp':
+                try
+                {
+                    const string = body.toLowerCase().includes(`${prefix}ttp`) ? body.slice(5) : body.slice(5)
+                    if(args)
+                    {
+                        if(quotedMsgObj == null)
+                        {
+                            const gasMake = await getStickerMaker(string)
+                            if(gasMake.status == true)
+                            {
+                                try{
+                                    await kay.sendImageAsSticker(from, gasMake.base64)
+                                }catch(err) {
+                                    await kay.reply(from, 'Gagal membuat.', id)
+                                } 
+                            }else{
+                                await kay.reply(from, gasMake.reason, id)
+                            }
+                        }else if(quotedMsgObj != null){
+                            const gasMake = await getStickerMaker(quotedMsgObj.body)
+                            if(gasMake.status == true)
+                            {
+                                try{
+                                    await kay.sendImageAsSticker(from, gasMake.base64)
+                                }catch(err) {
+                                    await kay.reply(from, 'Gagal membuat.', id)
+                                } 
+                            }else{
+                                await kay.reply(from, gasMake.reason, id)
+                            }
+                        }
+                       
+                    }else{
+                        await kay.reply(from, 'Tidak boleh kosong.', id)
+                    }
+                }catch(error)
+                {
+                    console.log(error)
+                }
+            break
+        case `${prefix}snobg`:
+                try {
+                    var mediaData = await decryptMedia(message, uaOverride)
+                    var imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
+                    var base64img = imageBase64
+                    var outFile = './media/img/noBg.png'
+                    // untuk api key kalian bisa dapatkan pada website remove.bg
+                    var result = await removeBackgroundFromImageBase64({ base64img, apiKey: 'Vbrh47isZc679eURhhuJs6kN', size: 'auto', type: 'auto', outFile })
+                    await fs.writeFile(outFile, result.base64img)
+                    await kay.sendImageAsSticker(from, `data:${mimetype};base64,${result.base64img}`)
+                } catch(err) {
+                    console.log(err)
+                }
+            break
+        case prefix+'ttp2':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#ttp2 [ Teks ]*, contoh *#ttp2 KAY *`, id)
+            const ttp2t = body.slice(6)
+            const lttp2 = ["Orange","White","Green","Black","Purple","Red","Yellow","Blue","Navy","Grey","Magenta","Brown","Gold"]
+            const rttp2 = lttp2[Math.floor(Math.random() * (lttp2.length))]
+            await kay.sendStickerfromUrl(from, `https://api.vhtear.com/textmaker?text=${ttp2t}&warna=${rttp2}&apikey=${vhtearkey}`)
+            break
+                case prefix+'waifusticker':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const wast = ["0001","0002","0003","0004","0005","0006","0007","0008","0009","0010","0011","0012","0013","0014","0015","0016","0017","0018","0019","0020","0021","0022","0023","0024","0025","0026","0027","0028","0029","0030","0031","0032","0033","0034","0035","0036","0037","0038","0039","0040","0041","0042","0043","0044","0045","0046","0047","0048","0049","0050","0051","0052","0053","0054","0055","0056","0057","0058","0059","0060","0061","0062","0063","0064","0065","0066","0067","0068","0069","0070","0071","0072","0073","0074","0075","0076","0077","0078","0079","0080","0081","0082","0083","0084","0085","0086","0087","0088","0089","0090","0091","0092","0093","0094","0095","0096","0097","0098","0099"]
+            const wast2 = wast[Math.floor(Math.random() * (wast.length))]
+            await kay.sendStickerfromUrl(from, `http://randomwaifu.altervista.org/images/${wast2}.png`)
+            break
+        case prefix+'ttg':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            try {
+                if (quotedMsgObj == null) {
+                    if (args.length === 1) return kay.reply(from, `Kirim perintah *#ttg [ Teks ]*, contoh *#ttg aku bukan boneka*`, id)
+                        await kay.sendStickerfromUrl(from, `https://api.vhtear.com/textxgif?text=${body.slice(5)}&apikey=${vhtearkey}`)
+                        limitAdd(serial)
+                } else {
+                    await kay.sendStickerfromUrl(from, `https://api.vhtear.com/textxgif?text=${quotedMsgObj}&apikey=${vhtearkey}`)
+                    limitAdd(serial)
+                }
+            } catch(e) {
+                console.log(e)
+                kay.reply(from, 'Maaf, Server sedang Error')
+            }
+            break
+         case `${prefix}getemoji`:
+		case prefix+'getemoji':
+		if (body.slice(10).length > 2) return kay.reply(from, 'upss maaf, hanya bisa 1 emoji', id)
+           try{
+            const getcod = getemo((body.slice(10)));
+            await kay.sendStickerfromUrl(from, `https://api.vhtear.com/emojitopng?code=${getcod}&apikey=${vhtearkey}`)
+           } catch {
+                return kay.reply(from, 'Upss maaf mungkin emoji tidak terdaftar', id)
+            }
+        break
+       case `p`:
+            kay.sendStickerfromUrl(from, 'https://i.ibb.co/zf41Vcs/IMG-20201212-WA1876.png')
+            kay.sendPtt(from, './media/senpai.mp3', id)
+            break
+        case `ara`:
+            kay.sendPtt(from, './media/ara.mp3', id)
+            break
+        case `iri`:
+        case `iri?`:
+            kay.sendPtt(from, './media/iri.mp3', id)
+            break
+        case `yamete`:
+        case `yametee`:
+            kay.sendPtt(from, './media/yamete.mp3', id)
+            break
+        case `bernyanyi`:
+        case `nyanyi`:
+        case `lawan`:
+            kay.sendPtt(from, './media/ber.mp3', id)
+            break
+        case `telat`:
+        case `lamaa`:
+        case `lambat`:
+            kay.sendPtt(from, './media/be.mp3', id)
+            break
+        case `assalamualaikum`:
+            kay.reply(from, `walaikumsalam Kak ${pushname}`, id)
+            break
+        case `pendaftar`:
+            kay.reply(from, `Total Pengguna yang telah terdaftar ${pendaftar.length}`, id)
+            break
+		case 'ohayou':
+		case 'pagi':
+		case 'morning':
+			kay.sendPtt(from, './media/ohayou.mp3', id)
+            kay.reply(from, 'Ohayo daling', id)
+            break
+		case 'konichiwa':
+		case 'konnichiwa':
+		case 'siang':
+			kay.sendPtt(from, './media/konichiwa.mp3',id)
+			break
+        case 'oyasumi':
+		case 'malam':
+		case 'night':
+			kay.sendPtt(from, './media/Oyasumi.mp3',id)
+			break
+		case 'sad':
+		case 'Sad':
+		case 'SAD':
+		    const sirrw = Math.floor(Math.random() * 2) + 1
+            if (sirrw == 1) {
+              kay.sendPtt(from, './media/saad.mp3', id)
+            } else {
+              kay.sendPtt(from, './media/sad.mp3', id)
+            }
+            break
+        case `kuntull`:
+               kay.sendPtt(from, './media/kuntull.mp3', id)
+            break
+        case `anjing`:
+               kay.sendPtt(from, './media/ajing.mp3', id)
+            break
+        case `malamthbaru`:
+               kay.sendPtt(from, './media/a.mp3', id)
+            break
+        case 'dj1':
+               kay.sendPtt(from, './media/dj1.mp3', id)
+            break
+        case `dj2`:
+               kay.sendPtt(from, './media/dj2.mp3', id)
+            break
+        case `dj3`:
+               kay.sendPtt(from, './media/dj3.mp3', id)
+            break
+        case `dj4`:
+               kay.sendPtt(from, './media/dj4.mp3', id)
+            break
+        case `dj5`:
+               kay.sendPtt(from, './media/dj5.mp3', id)
+            break
+        case `dj6`:
+               kay.sendPtt(from, './media/dj6.mp3', id)
+            break
+        case `dj7`:
+               kay.sendPtt(from, './media/dj7.mp3', id)
+            break
+        case `dj8`:
+               kay.sendPtt(from, './media/dj8.mp3', id)
+            break
+        case `dj9`:
+               kay.sendPtt(from, './media/dj9.mp3', id)
+            break
+        case `dj10`:
+               kay.sendPtt(from, './media/dj10.mp3', id)
+            break
+        case `dj11`:
+               kay.sendPtt(from, './media/dj11.mp3', id)
+            break
+        case `dj12`:
+               kay.sendPtt(from, './media/dj12.mp3', id)
+            break
+        case `dj13`:
+               kay.sendPtt(from, './media/dj13.mp3', id)
+            break  
+        case `dj14`:
+               kay.sendPtt(from, './media/dj14.mp3', id)
+            break  
+        case `dj15`:
+               kay.sendPtt(from, './media/dj15.mp3', id)
+            break
+        case `dj16`:
+               kay.sendPtt(from, './media/dj16.mp3', id)
+            break
+        case `dj17`:
+               kay.sendPtt(from, './media/dj17.mp3', id)
+            break
+        case `dj18`:
+               kay.sendPtt(from, './media/dj18.mp3', id)
+            break
+        case `dj19`:
+               kay.sendPtt(from, './media/dj19.mp3', id)
+            break
+        case `dj20`:
+               kay.sendPtt(from, './media/dj20.mp3', id)
+            break
+        case `ampun`:
+               kay.sendPtt(from, './media/b.mp3', id)
+            break
+        case `djancok`:
+               kay.sendPtt(from, './media/Djancok.mp3', id)
+            break
+        case `awoneme`:
+               kay.sendPtt(from, './media/Awoneme.mp3', id)
+            break
+        case `diggy`:
+               kay.sendPtt(from, './media/Diggy.mp3', id)
+            break
+        case `bantai`:
+               kay.sendPtt(from, './media/Bantai.mp3', id)
+            break
+        case `lolay`:
+               kay.sendPtt(from, './media/Lolay.mp3', id)
+            break
+        case `kenangan`:
+               kay.sendPtt(from, './media/Kenangan.mp3', id)
+            break
+        case prefix+'motor':
+                if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+                await limitAdd(serial)
+                const mtr = body.slice(7)
+                try {
+                    const resp = await axios.get(`https://api.vhtear.com/infomotor?merk=${mtr}&apikey=${vhtearkey}`)
+                    if (resp.data.error) return kay.reply(from, resp.data.error, id)
+                    const kbbuaww = `➸ *Title* : ${resp.data.result.title}\n➸ *Harga* : ${resp.data.result.harga}\n➸ *Spesifikasi* : ${resp.data.result.spesifikasi}\n➸ *Kelebihan* : ${resp.data.result.kelebihan}\n➸ *Kekurangan* : ${resp.data.result.kekurangan}`
+                    kay.sendFileFromUrl(from, resp.data.result.image, 'gsm.jpg', kbbuaww, id)
+                } catch (err) {
+                    console.error(err.message)
+                    await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
+                    kay.sendText(ownerNumber, 'Motor Error : ' + err)
+                }
+                break
+        case prefix+`spek`:
+                if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+
+                await limitAdd(serial)
+                const hpnya = body.slice(6)
+                try {
+                    const resp = await axios.get(`https://api.vhtear.com/gsmarena?query=${hpnya}&apikey=${vhtearkey}`)
+                    if (resp.data.error) return kay.reply(from, resp.data.error, id)
+                    const kbbuaww = `➸ ${resp.data.result.spec}`
+                    kay.sendFileFromUrl(from, resp.data.result.image, 'gsm.jpg', kbbuaww, id)
+                } catch (err) {
+                    console.error(err.message)
+                    await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
+                    kay.sendText(ownerNumber, 'Spek Error : ' + err)
+                }
+                break
+        case prefix+`mobil`:
+                if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+                
+                await limitAdd(serial)
+                const mbl = body.slice(7)
+                try {
+                    const resp = await axios.get(`https://api.vhtear.com/infomobil?merk=${mbl}&apikey=${vhtearkey}`)
+                    if (resp.data.error) return kay.reply(from, resp.data.error, id)
+                    const kbbuaww = `➸ *Title* : ${resp.data.result.title}\n➸ *Harga* : ${resp.data.result.harga}\n➸ *Spesifikasi* : ${resp.data.result.spesifikasi}\n➸ *Kelebihan* : ${resp.data.result.kelebihan}\n➸ *Kekurangan* : ${resp.data.result.kekurangan}`
+                    kay.sendFileFromUrl(from, resp.data.result.image, 'gsm.jpg', kbbuaww, id)
+                } catch (err) {
+                    console.error(err.message)
+                    await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
+                    kay.sendText(ownerNumber, 'Mobil Error : ' + err)
+                }
+                break
+       case prefix+'tod':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                    const sliin = "https://blog.elevenia.co.id/wp-content/uploads/2020/04/27420-truth-or-dare.jpg"
+                    const gmeek = await kay.getGroupMembersId(groupId)
+                    let gmimk = gmeek[Math.floor(Math.random() * gmeek.length)]
+                    const mmkkk = `     *「 TRUTH OR DARE 」*`
+                    const lllk = `Truth or Dare kali ini ditujukan kepada @${gmimk.replace(/@c.us/g, '')} \n\nTolong reply pesan ini dengan #truth atau #dare`
+                    kay.sendFileFromUrl(from, sliin, 'ddas.jpg', mmkkk, id)
+                    await sleep(3000)
+                    await kay.sendTextWithMentions(from, lllk, id)
+                    break
+                case `${prefix}truth`:
+                    if (!quotedMsg) return kay.reply(from, 'Reply pesannya!', id)
+                    kay.reply(from, `${truth()}`, id)
+                    break
+                case `${prefix}dare`:
+                    if (!quotedMsg) return kay.reply(from, 'Reply pesannya!', id)
+                    kay.reply(from, `${dare()}`, id)
+                    break
+                  case `${prefix}memesticker`:
+                case `${prefix}memestiker`:
+                    arg = body.trim().split('|')
+                    kay.reply(from, 'Sedang di proses silahkan tunggu ± 1 min!', id)
+                    if ((isMedia || isQuotedImage) && args.length >= 2) {
+                        const top = arg[1]
+                        const bottom = arg[2]
+                        const encryptMedia = isQuotedImage ? quotedMsg : message
+                        const mediaData = await decryptMedia(encryptMedia, uaOverride)
+                        const getUrl = await uploadImages(mediaData, false)
+                        const ImageBase64 = await meme.custom(getUrl, top, bottom)
+                        kay.sendImageAsSticker(from, ImageBase64, 'image.png', '', null, true)
+                            .catch(() => {
+                                kay.reply(from, 'Ada yang error!')
+                            })
+                    } else {
+                        await kay.reply(from, `Tidak ada gambar! Silahkan kirim gambar dengan caption ${prefix}memesticker <teks_atas> | <teks_bawah>\ncontoh: ${prefix}meme teks atas | teks bawah`, id)
+                    }
+                    break
+             case prefix+'gdrive':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const regex = new RegExp("\/d\/(.+)\/", 'gi')
+            if (!args[1].match(regex)) { await kay.reply(from, `Url Google Drive Yang Kamu Masukkan Salah!\nContoh : #gdrive https://drive.google.com/file/d/1Cd8KjB9-cUU_Jy8Q/view`, id) }
+                const urla = args[1]
+                const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+                function niceBytes(x){
+                    let l = 0, n = parseInt(x, 10) || 0;
+                    while(n >= 1024 && ++l){
+                        n = n/1024;
+                    }
+                    return(n.toFixed(n < 10 && l > 0 ? 1 : 0) + ' ' + units[l]);
+                }
+                const m = urla.match(regex)
+                const fileid = m.toString().trimStart('/', 'd').trim('/');
+                const linke = 'https://drive.google.com/file' + fileid + 'view?usp=sharing'
+                fetch('https://gdbypass.host/api/?link='+linke)
+                    .then((res) => {
+                        status = res.status
+                        return res.json()
+                    })
+                    .then(async(body) => {
+                        const fileName = body.data.Filename
+                        const size = body.data.Filesize
+                        const newLink = body.data.NewUnlimitedURL
+                        const ling = await urlShortener(newLink)
+                            kay.reply(from, `*「 GOOGLE DRIVE 」*\n\n• *Nama File :* ${fileName}\n*• File Size :* ${niceBytes(size)}\n*• Short Link :* ${ling}`, id)
+                            limitAdd(serial)
+                    })
+                    .catch((err) => {
+                        kay.reply(from, `Maaf, Sepertinya Link Tidak Berhasil Di Bypass\n` + err, id)
+                    })
+            break
+        case prefix+'pastebin': //BY VINZ
+        if(isReg(obj)) return
+        if(cekumur(cekage)) return
+        if (args.length == 1) return kay.reply(from, 'Ketik command *prefix+pastebin [text]|[nama]\nContoh *prefix+pastebin ini contohnya', id)
+        await kay.reply(from, mess.wait, id)
+        var bdtrm = body.trim().split('|')
+        const pstbn = await axios.get(`https://zeksapi.herokuapp.com/api/pastebin?apikey=apivinz&text=${bdtrm[0]}&name=${bdtrm[1]}`) //LIMIT 800/HARI
+        await kay.reply(from, pstbn.data.result, id) 
+        break
+        case prefix+'magernulis1': // BY MFARELS
+            if (args.length === 1) return await kay.reply(from, 'Kirim perintah *prefix+magernulis1 [teks]*', id)  // BY MFARELS
+            const farel = body.slice(13)  // YOUTUBE : MFARELS CH
+            await kay.reply(from, mess.magernulissatu, id)  // INSTAGRAM : @mfarelsyahtiawan
+            const zahra = farel.replace(/(\S+\s*){1,10}/g, '$&\n')  // INSTALL IMAGEMAGICK KALO WAU WORK
+            const farelzahra = zahra.split('\n').slice(0, 33).join('\n')  // WAKTU INSTALL IMAGEMAGICK CENTANG KOLOM 1,2,3,5,6
+            var months = ['- 1 -', '- 2 -', '- 3 -', '- 4 -', '- 5 -', '- 6 -', '- 7 -', '- 8 -', '- 9 -', '- 10 -', '- 11 -', '- 12 -'];
+            var myDays = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            var date = new Date();
+            var day = date.getDate();
+            var month = date.getMonth();
+            var thisDay = date.getDay(),
+                thisDay = myDays[thisDay];
+            var yy = date.getYear();
+            var year = (yy < 1000) ? yy + 1900 : yy;
+            const zahrafarel = (day + ' ' + months[month] + ' ' + year)
+            const farelllzahraaa = (thisDay)
+            spawn('convert', [
+                './mager/magernulis/magernulis1.jpg',
+                '-font',
+                './font/Zahraaa.ttf',
+                '-size',
+                '700x960',
+                '-pointsize',
+                '100',
+                '-interline-spacing',
+                '1',
+                '-annotate',
+                '+4100+460',
+                farelllzahraaa,
+                '-font',
+                './font/Zahraaa.ttf',
+                '-size',
+                '700x960',
+                '-pointsize',
+                '100',
+                '-interline-spacing',
+                '1',
+                '-annotate',
+                '+4100+640',
+                zahrafarel,
+                '-font',
+                './font/Zahraaa.ttf',
+                '-size',
+                '6000x8000',
+                '-pointsize',
+                '130',
+                '-interline-spacing',
+                '1',
+                '-annotate',
+                '+1010+1010',
+                farelzahra,
+                './mager/magernulis√/magernulis1√.jpg'
+            ])
+            .on('error', () => kay.reply(from, 'Error Bjeer', id))
+            .on('exit', () => {
+                kay.sendImage(from, './mager/magernulis√/magernulis1√.jpg', 'magernulis.jpg', '*Sukses Nulis DiBuku✓*\n\n*YouTube : MFarelS CH*\n*Instagram : @mfarelsyahtiawan*\n\n*© Powered By MFarelS | RajinNulis-BOT*', id)
+            })
+            break // BY MFARELS
+        case prefix+'stickertoimg':
+            if (quotedMsg && quotedMsg.type == 'sticker') {
+                const mediaData = await decryptMedia(quotedMsg)
+                kay.reply(from, `[WAIT] Sedang di proses⏳ silahkan tunggu!`, id)
+                const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
+                await kay.sendFile(from, imageBase64, 'imagesticker.jpg', 'Success Convert Sticker to Image!', id)
+            } else if (!quotedMsg) return kay.reply(from, `Mohon tag sticker yang ingin dijadikan gambar!`, id)
+            break
+        case prefix+'stickergif': // INSTALL FFMPEG, IF YOU WANT THIS COMMAND WORK!
+        case prefix+'stikergif': // TUTORIAL IN README, PLEASE READ!
+        case prefix+'sgif': // MRHRTZ
+            kay.reply(from, `[WAIT] Sedang di proses⏳ silahkan tunggu ± 1 min!`, id)
+            if (isMedia && type === 'video' || mimetype === 'image/gif') {
+                try {
+                    const mediaData = await decryptMedia(message, uaOverride)
+                    await kay.sendMp4AsSticker(from, mediaData, {fps: 10, startTime: `00:00:00.0`, endTime : `00:00:05.0`,loop: 0})
+                } catch (e) {
+                    kay.reply(from, `Size media terlalu besar! mohon kurangi durasi video.`)
+                }
+            } else if (quotedMsg && quotedMsg.type == 'video' || quotedMsg && quotedMsg.mimetype == 'image/gif') {
+                const mediaData = await decryptMedia(quotedMsg, uaOverride)
+                await kay.sendMp4AsSticker(from, mediaData, {fps: 10, startTime: `00:00:00.0`, endTime : `00:00:05.0`,loop: 0})
+            } else {
+                kay.reply(from, `Kesalahan ⚠️ Hanya bisa video/gif apabila file media berbentuk gambar ketik #stickergif`, id)
+            } 
+            break
+        case prefix+'stickerlightning':
+        case prefix+'slightning':
+            kay.reply(from, `[WAIT] Sedang di proses⏳ silahkan tunggu ± 1 min!`, id)
+            if (isMedia && type === 'image') {
+                const mediaData = await decryptMedia(message, uaOverride)
+                const getUrle = await uploadImages(mediaData, false)
+                const imgnye = await stickerlight(getUrle)
+                const Slight = imgnye.result.imgUrl
+                await kay.sendStickerfromUrl(from, Slight)
+            } else if (quotedMsg && quotedMsg.type == 'image') {
+                const mediaData = await decryptMedia(quotedMsg, uaOverride)
+                const getUrle = await uploadImages(mediaData, false)
+                const imgnye = await stickerlight(getUrle)
+                const Slight = imgnye.result.imgUrl
+                await kay.sendStickerfromUrl(from, Slight)
+            } else {
+                await kay.reply(from, `Wrong Format!\n⚠️ Harap Kirim Gambar Dengan #stickerlightning`, id)
+            }
+            break
+        case prefix+'stickerfire':
+        case prefix+'sfire':
+            kay.reply(from, `[WAIT] Sedang di proses⏳ silahkan tunggu ± 1 min!`, id)
+            if (isMedia && type === 'image') {
+                const mediaData = await decryptMedia(message, uaOverride)
+                const getUrli = await uploadImages(mediaData, false)
+                const imgnya = await stickerburn(getUrli)
+                const Sfire = imgnya.result.imgUrl
+                await kay.sendStickerfromUrl(from, Sfire)
+            } else if (quotedMsg && quotedMsg.type == 'image') {
+                const mediaData = await decryptMedia(quotedMsg, uaOverride)
+                const getUrli = await uploadImages(mediaData, false)
+                const imgnya = await stickerburn(getUrli)
+                const Sfire = imgnya.result.imgUrl
+                await kay.sendStickerfromUrl(from, Sfire)
+            } else {
+                await kay.reply(from, `Wrong Format!\n⚠️ Harap Kirim Gambar Dengan #stickerfire`, id)
+            }
+            break
+        case prefix+'blackpink':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#blackpink [ Teks ]*, contoh *#blackpink KAY *`, id)
+            kay.reply(from, mess.wait, id)
+            const blpk = body.slice(11)
+            if (blpk.length > 15) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 15 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://api.vhtear.com/blackpinkicon?text=${blpk}&apikey=${vhtearkey}`, 'blackpink.jpg', '', id)
+            break
+          case prefix+'epep':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#epep [ Teks ]*, contoh *#epep KAY *`, id)
+            kay.reply(from, mess.wait, id)
+            const buriq = body.slice(6)
+            if (buriq.length > 10) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 10 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://docs-jojo.herokuapp.com/api/epep?text=${buriq}`, 'blackpink.png', '', id)
+            break
+        case prefix+'text3d':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#text3d [ Teks ]*, contoh *#text3d KAY *`, id)
+            kay.reply(from, mess.wait, id)
+            const shste = body.slice(8)
+            if (shste.length > 20) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 10 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://docs-jojo.herokuapp.com/api/text3d?text=${shste}`, 'blackpink.jpg', '', id)
+            break
+         case prefix+'sarah':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#sarah [ Teks ]*, contoh *#sarah KAY *`, id)
+            kay.reply(from, mess.wait, id)
+            const samra = body.slice(7)
+            if (samra.length > 10) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 10 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://rest.farzain.com/api/special/fansign/indo/viloid.php?apikey=ppqeuy&text=${samra}`, 'blackpink.jpg', '', id)
+            break
+         case prefix+'trumptweet':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#trumptweet [ Teks ]*, contoh *#trumptweet KAY *`, id)
+             kay.reply(from, mess.wait, id)
+            const tump = body.slice(12)
+            kay.sendFileFromUrl(from, `https://nekobot.xyz/api/imagegen?type=trumptweet&text=${tump}&raw=1`, `Nekonime.jpg`, 'Noh mhank', id)
+            await limitAdd(serial)
+            break
+         case prefix+'changemymind':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#changemymind [ Teks ]*, contoh *#changemymind KAY *`, id)
+             kay.reply(from, mess.wait, id)
+            const tumpyy = body.slice(14)
+            kay.sendFileFromUrl(from, `https://nekobot.xyz/api/imagegen?type=changemymind&text=${tumpyy}&raw=1`, `Nekonime.jpg`, 'Noh mhank', id)
+            await limitAdd(serial)
+            break
+        case prefix+'kanna':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#kanna [ Teks ]*, contoh *#kanna KAY *`, id)
+             kay.reply(from, mess.wait, id)
+            const tumpyyy = body.slice(7)
+            kay.sendFileFromUrl(from, `https://nekobot.xyz/api/imagegen?type=kannagen&text=${tumpyyy}&raw=1`, `Nekonime.jpg`, 'Noh mhank', id)
+            await limitAdd(serial)
+            break
+         case prefix+'gmlogo':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#gmlogo [ Teks ]*, contoh *#gmlogo KAY *`, id)
+            kay.reply(from, mess.wait, id)
+            const gmjoj = body.slice(8)
+            if (gmjoj.length > 10) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 10 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://docs-jojo.herokuapp.com/api/gaming?text=${gmjoj}`, 'blackpink.jpg', '', id)
+            break
+        case prefix+'glowtext':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#glowtext [ Teks ]*, contoh *#glowtext KAY *`, id)
+            kay.reply(from, mess.wait, id)
+            const gltx = body.slice(10)
+            if (gltx.length > 15) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 10 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://api.vhtear.com/glowtext?text=${gltx}&apikey=${vhtearkey}`, 'blackpink.jpg', '', id)
+            break
+        case prefix+'thunder':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#thunder [ Teks ]*, contoh *#thunder rashid*`, id)
+            kay.reply(from, mess.wait, id)
+            const thndr = body.slice(9)
+            if (thndr.length > 20) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 20 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://api.vhtear.com/thundertext?text=${thndr}&apikey=${vhtearkey}`, 'thndr.jpg', '', id)
+            break
+         case prefix+'lovetext':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#lovetext [ Teks ]*, contoh *#lovetext KAY *`, id)
+            kay.reply(from, mess.wait, id)
+            const lvtx = body.slice(10)
+            if (lvtx.length > 10) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 10 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://api.vhtear.com/lovemessagetext?text=${lvtx}&apikey=${vhtearkey}`, 'blackpink.jpg', '', id)
+            break
+         case prefix+'silk':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#silk [ Teks ]*, contoh *#srashid*`, id)
+            kay.reply(from, mess.wait, id)
+            const silkh = body.slice(6)
+            if (silkh.length > 20) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 20 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://api.vhtear.com/silktext?text=${silkh}&apikey=${vhtearkey}`, 'thndr.jpg', '', id)
+            break
+         case prefix+'party':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#party [ Teks ]*, contoh *#party rashid*`, id)
+            kay.reply(from, mess.wait, id)
+            const partyy = body.slice(7)
+            if (partyy.length > 20) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 20 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://api.vhtear.com/partytext?text=${partyy}&apikey=${vhtearkey}`, 'thndr.jpg', '', id)
+            break
+         case prefix+'romtext':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#romtext [ Teks ]*, contoh *#romtext gw dan owner*`, id)
+            kay.reply(from, mess.wait, id)
+            const romte = body.slice(9)
+            if (romte.length > 20) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 20 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://api.vhtear.com/romancetext?text=${romte}&apikey=${vhtearkey}`, 'thndr.jpg', '', id)
+            break
+        case prefix+'googletext':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#googletext [ |Teks1|Teks2|Text3 ]*, contoh *#googletext |rashid|Dev|KAY *`, id)
+            argz = body.trim().split('|')
+            if (argz.length >= 3) {
+                kay.reply(from, mess.wait, id)
+                const googte = argz[1]
+                const googte2 = argz[2]
+                const googte3 = argz[3]
+                kay.sendFileFromUrl(from, `https://api.vhtear.com/googletext?text1=${googte}&text2=${googte2}&text3=${googte3}&apikey=${vhtearkey}`)
+                await limitAdd(serial)
+            } else {
+                await kay.reply(from, `Wrong Format!\n[❗] Kirim perintah *#googletext [ |Teks1|Teks2|tesk3 ]*, contoh *#googletext |rashid|Dev|KAY *`, id)
+            }
+            break
+        case prefix+'pornhub':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#pornhub [ |Teks1|Teks2 ]*, contoh *#pornhub |rashid|Dev KAY *`, id)
+            argz = body.trim().split('|')
+            if (argz.length >= 2) {
+                kay.reply(from, mess.wait, id)
+                const lpornhub = argz[1]
+                const lpornhub2 = argz[2]
+                if (lpornhub.length > 10) return kay.reply(from, '*Teks1 Terlalu Panjang!*\n_Maksimal 10 huruf!_', id)
+                if (lpornhub2.length > 10) return kay.reply(from, '*Teks2 Terlalu Panjang!*\n_Maksimal 10 huruf!_', id)
+                kay.sendFileFromUrl(from, `https://api.vhtear.com/pornlogo?text1=${lpornhub}&text2=${lpornhub2}&apikey=${vhtearkey}`)
+                await limitAdd(serial)
+            } else {
+                await kay.reply(from, `Wrong Format!\n[❗] Kirim perintah *#pornhub [ |Teks1|Teks2 ]*, contoh *#pornhub |rashid|Dev KAY *`, id)
+            }
+            break
+         case prefix+'wolf1':
+		if(isReg(obj)) return
+        if(cekumur(cekage)) return
+       if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#wolf1 [ |Teks1|Teks2 ]*, contoh *#wolf1 |rashid|Dev KAY *`, id)
+             kay.reply(from, mess.wait, id)
+            argz = body.trim().split('|')
+            const wol1 = argz[1]
+            const wol2 = argz[2]
+            try {
+            const swrt2 = await axios.get('https://tobz-api.herokuapp.com/api/textpro?theme=wolflogo1&text1=' + wol1 + '&text2=' + wol2)       
+            const { result } = swrt2.data
+            const swrt3 = `NOH`
+            const pictk = await bent("buffer")(result)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            kay.sendImage(from, base64, swrt3)
+            } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔 Maaf, User tidak ditemukan')
+             kay.sendText(ownerNumber, 'wolf WRITING Error : ' + err)
+           }
+          break
+               case prefix+'ninjatext':
+		if(isReg(obj)) return
+        if(cekumur(cekage)) return
+       if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#ninjatext [ |Teks1|Teks2 ]*, contoh *#ninjatext |rashid|Dev KAY *`, id)
+             kay.reply(from, mess.wait, id)
+            argz = body.trim().split('|')
+            const ninjaa = argz[1]
+            const ninjaaa = argz[2]
+            try {
+            const swrt2 = await axios.get('https://tobz-api.herokuapp.com/api/textpro?theme=ninjalogo&text1=' + ninjaa + '&text2=' + ninjaaa)       
+            const { result } = swrt2.data
+            const swrt3 = `NOH`
+            const pictk = await bent("buffer")(result)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            kay.sendImage(from, base64, swrt3)
+            } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔 Maaf, User tidak ditemukan')
+             kay.sendText(ownerNumber, 'wolf WRITING Error : ' + err)
+           }
+          break
+        case prefix+'galaxy':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#galaxy [ Teks ]*, contoh *#galaxy gw dan owner*`, id)
+            kay.reply(from, mess.wait, id)
+            const galate = body.slice(8)
+            if (galate.length > 20) return kay.reply(from, '*Teks Terlalu Panjang!*\n_Maksimal 20 huruf!_', id)
+            await kay.sendFileFromUrl(from, `https://api.vhtear.com/galaxytext?text=${galate}&apikey=${vhtearkey}`, 'thndr.jpg', '', id)
+            break
+        case prefix+'glitch':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#glitch [ |Teks1|Teks2 ]*, contoh *#glitch |rashid|Dev KAY *`, id)
+            argz = body.trim().split('|')
+            if (argz.length >= 2) {
+                kay.reply(from, mess.wait, id)
+                const lglitch = argz[1]
+                const lglitch2 = argz[2]
+                if (lglitch.length > 10) return kay.reply(from, '*Teks1 Terlalu Panjang!*\n_Maksimal 10 huruf!_', id)
+                if (lglitch2.length > 10) return kay.reply(from, '*Teks2 Terlalu Panjang!*\n_Maksimal 10 huruf!_', id)
+                kay.sendFileFromUrl(from, `https://api.vhtear.com/glitchtext?text1=${lglitch}&text2=${lglitch2}&apikey=${vhtearkey}`)
+                await limitAdd(serial)
+            } else {
+                await kay.reply(from, `Wrong Format!\n[❗] Kirim perintah *#glitch [ |Teks1|Teks2 ]*, contoh *#glitch |rashid|Dev KAY *`, id)
+            }
+            break
+        case prefix+'neon1': 
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'playbutton': 
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'avengers': 
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'marvel1': 
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'marvel2':
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'matrix': 
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'neon2': 
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'neon3': 
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'dropwater': 
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'bokeh':
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'captain':
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+        case prefix+'lava':
+            kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+            break
+         case '#skytext1':
+         {
+                                                        const skycuys = body.slice(10)
+                                                        if (args.length === 1) return kay.reply(from, `Kirim perintah *#skytext1 [ Teks ]*, contoh *#skytext1 KAY *`, id)
+                                                        kay.reply(from, mess.wait, id)
+                                                        const puppeteer = require('puppeteer')
+                                                try {
+                                                    (async () => {
+                                                        const browser = await puppeteer.launch({
+                                                            headless: true,
+                                                        });
+                                                        const page = await browser.newPage();
+                                                        await page
+                                                            .goto("https://textpro.me/create-a-cloud-text-effect-in-the-sky-online-997.html", {
+                                                                waitUntil: "networkidle2"
+                                                            })
+                                                            .then(async () => {
+                                                                await page.type("#text-0", skycuys);
+                                                                await page.click("#submit");
+                                                                await new Promise(resolve => setTimeout(resolve, 3000));
+                                                                const element = await page.$(
+                                                                    'div[class="thumbnail"] > img'
+                                                                    );
+                                                                const text = await (await element.getProperty("src")).jsonValue();
+                                                                const urlmp4 = ({
+                                                                    url: text
+                                                                })
+                                                                kay.sendFileFromUrl(from, text, id)
+                                                                browser.close();
+                                                
+                                                            })
+                                                            .catch((err => {
+                                                                console.log(err)
+                                                                 kay.reply(from, 'error', id)
+                                                            }))
+            })();
+            } catch (error) {
+            console.log('error bang')
+             kay.reply(from, 'error', id)
+            }
+            }
+            break
+         case '#skytext2': 
+         {
+                                                        const skyycuys = body.slice(10)
+                                                        if (args.length === 1) return kay.reply(from, `Kirim perintah *#skytext2 [ Teks ]*, contoh *#skytext2 KAY *`, id)
+                                                        kay.reply(from, mess.wait, id)
+                                                        const puppeteer = require('puppeteer')
+                                                try {
+                                                    (async () => {
+                                                        const browser = await puppeteer.launch({
+                                                            headless: true,
+                                                        });
+                                                        const page = await browser.newPage();
+                                                        await page
+                                                            .goto("https://textpro.me/create-realistic-cloud-text-effect-online-free-999.html", {
+                                                                waitUntil: "networkidle2"
+                                                            })
+                                                            .then(async () => {
+                                                                await page.type("#text-0", skyycuys);
+                                                                await page.click("#submit");
+                                                                await new Promise(resolve => setTimeout(resolve, 3000));
+                                                                const element = await page.$(
+                                                                    'div[class="thumbnail"] > img'
+                                                                    );
+                                                                const text = await (await element.getProperty("src")).jsonValue();
+                                                                const urlmp4 = ({
+                                                                    url: text
+                                                                })
+                                                                kay.sendFileFromUrl(from, text, id)
+                                                                browser.close();
+                                                
+                                                            })
+                                                            .catch((err => {
+                                                                console.log(err)
+                                                                 kay.reply(from, 'error', id)
+                                                            }))
+            })();
+            } catch (error) {
+            console.log('error bang')
+             kay.reply(from, 'error', id)
+            }
+            }
+            break
+         case '#sandwriting2': 
+         {
+                                                        const sandcuys = body.slice(14)
+                                                        if (args.length === 1) return kay.reply(from, `Kirim perintah *#sandwriting2 [ Teks ]*, contoh *#sandwriting2 KAY *`, id)
+                                                        kay.reply(from, mess.wait, id)
+                                                        const puppeteer = require('puppeteer')
+                                                try {
+                                                    (async () => {
+                                                        const browser = await puppeteer.launch({
+                                                            headless: true,
+                                                        });
+                                                        const page = await browser.newPage();
+                                                        await page
+                                                            .goto("https://textpro.me/sand-engraved-3d-text-effect-989.html", {
+                                                                waitUntil: "networkidle2"
+                                                            })
+                                                            .then(async () => {
+                                                                await page.type("#text-0", sandcuys);
+                                                                await page.click("#submit");
+                                                                await new Promise(resolve => setTimeout(resolve, 3000));
+                                                                const element = await page.$(
+                                                                    'div[class="thumbnail"] > img'
+                                                                    );
+                                                                const text = await (await element.getProperty("src")).jsonValue();
+                                                                const urlmp4 = ({
+                                                                    url: text
+                                                                })
+                                                                kay.sendFileFromUrl(from, text, id)
+                                                                browser.close();
+                                                
+                                                            })
+                                                            .catch((err => {
+                                                                console.log(err)
+                                                                 kay.reply(from, 'error', id)
+                                                            }))
+            })();
+            } catch (error) {
+            console.log('error bang')
+             kay.reply(from, 'error', id)
+            }
+            }
+            break
+         case `${prefix}linesticker`:
+			if (args.length === 1) return kay.reply(from, 'Gunakan perntah #linesticker [link]\n Contoh #linesticker https://store.line.me/stickershop/product/4877/id')
+			const getline = await axios.get(`http://enznoire.herokuapp.com/line?url=${body.slice(13)}`)	
+			if (getline.status === false) {
+				return kay.relpy(from, 'Upss maaf terjadi kesalahan [ERROR] mungkin linknya tidak valid')
+			} else {
+				kay.reply(from, mess.wait, id)
+				await kay.sendStickerfromUrl(from, getline.data.thumb)
+				for (let i = 0; i < getline.data.sticker.length; i++) {
+				await kay.sendStickerfromUrl(from, `${getline.data.sticker[i]}`)
+				}
+			}
+			break
+		  case prefix+'cekresi':     
+        if (args.length === 1) return benz.reply(from, 'salah! ketik #cekresi [nomor resi] [nama kurir]\nContoh: #cekresi JP0177687883 jnt', id)
+        if (isLimit(serial)) return
+        benz.reply(from, mess.wait, id)
+                var gntd = await axios.get(`https://api.vhtear.com/cekresi?resi=${args[1]}&kurir=${args[2]}&apikey=${vhtearkey}`)
+                var gentod = gntd.data.result
+                if (gentod.status.code !== 200) return benz.reply(from, 'Upss terjadi kesalahan, pastikan data yang kamu kirimkan benar', id)
+                let gindtod = `Info untuk Resi *${args[1]}*\n\n*Status*: ${gentod.result.summary.status}\n*WayBill Date*: ${gentod.result.details.waybill_date}\n*Status Pengiriman*:\n\n`
+                var camtol = gentod.result.manifest
+				for (let i = 0; i < camtol.length; i++) {
+                    gindtod += `*City* : ${camtol[i].city_name}\n*Deskripsi* : ${camtol[i].manifest_description}\n*Tanggal*: ${camtol[i].manifest_date}\n\n`
+                }
+                await benz.reply(from, gindtod, id)
+
+        await limitAdd(serial)             
+        break
+        case prefix+'groupinfo' :
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', message.id)
+            isMuted(chatId) == false
+            var totalMem = chat.groupMetadata.participants.length
+            var desc = chat.groupMetadata.desc
+            var groupname = name
+            var welgrp = welkom.includes(chat.id)
+            var leftgrp = left.includes(chat.id)
+            var ngrp = nsfw_.includes(chat.id)
+            var antlink = antilink.includes(chat.id)
+            var simu = simi_.includes(chat.id)
+            var stprt = antisticker.includes(chat.id)
+            var antbad = antibadword.includes(chat.id)
+            var grouppic = await kay.getProfilePicFromServer(chat.id)
+            if (grouppic == undefined) {
+                 var pfp = errorurl
+            } else {
+                 var pfp = grouppic 
+            }
+            await kay.sendFileFromUrl(from, pfp, 'group.png', `*「 GROUP INFO 」*
+*➸ *Name : ${groupname}* 
+*➸ Members : ${totalMem}*
+*➸ Left : ${leftgrp ? 'Aktif' : 'Tidak Aktif'}*
+*➸ NSFW : ${ngrp ? 'Aktif' : 'Tidak Aktif'}*
+*➸ Simsimi : ${simu ? 'Aktif' : 'Tidak Aktif'}*
+*➸ Anti Sticker : ${stprt ? 'Aktif' : 'Tidak Aktif'}*
+*➸ Anti Link : ${antlink ? 'Aktif' : 'Tidak Aktif'}*
+*➸ Anti Badword : ${antbad ? 'Aktif' : 'Tidak Aktif'}*
+*➸ Group Description* 
+${desc}`)
+            break
+        case prefix+'quoterandom' :
+        case prefix+'quote' :
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.sendText(from, quotedd())
+            break
+        case prefix+'tts':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            try {
+                if (args.length === 1) return kay.reply(from, 'Kirim perintah *#tts [ Bahasa ] [ Teks ]*, contoh *#tts id halo semua*')
+                var dataBhs = args[1]      
+                const ttsHZ = require('node-gtts')(dataBhs)
+                var dataText = body.slice(8)
+                if (dataText === '') return kay.reply(from, 'Masukkan teksnya', id)
+                if (dataText.length > 500) return kay.reply(from, 'Teks terlalu panjang!', id)
+                var dataBhs = body.slice(5, 7)
+                ttsHZ.save('./media/tts.mp3', dataText, function () {
+                kay.sendPtt(from, './media/tts.mp3', id)
+                limitAdd(serial)
+                })
+            } catch (err){
+                console.log(err)
+                kay.reply(from, bahasa_list, id)
+            }
+            break
+        case prefix+'koin':
+            const side = Math.floor(Math.random() * 2) + 1
+            if (side == 1) {
+              kay.sendStickerfromUrl(from, 'https://i.ibb.co/YTWZrZV/2003-indonesia-500-rupiah-copy.png', { method: 'get' })
+            } else {
+              kay.sendStickerfromUrl(from, 'https://i.ibb.co/bLsRM2P/2003-indonesia-500-rupiah-copy-1.png', { method: 'get' })
+            }
+            break
+        case prefix+'dadu':
+            const dice = Math.floor(Math.random() * 6) + 1
+            await kay.sendStickerfromUrl(from, 'https://www.random.org/dice/dice' + dice + '.png', { method: 'get' })
+            break
+        case prefix+'kapankah':
+            const when = args.join(' ')
+            const ans = kapankah[Math.floor(Math.random() * (kapankah.length))]
+            if (!when) kay.reply(from, '⚠️ Format salah! Ketik *#menu* untuk penggunaan.')
+            await kay.sendText(from, `Pertanyaan: *${when}* \n\nJawaban: ${ans}`)
+            break
+        case prefix+'nilai':
+        case prefix+'rate':
+            const rating = args.join(' ')
+            const awr = rate[Math.floor(Math.random() * (rate.length))]
+            if (!rating) kay.reply(from, '⚠️ Format salah! Ketik *#menu* untuk penggunaan.')
+            await kay.sendText(from, `Pertanyaan: *${rating}* \n\nJawaban: ${awr}`)
+            break
+        case prefix+'apakah':
+            const nanya = args.join(' ')
+            const jawab = apakah[Math.floor(Math.random() * (apakah.length))]
+            if (!nanya) kay.reply(from, '⚠️ Format salah! Ketik *#menu* untuk penggunaan.')
+            await kay.sendText(from, `Pertanyaan: *${nanya}* \n\nJawaban: ${jawab}`)
+            break
+         case prefix+'bisakah':
+            const bsk = args.join(' ')
+            const jbsk = bisakah[Math.floor(Math.random() * (bisakah.length))]
+            if (!bsk) kay.reply(from, '⚠️ Format salah! Ketik *#menu* untuk penggunaan.')
+            await kay.sendText(from, `Pertanyaan: *${bsk}* \n\nJawaban: ${jbsk}`)
+            break
+        case prefix+'owner':
+        case prefix+'creator':
+            kay.sendContact(chatId, `6285648253605@c.us`)
+            kay.reply(from, 'Itu nomor Pacar ku, eh maksudnya Owner ku', id)
+            break
+        case prefix+'resetsticker':
+            if (!isAdmin) return kay.reply(from, `Maaf, perintah ini hanya dapat dilakukan oleh User VIP!`, id)
+            if (!args.length === 1) return kay.reply(from, `Masukkan nomornya, *GUNAKAN AWALAN 62*\ncontoh: #resetsticker 62852262236155 / #resetsticker @member`, id) 
+            const nomebr = args[1]
+            let textz = nomebr.replace(/[-\s+@c.us]/g,'')
+            const cuss = textz + '@c.us'
+                var found = false
+                Object.keys(stickerspam).forEach((i) => {
+                    if(stickerspam[i].id == cuss){
+                        found = i
+                    }
+                })
+                if (found !== false) {
+                    stickerspam[found].msg = 1;
+                    const result = 'DB Sticker Spam has been reset'
+                    console.log(stickerspam[found])
+                    fs.writeFileSync('./lib/database/stickerspam.json',JSON.stringify(stickerspam));
+                    kay.reply(from, result, from)
+                    limitAdd(serial)
+                } else {
+                        kay.reply(from, `Maaf, Nomor itu tidak terdaftar di database!`, id)
+                }
+            break
+        case prefix+'resetbadword':
+                    if(isLimit(serial)) return
+                    if (!isGroupAdmins) return kay.reply(from, 'Command ini hanya dapat digunakan oleh admin grup')  
+                    if (!args.length === 1) return kay.reply(from, 'Masukkan nomornya, *GUNAKAN AWALAN 62*\ncontoh: #resetbadword 6285112554122 / #resetbadword @member') 
+                    const nomer = args[1]
+                    let text = nomer.replace(/[-\s+@c.us]/g,'')
+                    const cus = text + '@c.us'
+                        var found = false
+                        Object.keys(msgBadword).forEach((i) => {
+                            if(msgBadword[i].id == cus){
+                                found = i
+                            }
+                        })
+                        if (found !== false) {
+                            msgBadword[found].msg = 1;
+                            const result = 'DB Badword Spam has been reset'
+                            console.log(msgBadword[found])
+                            fs.writeFileSync('./lib/database/msgBadword.json',JSON.stringify(msgBadword));
+                            kay.reply(from, result, from)
+                            limitAdd(serial)
+                        } else {
+                                kay.reply(from, `${monospace(`Di database ngga ada nomer itu dik`)}`, id)
+                        }
+                break
+        // ON OFF
+        case prefix+'antilink':  
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (!isGroupAdmins) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh Admin group!`, id)
+            if (!isBotGroupAdmins) return kay.reply(from, `Perintah ini hanya bisa di gunakan jika Bot menjadi Admin!`, id)
+            if (args[1] == 'enable') {
+                var cek = antilink.includes(chatId);
+                if(cek){
+                    return kay.reply(from, `*「 ANTI GROUP LINK 」*\nStatus : Sudah Aktif`, id) //if number already exists on database
+                } else {
+                    antilink.push(chatId)
+                    fs.writeFileSync('./lib/database/antilink.json', JSON.stringify(antilink))
+                    kay.reply(from, `*「 ANTI GROUP LINK 」*\nStatus : Aktif`, id)
+                }
+            } else if (args[1] == 'disable') {
+                var cek = antilink.includes(chatId);
+                if(!cek){
+                    return kay.reply(from, `*「 ANTI GROUP LINK 」*\nStatus : Sudah DiNonaktif`, id) //if number already exists on database
+                } else {
+                    let nixx = antilink.indexOf(chatId)
+                    antilink.splice(nixx, 1)
+                    fs.writeFileSync('./lib/database/antilink.json', JSON.stringify(antilink))
+                    kay.reply(from, `*「 ANTI GROUP LINK 」*\nStatus : Nonaktif`, id)
+                }
+            } else {
+                kay.reply(from, `Pilih enable atau disable udin!`, id)
+            }
+            break    
+        case prefix+'antisticker':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (!isGroupAdmins) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh Admin group!`, id)
+            if (!isBotGroupAdmins) return kay.reply(from, `Perintah ini hanya bisa di gunakan jika Bot menjadi Admin!`, id)
+            if (args[1] == 'enable') {
+                var cek = antisticker.includes(chatId);
+                if(cek){
+                    return kay.reply(from, `*「 ANTI SPAM STICKER 」*\nStatus : Sudah Aktif`, id)
+                 } else {
+                    antisticker.push(chatId)
+                    fs.writeFileSync('./lib/database/antisticker.json', JSON.stringify(antisticker))
+                    kay.reply(from, `*「 ANTI SPAM STICKER 」*\nStatus : Aktif`, id)
+                }
+            } else if (args[1] == 'disable') {
+                var cek = antisticker.includes(chatId);
+                if(cek){
+                    return kay.reply(from, `*「 ANTI SPAM STICKER 」*\nStatus : Sudak DiNonaktif`, id) //if number already exists on database
+                } else {
+                    let nixx = antisticker.indexOf(chatId)
+                    antisticker.splice(nixx, 1)
+                    fs.writeFileSync('./lib/database/antisticker.json', JSON.stringify(antisticker))
+                    kay.reply(from, `*「 ANTI SPAM STICKER 」*\nStatus : Nonaktif`, id)
+                    limitAdd(serial)
+                }
+            } else {
+                kay.reply(from, `Pilih enable atau disable udin!`, id)
+            }
+            break
+        case prefix+'antibadword':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (!isGroupAdmins) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh Admin group!`, id)
+            if (!isBotGroupAdmins) return kay.reply(from, `Perintah ini hanya bisa di gunakan jika Bot menjadi Admin!`, id)
+            if (args[1] == 'enable') {
+                var cek = antibadword.includes(chatId);
+                if(cek){
+                    return kay.reply(from, `*「 ANTI BADWORD 」*\nSudah diaktifkan di grup ini`, id)
+                } else {
+                    antibadword.push(chatId)
+                    fs.writeFileSync('./lib/database/antibadword.json', JSON.stringify(antibadword))
+                    kay.reply(from, `*「 ANTI BADWORD 」*\nPerhatian Untuk Member Grup ${name} Tercinta\nHarap Jangan Toxic Di Sini Atau bakal KAY  Akan Kick!`, id)
+                }
+            } else if (args[1] == 'disable') {
+                var cek = antibadword.includes(chatId);
+                if(!cek){
+                    return kay.reply(from, `*「 ANTI BADWORD 」*\nSudah dinonaktifkan di grup ini`, id)
+                } else {
+                    let nixx = antibadword.indexOf(chatId)
+                    antibadword.splice(nixx, 1)
+                    fs.writeFileSync('./lib/database/antibadword.json', JSON.stringify(antibadword))
+                    kay.reply(from, `*「 ANTI BADWORD 」*\nPerhatian Untuk Member Grup ${name} Tercinta\nHarap Jangan Toxic Di Sini Atau bakal KAY  Akan Kick!`, id)
+                }
+            } else {
+                kay.reply(from, `Pilih enable atau disable udin!`, id)
+            } 
+            break   
+        case prefix+'nsfw':
+            if (!isGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh Admin group!', id)
+            if (args.length === 1) return kay.reply(from, 'Pilih enable atau disable!', id)
+            if (args[1].toLowerCase() === 'enable') {
+                var cek = nsfw_.includes(chatId);
+                if(cek){
+                    return kay.reply(from, `NSFW Sudah diaktifkan di grup ini`, id)
+                } else {
+                nsfw_.push(chat.id)
+                fs.writeFileSync('./lib/database/nsfwz.json', JSON.stringify(nsfw_))
+                kay.reply(from, 'NSFW berhasil di aktifkan di group ini! kirim perintah *#nsfwMenu* untuk mengetahui menu', id)
+                }
+            } else if (args[1].toLowerCase() === 'disable') {
+                var cek = nsfw_.includes(chatId);
+                if(cek){
+                    return kay.reply(from, `NSFW Sudah dinonaktifkan di grup ini`, id)
+                } else {
+                nsfw_.splice(chat.id, 1)
+                fs.writeFileSync('./lib/database/nsfwz.json', JSON.stringify(nsfw_))
+                kay.reply(from, 'NSFW berhasil di nonaktifkan di group ini!', id)
+                }
+            } else {
+                kay.reply(from, 'Pilih enable atau disable udin!', id)
+            }
+            break
+        case prefix+'simi':
+            if (!isAdmin) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh user vip!', id) // Hanya Admin yang bisa mengaktifkan
+            if (args.length === 1) return kay.reply(from, 'Pilih enable atau disable!', id)
+            if (args[1].toLowerCase() === 'enable') {
+                var cek = simi_.includes(chatId);
+                if(cek){
+                    return kay.reply(from, `Simsimi Sudah diaktifkan di grup ini`, id)
+                } else {
+                simi_.push(chat.id)
+                fs.writeFileSync('./lib/database/Simsimi.json', JSON.stringify(simi_))
+                kay.reply(from, 'Simsimi berhasil di aktifkan di group ini! Kirim perintah *# [teks]*\nContoh : *# halo*', id)
+                }
+            } else if (args[1].toLowerCase() === 'disable') {
+                var cek = simi_.includes(chatId);
+                if(cek){
+                    return kay.reply(from, `Simsimi Sudah diaktifkan di grup ini`, id)
+                } else {
+                simi_.splice(chat.id, 1)
+                fs.writeFileSync('./lib/database/Simsimi.json', JSON.stringify(simi_))
+                kay.reply(from, 'Simsimi berhasil di nonaktifkan di group ini!', id)
+                }
+            } else {
+                kay.reply(from, 'Pilih enable atau disable udin!', id)
+            }
+            break
+        case prefix+'group':
+            if (!isGroupMsg) return kay.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Fitur ini hanya bisa di gunakan oleh admin group', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Fitur ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            if (args.length === 1) return kay.reply(from, 'Pilih open atau close!', id)
+            if (args[1].toLowerCase() === 'open') {
+                kay.setGroupToAdminsOnly(groupId, false)
+                kay.sendTextWithMentions(from, `Group telah dibuka oleh admin @${sender.id.replace('@c.us','')}\nSekarang *semua member* dapat mengirim pesan`)
+            } else if (args[1].toLowerCase() === 'close') {
+                kay.setGroupToAdminsOnly(groupId, true)
+                kay.sendTextWithMentions(from, `Group telah ditutup oleh admin @${sender.id.replace('@c.us','')}\nSekarang *hanya admin* yang dapat mengirim pesan`)
+            } else {
+                kay.reply(from, 'Pilih open atau disable close!', id)
+            }
+            break
+        case prefix+'left':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh Admin group!', id)
+            if (args.length === 1) return kay.reply(from, 'Pilih enable atau disable!', id)
+            if (args[1].toLowerCase() === 'enable') {
+                left.push(chat.id)
+                fs.writeFileSync('./lib/database/left.json', JSON.stringify(left))
+                kay.reply(from, 'Fitur left berhasil di aktifkan di group ini!', id)
+            } else if (args[1].toLowerCase() === 'disable') {
+                left.splice(chat.id, 1)
+                fs.writeFileSync('./lib/database/left.json', JSON.stringify(left))
+                kay.reply(from, 'Fitur left berhasil di nonaktifkan di group ini!', id)
+            } else {
+                kay.reply(from, 'Pilih enable atau disable udin!', id)
+            }
+            break
+        //FITUR INI MASIH ERROR JADI KALIAN MAU OFF ATAU GA TERSERAH YA
+        case prefix+'welcome':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh Admin group!', id)
+            if (args.length === 1) return kay.reply(from, 'Pilih enable atau disable!', id)
+            if (args[1].toLowerCase() === 'enable') {
+                welkom.push(chat.id)
+                fs.writeFileSync('./lib/database/welcome.json', JSON.stringify(welkom))
+                kay.reply(from, 'Fitur welcome berhasil di aktifkan di group ini!', id)
+            } else if (args[1].toLowerCase() === 'disable') {
+                welkom.splice(chat.id, 1)
+                fs.writeFileSync('./lib/database/welcome.json', JSON.stringify(welkom))
+                kay.reply(from, 'Fitur welcome berhasil di nonaktifkan di group ini!', id)
+            } else {
+                kay.reply(from, 'Pilih enable atau disable udin!', id)
+            }
+            break
+        // ANIME //
+        case prefix+'otakudesu':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#otakudesu [query]*\nContoh : *#otakudesu darling in the franxx*', id)
+            const animes = await axios.get('https://mhankbarbars.herokuapp.com/api/otakudesu?q=' + body.slice(7) + '&apiKey=' + barbarkey)
+            if (animes.data.error) return kay.reply(from, animes.data.error, id)
+            const res_animes = `${animes.data.title}\n\n${animes.data.info}\n\n${animes.data.sinopsis}`
+            kay.sendFileFromUrl(from, animes.data.thumb, 'otakudesu.jpg', res_animes, id)
+            await limitAdd(serial)
+            break
+        case prefix+'kusonime':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#kusonime [query]*\nContoh : *#kusonime darling in the franxx*', id)
+            const animeq = await axios.get('https://tobz-api.herokuapp.com/v1/kuso?q=' + body.slice(7))
+            if (animeq.data.error) return kay.reply(from, animeq.data.error, id)
+            const res_animeq = `${animeq.data.title}\n\n${animeq.data.info}\n\n${animeq.data.sinopsis}\n\n${animeq.data.link_dl}`
+            kay.sendFileFromUrl(from, animeq.data.thumb, 'kusonime.jpg', res_animeq, id)
+            await limitAdd(serial)
+            break
+        case prefix+'dewabatch':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#dewabatch [query]*\nContoh : *#dewabatch darling in the franxx*', id)
+            const animek = await axios.get('https://tobz-api.herokuapp.com/v1/dewabatch?q=' + body.slice(7))
+            if (animek.data.error) return kay.reply(from, animek.data.error, id)
+            const res_animek = `${animek.data.result}\n\n${animek.data.sinopsis}`
+            kay.sendFileFromUrl(from, animek.data.thumb, 'dewabatch.jpg', res_animek, id)
+            await limitAdd(serial)
+            break
+        case prefix+'komiku':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#komiku [query]*\nContoh : *#komiku darling in the franxx*', id)
+            const animep = await axios.get('https://mhankbarbars.herokuapp.com/api/komiku?q=' + body.slice(7) + '&apiKey=' + barbarkey)
+            if (animep.data.error) return kay.reply(from, animep.data.error, id)
+            const res_animep = `${animep.data.info}\n\n${animep.data.sinopsis}\n\n${animep.data.link_dl}`
+            kay.sendFileFromUrl(from, animep.data.thumb, 'komiku.jpg', res_animep, id)
+            await limitAdd(serial)
+            break
+        case prefix+'pinterest':
+            if (!isAdmin) return kay.reply(from, 'Maaf, perintah ini hanya dapat dilakukan oleh User VIP!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#pinterest [query]*\nContoh : *#pinterest KAY *', id)
+            const ptrsq = body.slice(11)
+            const ptrst = await fetch(`https://api.vhtear.com/pinterest?query=${ptrsq}&apikey=${vhtearkey}`)
+            if (!ptrst.ok) throw new Error(`Error Pinterest : ${ptrst.statusText}`)
+            const ptrs = await ptrst.json()
+            const ptrsn = ptrs.result
+            const b = JSON.parse(JSON.stringify(ptrsn))
+            const ptrs2 =  b[Math.floor(Math.random() * b.length)]
+            const image = await bent("buffer")(ptrs2)
+            const base64 = `data:image/jpg;base64,${image.toString("base64")}`
+            await kay.sendImage(from, base64, 'ptrs.jpg', `*Pinterest*\n\n*Hasil Pencarian : ${ptrsq}*`)
+            await limitAdd(serial)
+            break
+        case prefix+'nhview':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#nhview [212121]*\nContoh : *#nhview 321421*', id)
+            const nhsh = body.slice(11)
+            const nhsh2 = await axios.get('https://mnazria.herokuapp.com/api/nhentai?code='+nhsh)
+            for (let i = 0; i < nhsh2.length; i++) {
+                await kay.sendImage(from, nhsh2[i].data, 'thumbserc.jpg', '', id)
+                }
+            limitAdd(serial)
+            break
+        case prefix+'loli':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const loli = await axios.get(`https://api.vhtear.com/randomloli&apikey=${vhtearkey}`)
+            const loly = loli.data.result
+            kay.sendFileFromUrl(from, loly.result, 'loli.jpeg', '*LOLI*', id)
+            await limitAdd(serial)
+            break
+        case prefix+'shota':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const imageToBase64 = require('image-to-base64')
+            var shouta = ['shota anime','anime shota'];
+            var shotaa = shouta[Math.floor(Math.random() * shouta.length)];
+            var urlshot = "https://api.fdci.se/rep.php?gambar=" + shotaa;
+            axios.get(urlshot)
+            .then((result) => {
+            var sht = JSON.parse(JSON.stringify(result.data));
+            var shotaak =  sht[Math.floor(Math.random() * sht.length)];
+            imageToBase64(shotaak)
+            .then(
+                (response) => {
+            let img = 'data:image/jpeg;base64,'+response
+            kay.sendFile(from, img, "shota.jpg", `*SHOTA*`, id)
+            limitAdd(serial)
+                    }) 
+                .catch(
+                    (error) => {
+                        console.log(error);
+                    })
+            })
+            break
+        case prefix+'waifu':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const waifu = await axios.get('https://tobz-api.herokuapp.com/api/waifu')
+            kay.sendFileFromUrl(from, waifu.data.image, 'Waifu.jpg', `➸ Name : ${waifu.data.name}\n➸ Description : ${waifu.data.desc}\n\n➸ Source : ${waifu.data.source}`, id)
+            await limitAdd(serial)
+            break
+        case prefix+'husbu':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const diti = fs.readFileSync('./lib/database/husbu.json')
+            const ditiJsin = JSON.parse(diti)
+            const rindIndix = Math.floor(Math.random() * ditiJsin.length)
+            const rindKiy = ditiJsin[rindIndix]
+            kay.sendFileFromUrl(from, rindKiy.image, 'Husbu.jpg', rindKiy.teks, id)
+            await limitAdd(serial)
+            break
+        case prefix+'randomnekonime':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const nekonime = await axios.get(`https://nekobot.xyz/api/image?tipe=image&type=neko`)
+            const nekon = nekonime.data
+            kay.sendFileFromUrl(from, nekon.message, `Nekonime.jpg`, 'Nekonime!', id)
+            await limitAdd(serial)
+            break
+        
+        // MFARELS
+        case prefix+'bokep': // MFARELS
+        case prefix+'randombokep': // MFARELS
+        case prefix+'bkp': // MFARELS
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id) // MFARELS
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id) // MFARELS
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id) // MFARELS
+            const mskkntl = fs.readFileSync('./lib/database/18+.json') // MFARELS
+            const kntlnya = JSON.parse(mskkntl) // MFARELS
+            const rindBkp = Math.floor(Math.random() * kntlnya.length) // MFARELS
+            const rindBkep = kntlnya[rindBkp] // MFARELS
+            kay.sendFileFromUrl(from, rindBkep.image, 'Bokep.jpg', rindBkep.teks, id) // MFARELS
+            await limitAdd(serial)
+            break // MFARELS
+                        case `${prefix}asupan`: 
+                    if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+
+                    await limitAdd(serial)
+                    const ditai = fs.readFileSync('./lib/asupan.json')
+                    const ditaiJsin = JSON.parse(ditai)
+                    const rindIndixa = Math.floor(Math.random() * ditaiJsin.length)
+                    const rindKiya = ditaiJsin[rindIndixa]
+                    kay.sendFileFromUrl(from, rindKiya, 'asupan.mp4', 'Nih', id)
+                    break
+        // MFARELS
+
+        case prefix+'randomtrapnime':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const trapnime = await axios.get('https://tobz-api.herokuapp.com/api/nsfwtrap')
+            const trapn = trapnime.data.result
+            if (trapn.result.endsWith('.png')) {
+                var ext = '.png'
+            } else {
+                var ext = '.jpg'
+            }
+            kay.sendImage(from, trapn.result, `trapnime${ext}`, 'Trapnime!', id)
+            await limitAdd(serial)
+            break
+        case prefix+'randomhentai':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const hentai = await axios.get(`https://nekobot.xyz/api/image?tipe=image&type=hentai`)
+            const henta = hentai.data
+            kay.sendImage(from, henta.message, `RandomHentai.jpg`, 'Random Hentai!', id)
+            await limitAdd(serial)
+            break
+        case prefix+'randomnsfwneko':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const nsfwneko = await axios.get('https://nekobot.xyz/api/image?tipe=image&type=hneko')
+            const nsfwn = nsfwneko.data
+            kay.sendImage(from, nsfwn.message, `NsfwNeko.jpg`, 'NsfwNeko!', id)
+            await limitAdd(serial)
+            break
+        case prefix+'randomanime':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const ranime = await axios.get('https://tobz-api.herokuapp.com/api/randomanime')
+            const ranimen = ranime.data
+            if (ranimen.result.endsWith('.png')) {
+                var ext = '.png'
+            } else {
+                var ext = '.jpg'
+            }
+            kay.sendFileFromUrl(from, ranimen.result, `RandomAnime${ext}`, 'Random Anime!', id)
+            await limitAdd(serial)
+            break
+        case prefix+'randomblowjob':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            await limitAdd(serial)
+            const sblow = await axios.get('https://tobz-api.herokuapp.com/api/nsfwblowjob')
+            const rblow = sblow.data
+            kay.sendFileFromUrl(from, rblow.result, `RandoBlow${ext}`, 'Random Blowjob!', id)
+            break
+        case prefix+'randomhug':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const shug = await axios.get('https://tobz-api.herokuapp.com/api/hug')
+            const rhug = shug.data
+            kay.sendFileFromUrl(from, rhug.result, `RandomHug${ext}`, 'Random Hug!', id)
+            break
+        case prefix+'randomcry':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const scry = await axios.get('https://tobz-api.herokuapp.com/api/cry')
+            const rcry = scry.data
+            kay.sendFileFromUrl(from, rcry.result, `RandomCry${ext}`, 'Random Cry!', id)
+            await limitAdd(serial)
+            break
+        case prefix+'randomkiss':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const skiss = await axios.get('https://tobz-api.herokuapp.com/api/kiss')
+            const rkiss = skiss.data
+            kay.sendFileFromUrl(from, rkiss.result, `RandomKiss${ext}`, 'Random Kiss!', id)
+            await limitAdd(serial)
+            break
+        case prefix+'subreddit':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isAdmin) return kay.reply(from, 'Maaf, perintah ini hanya dapat dilakukan oleh User VIP!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            argz = body.trim().split(' ')
+            const sr = argz[1]
+            try {
+            const response1 = await axios.get('https://meme-api.herokuapp.com/gimme/' + sr + '/');
+            const { postLink, title, subreddit, url, nsfw, spoiler } = response1.data
+                if (nsfw == true) {
+                    if ((isGroupMsg) && (isNsfw)) {
+                        await kay.sendFileFromUrl(from, `${url}`, 'Reddit.jpg', `*Title*: ${title}` + '\n\n*Postlink*:' + `${postLink}`)
+                        limitAdd(serial)
+                    } else if ((isGroupMsg) && (!isNsfw)) {
+                        await kay.reply(from, `Nsfw belum diaktifkan di Grup *${name}*`, id)
+                    }
+                } else { 
+                    await kay.sendFileFromUrl(from, `${url}`, 'Reddit.jpg', `*Title*: ${title}` + '\n\n*Postlink*:' + `${postLink}`)
+                }
+            } catch(err) {
+                await kay.sendFileFromUrl(from, errorurl, id) 
+            }
+            break
+        case prefix+'nhder':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length >=2){
+                const code = args[1]
+                const url = 'https://nhder.herokuapp.com/download/nhentai/'+code+'/zip'
+                const short = []
+                const shortener = await urlShortener(url)
+                url['short'] = shortener
+                short.push(url)
+                const caption = `*NHENTAI DOWNLOADER*\n\nLink: ${shortener}`
+                kay.sendText(from, caption)
+                limitAdd(serial)
+            } else {
+                kay.sendText(from, 'Maaf tolong masukan code nuclear')
+            }
+            break
+        case prefix+'wallanime' :
+            const walnime = ['https://wallpaperaccess.com/full/395986.jpg','https://wallpaperaccess.com/full/21628.jpg','https://wallpaperaccess.com/full/21622.jpg','https://wallpaperaccess.com/full/21612.jpg','https://wallpaperaccess.com/full/21611.png','https://wallpaperaccess.com/full/21597.jpg','https://cdn.nekos.life/wallpaper/QwGLg4oFkfY.png','https://wallpaperaccess.com/full/21591.jpg','https://cdn.nekos.life/wallpaper/bUzSjcYxZxQ.jpg','https://cdn.nekos.life/wallpaper/j49zxzaUcjQ.jpg','https://cdn.nekos.life/wallpaper/YLTH5KuvGX8.png','https://cdn.nekos.life/wallpaper/Xi6Edg133m8.jpg','https://cdn.nekos.life/wallpaper/qvahUaFIgUY.png','https://cdn.nekos.life/wallpaper/leC8q3u8BSk.jpg','https://cdn.nekos.life/wallpaper/tSUw8s04Zy0.jpg','https://cdn.nekos.life/wallpaper/sqsj3sS6EJE.png','https://cdn.nekos.life/wallpaper/HmjdX_s4PU4.png','https://cdn.nekos.life/wallpaper/Oe2lKgLqEXY.jpg','https://cdn.nekos.life/wallpaper/GTwbUYI-xTc.jpg','https://cdn.nekos.life/wallpaper/nn_nA8wTeP0.png','https://cdn.nekos.life/wallpaper/Q63o6v-UUa8.png','https://cdn.nekos.life/wallpaper/ZXLFm05K16Q.jpg','https://cdn.nekos.life/wallpaper/cwl_1tuUPuQ.png','https://cdn.nekos.life/wallpaper/wWhtfdbfAgM.jpg','https://cdn.nekos.life/wallpaper/3pj0Xy84cPg.jpg','https://cdn.nekos.life/wallpaper/sBoo8_j3fkI.jpg','https://cdn.nekos.life/wallpaper/gCUl_TVizsY.png','https://cdn.nekos.life/wallpaper/LmTi1k9REW8.jpg','https://cdn.nekos.life/wallpaper/sbq_4WW2PUM.jpg','https://cdn.nekos.life/wallpaper/QOSUXEbzDQA.png','https://cdn.nekos.life/wallpaper/khaqGIHsiqk.jpg','https://cdn.nekos.life/wallpaper/iFtEXugqQgA.png','https://cdn.nekos.life/wallpaper/deFKIDdRe1I.jpg','https://cdn.nekos.life/wallpaper/OHZVtvDm0gk.jpg','https://cdn.nekos.life/wallpaper/YZYa00Hp2mk.jpg','https://cdn.nekos.life/wallpaper/R8nPIKQKo9g.png','https://cdn.nekos.life/wallpaper/_brn3qpRBEE.jpg','https://cdn.nekos.life/wallpaper/ADTEQdaHhFI.png','https://cdn.nekos.life/wallpaper/MGvWl6om-Fw.jpg','https://cdn.nekos.life/wallpaper/YGmpjZW3AoQ.jpg','https://cdn.nekos.life/wallpaper/hNCgoY-mQPI.jpg','https://cdn.nekos.life/wallpaper/3db40hylKs8.png','https://cdn.nekos.life/wallpaper/iQ2FSo5nCF8.jpg','https://cdn.nekos.life/wallpaper/meaSEfeq9QM.png','https://cdn.nekos.life/wallpaper/CmEmn79xnZU.jpg','https://cdn.nekos.life/wallpaper/MAL18nB-yBI.jpg','https://cdn.nekos.life/wallpaper/FUuBi2xODuI.jpg','https://cdn.nekos.life/wallpaper/ez-vNNuk6Ck.jpg','https://cdn.nekos.life/wallpaper/K4-z0Bc0Vpc.jpg','https://cdn.nekos.life/wallpaper/Y4JMbswrNg8.jpg','https://cdn.nekos.life/wallpaper/ffbPXIxt4-0.png','https://cdn.nekos.life/wallpaper/x63h_W8KFL8.jpg','https://cdn.nekos.life/wallpaper/lktzjDRhWyg.jpg','https://cdn.nekos.life/wallpaper/j7oQtvRZBOI.jpg','https://cdn.nekos.life/wallpaper/MQQEAD7TUpQ.png','https://cdn.nekos.life/wallpaper/lEG1-Eeva6Y.png','https://cdn.nekos.life/wallpaper/Loh5wf0O5Aw.png','https://cdn.nekos.life/wallpaper/yO6ioREenLA.png','https://cdn.nekos.life/wallpaper/4vKWTVgMNDc.jpg','https://cdn.nekos.life/wallpaper/Yk22OErU8eg.png','https://cdn.nekos.life/wallpaper/Y5uf1hsnufE.png','https://cdn.nekos.life/wallpaper/xAmBpMUd2Zw.jpg','https://cdn.nekos.life/wallpaper/f_RWFoWciRE.jpg','https://cdn.nekos.life/wallpaper/Y9qjP2Y__PA.jpg','https://cdn.nekos.life/wallpaper/eqEzgohpPwc.jpg','https://cdn.nekos.life/wallpaper/s1MBos_ZGWo.jpg','https://cdn.nekos.life/wallpaper/PtW0or_Pa9c.png','https://cdn.nekos.life/wallpaper/32EAswpy3M8.png','https://cdn.nekos.life/wallpaper/Z6eJZf5xhcE.png','https://cdn.nekos.life/wallpaper/xdiSF731IFY.jpg','https://cdn.nekos.life/wallpaper/Y9r9trNYadY.png','https://cdn.nekos.life/wallpaper/8bH8CXn-sOg.jpg','https://cdn.nekos.life/wallpaper/a02DmIFzRBE.png','https://cdn.nekos.life/wallpaper/MnrbXcPa7Oo.png','https://cdn.nekos.life/wallpaper/s1Tc9xnugDk.jpg','https://cdn.nekos.life/wallpaper/zRqEx2gnfmg.jpg','https://cdn.nekos.life/wallpaper/PtW0or_Pa9c.png','https://cdn.nekos.life/wallpaper/0ECCRW9soHM.jpg','https://cdn.nekos.life/wallpaper/kAw8QHl_wbM.jpg','https://cdn.nekos.life/wallpaper/ZXcaFmpOlLk.jpg','https://cdn.nekos.life/wallpaper/WVEdi9Ng8UE.png','https://cdn.nekos.life/wallpaper/IRu29rNgcYU.png','https://cdn.nekos.life/wallpaper/LgIJ_1AL3rM.jpg','https://cdn.nekos.life/wallpaper/DVD5_fLJEZA.jpg','https://cdn.nekos.life/wallpaper/siqOQ7k8qqk.jpg','https://cdn.nekos.life/wallpaper/CXNX_15eGEQ.png','https://cdn.nekos.life/wallpaper/s62tGjOTHnk.jpg','https://cdn.nekos.life/wallpaper/tmQ5ce6EfJE.png','https://cdn.nekos.life/wallpaper/Zju7qlBMcQ4.jpg','https://cdn.nekos.life/wallpaper/CPOc_bMAh2Q.png','https://cdn.nekos.life/wallpaper/Ew57S1KtqsY.jpg','https://cdn.nekos.life/wallpaper/hVpFbYJmZZc.jpg','https://cdn.nekos.life/wallpaper/sb9_J28pftY.jpg','https://cdn.nekos.life/wallpaper/JDoIi_IOB04.jpg','https://cdn.nekos.life/wallpaper/rG76AaUZXzk.jpg','https://cdn.nekos.life/wallpaper/9ru2luBo360.png','https://cdn.nekos.life/wallpaper/ghCgiWFxGwY.png','https://cdn.nekos.life/wallpaper/OSR-i-Rh7ZY.png','https://cdn.nekos.life/wallpaper/65VgtPyweCc.jpg','https://cdn.nekos.life/wallpaper/3vn-0FkNSbM.jpg','https://cdn.nekos.life/wallpaper/u02Y0-AJPL0.jpg','https://cdn.nekos.life/wallpaper/_-Z-0fGflRc.jpg','https://cdn.nekos.life/wallpaper/3VjNKqEPp58.jpg','https://cdn.nekos.life/wallpaper/NoG4lKnk6Sc.jpg','https://cdn.nekos.life/wallpaper/xiTxgRMA_IA.jpg','https://cdn.nekos.life/wallpaper/yq1ZswdOGpg.png','https://cdn.nekos.life/wallpaper/4SUxw4M3UMA.png','https://cdn.nekos.life/wallpaper/cUPnQOHNLg0.jpg','https://cdn.nekos.life/wallpaper/zczjuLWRisA.jpg','https://cdn.nekos.life/wallpaper/TcxvU_diaC0.png','https://cdn.nekos.life/wallpaper/7qqWhEF_uoY.jpg','https://cdn.nekos.life/wallpaper/J4t_7DvoUZw.jpg','https://cdn.nekos.life/wallpaper/xQ1Pg5D6J4U.jpg','https://cdn.nekos.life/wallpaper/aIMK5Ir4xho.jpg','https://cdn.nekos.life/wallpaper/6gneEXrNAWU.jpg','https://cdn.nekos.life/wallpaper/PSvNdoISWF8.jpg','https://cdn.nekos.life/wallpaper/SjgF2-iOmV8.jpg','https://cdn.nekos.life/wallpaper/vU54ikOVY98.jpg','https://cdn.nekos.life/wallpaper/QjnfRwkRU-Q.jpg','https://cdn.nekos.life/wallpaper/uSKqzz6ZdXc.png','https://cdn.nekos.life/wallpaper/AMrcxZOnVBE.jpg','https://cdn.nekos.life/wallpaper/N1l8SCMxamE.jpg','https://cdn.nekos.life/wallpaper/n2cBaTo-J50.png','https://cdn.nekos.life/wallpaper/ZXcaFmpOlLk.jpg','https://cdn.nekos.life/wallpaper/7bwxy3elI7o.png','https://cdn.nekos.life/wallpaper/7VW4HwF6LcM.jpg','https://cdn.nekos.life/wallpaper/YtrPAWul1Ug.png','https://cdn.nekos.life/wallpaper/1p4_Mmq95Ro.jpg','https://cdn.nekos.life/wallpaper/EY5qz5iebJw.png','https://cdn.nekos.life/wallpaper/aVDS6iEAIfw.jpg','https://cdn.nekos.life/wallpaper/veg_xpHQfjE.jpg','https://cdn.nekos.life/wallpaper/meaSEfeq9QM.png','https://cdn.nekos.life/wallpaper/Xa_GtsKsy-s.png','https://cdn.nekos.life/wallpaper/6Bx8R6D75eM.png','https://cdn.nekos.life/wallpaper/zXOGXH_b8VY.png','https://cdn.nekos.life/wallpaper/VQcviMxoQ00.png','https://cdn.nekos.life/wallpaper/CJnRl-PKWe8.png','https://cdn.nekos.life/wallpaper/zEWYfFL_Ero.png','https://cdn.nekos.life/wallpaper/_C9Uc5MPaz4.png','https://cdn.nekos.life/wallpaper/zskxNqNXyG0.jpg','https://cdn.nekos.life/wallpaper/g7w14PjzzcQ.jpg','https://cdn.nekos.life/wallpaper/KavYXR_GRB4.jpg','https://cdn.nekos.life/wallpaper/Z_r9WItzJBc.jpg','https://cdn.nekos.life/wallpaper/Qps-0JD6834.jpg','https://cdn.nekos.life/wallpaper/Ri3CiJIJ6M8.png','https://cdn.nekos.life/wallpaper/ArGYIpJwehY.jpg','https://cdn.nekos.life/wallpaper/uqYKeYM5h8w.jpg','https://cdn.nekos.life/wallpaper/h9cahfuKsRg.jpg','https://cdn.nekos.life/wallpaper/iNPWKO8d2a4.jpg','https://cdn.nekos.life/wallpaper/j2KoFVhsNig.jpg','https://cdn.nekos.life/wallpaper/z5Nc-aS6QJ4.jpg','https://cdn.nekos.life/wallpaper/VUFoK8l1qs0.png','https://cdn.nekos.life/wallpaper/rQ8eYh5mXN8.png','https://cdn.nekos.life/wallpaper/D3NxNISDavQ.png','https://cdn.nekos.life/wallpaper/Z_CiozIenrU.jpg','https://cdn.nekos.life/wallpaper/np8rpfZflWE.jpg','https://cdn.nekos.life/wallpaper/ED-fgS09gik.jpg','https://cdn.nekos.life/wallpaper/AB0Cwfs1X2w.jpg','https://cdn.nekos.life/wallpaper/DZBcYfHouiI.jpg','https://cdn.nekos.life/wallpaper/lC7pB-GRAcQ.png','https://cdn.nekos.life/wallpaper/zrI-sBSt2zE.png','https://cdn.nekos.life/wallpaper/_RJhylwaCLk.jpg','https://cdn.nekos.life/wallpaper/6km5m_GGIuw.png','https://cdn.nekos.life/wallpaper/3db40hylKs8.png','https://cdn.nekos.life/wallpaper/oggceF06ONQ.jpg','https://cdn.nekos.life/wallpaper/ELdH2W5pQGo.jpg','https://cdn.nekos.life/wallpaper/Zun_n5pTMRE.png','https://cdn.nekos.life/wallpaper/VqhFKG5U15c.png','https://cdn.nekos.life/wallpaper/NsMoiW8JZ60.jpg','https://cdn.nekos.life/wallpaper/XE4iXbw__Us.png','https://cdn.nekos.life/wallpaper/a9yXhS2zbhU.jpg','https://cdn.nekos.life/wallpaper/jjnd31_3Ic8.jpg','https://cdn.nekos.life/wallpaper/Nxanxa-xO3s.png','https://cdn.nekos.life/wallpaper/dBHlPcbuDc4.jpg','https://cdn.nekos.life/wallpaper/6wUZIavGVQU.jpg','https://cdn.nekos.life/wallpaper/_-Z-0fGflRc.jpg','https://cdn.nekos.life/wallpaper/H9OUpIrF4gU.jpg','https://cdn.nekos.life/wallpaper/xlRdH3fBMz4.jpg','https://cdn.nekos.life/wallpaper/7IzUIeaae9o.jpg','https://cdn.nekos.life/wallpaper/FZCVL6PyWq0.jpg','https://cdn.nekos.life/wallpaper/5dG-HH6d0yw.png','https://cdn.nekos.life/wallpaper/ddxyA37HiwE.png','https://cdn.nekos.life/wallpaper/I0oj_jdCD4k.jpg','https://cdn.nekos.life/wallpaper/ABchTV97_Ts.png','https://cdn.nekos.life/wallpaper/58C37kkq39Y.png','https://cdn.nekos.life/wallpaper/HMS5mK7WSGA.jpg','https://cdn.nekos.life/wallpaper/1O3Yul9ojS8.jpg','https://cdn.nekos.life/wallpaper/hdZI1XsYWYY.jpg','https://cdn.nekos.life/wallpaper/h8pAJJnBXZo.png','https://cdn.nekos.life/wallpaper/apO9K9JIUp8.jpg','https://cdn.nekos.life/wallpaper/p8f8IY_2mwg.jpg','https://cdn.nekos.life/wallpaper/HY1WIB2r_cE.jpg','https://cdn.nekos.life/wallpaper/u02Y0-AJPL0.jpg','https://cdn.nekos.life/wallpaper/jzN74LcnwE8.png','https://cdn.nekos.life/wallpaper/IeAXo5nJhjw.jpg','https://cdn.nekos.life/wallpaper/7lgPyU5fuLY.jpg','https://cdn.nekos.life/wallpaper/f8SkRWzXVxk.png','https://cdn.nekos.life/wallpaper/ZmDTpGGeMR8.jpg','https://cdn.nekos.life/wallpaper/AMrcxZOnVBE.jpg','https://cdn.nekos.life/wallpaper/ZhP-f8Icmjs.jpg','https://cdn.nekos.life/wallpaper/7FyUHX3fE2o.jpg','https://cdn.nekos.life/wallpaper/CZoSLK-5ng8.png','https://cdn.nekos.life/wallpaper/pSNDyxP8l3c.png','https://cdn.nekos.life/wallpaper/AhYGHF6Fpck.jpg','https://cdn.nekos.life/wallpaper/ic6xRRptRes.jpg','https://cdn.nekos.life/wallpaper/89MQq6KaggI.png','https://cdn.nekos.life/wallpaper/y1DlFeHHTEE.png']
+            let walnimek = walnime[Math.floor(Math.random() * walnime.length)]
+            kay.sendFileFromUrl(from, walnimek, 'Nimek.jpg', '', id)
+            break
+       case prefix+'quotesnime':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const skya = await axios.get('https://tobz-api.herokuapp.com/api/quotesnime/random')
+            skya_ = skya.data
+            kay.reply(from, `➸ *Quotes* : ${skya_.quote}\n➸ *Character* : ${skya_.character}\n➸ *Anime* : ${skya_.anime}`, id)
+            await limitAdd(serial)
+            break
+        case prefix+'meme':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const response = await axios.get('https://meme-api.herokuapp.com/gimme/wholesomeanimemes')
+            const { postlink, title, subreddit, url, nsfw, spoiler } = response.data
+            kay.sendFileFromUrl(from, `${url}`, 'meme.jpg', `${title}`)
+            await limitAdd(serial)
+            break
+        case prefix+'quoteanime':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+                        if(args[1]){
+                            if(args[1] === 'anime'){
+                                const anime = body.slice(13)
+                                axios.get('https://animechanapi.xyz/api/quotes?anime='+anime).then(({ data }) => {
+                                    let quote = data.data[0].quote 
+                                    let char = data.data[0].character
+                                    let anime = data.data[0].anime
+                                    kay.sendText(from, `"${quote}"\n\nCharacter : ${char}\nAnime : ${anime}`)
+                                    limitAdd(serial)
+                                }).catch(err => {
+                                    kay.sendText('Quote Char/Anime tidak ditemukan!')
+                                })
+                            }else{
+                                const char = body.slice(12)
+                                axios.get('https://animechanapi.xyz/api/quotes?char='+char).then(({ data }) => {
+                                    let quote = data.data[0].quote 
+                                    let char = data.data[0].character
+                                    let anime = data.data[0].anime
+                                    kay.sendText(from, `"${quote}"\n\nCharacter : ${char}\nAnime : ${anime}`)
+                                    limitAdd(serial)
+                                }).catch(err => {
+                                    kay.sendText('Quote Char/Anime tidak ditemukan!')
+                                })
+                            }
+                        }else{
+                            axios.get('https://animechanapi.xyz/api/quotes/random').then(({ data }) => {
+                                let penyanyi = data.result[0].penyanyi 
+                                let judul = data.result[0].judul
+                                let linkimg = data.result[0].linkImg
+                                let lagu = data.result[0].linkMp3 
+                                let size = data.result[0].filesize
+                                let durasi = data.result[0].duration
+                                kay.sendText(from, `"${quote}"\n\nCharacter : ${char}\nAnime : ${anime}`) 
+                                limitAdd(serial)
+                            }).catch(err => {
+                                console.log(err)
+                            })
+                        }
+            break
+        case `${prefix}jarak`: 
+                    if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+                    argz = body.trim().split('|')
+                   if (argz.length >= 2) {
+                kay.reply(from, mess.wait, id)
+                    await limitAdd(serial)
+                    const jar = argz[1]
+                    const rak = argz[2]
+                    try {
+                        const resp = await axios.get(`https://api.vhtear.com/distance?from=${jar}&to=${rak}&apikey=${vhtearkey}`)
+                        if (resp.data.error) return kay.reply(from, resp.data.error, id)
+                        const kbbuaw = `➸ ${resp.data.result.data}`
+                        kay.reply(from, kbbuaw, id)
+                    } catch (err) {
+                        console.error(err.message)
+                        await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, tidak ditemukan')
+                        kay.sendText(ownerNumber, 'Jarak Error : ' + err)
+                    }
+                }
+                    break
+             case prefix+'maluser':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const username = body.slice(18)
+            kay.reply(from, mess.wait, id)
+            try {
+                const result = await axios.get(`https://api.jikan.moe/v3/user/${username}`)
+                const jikan =  result.data
+                const Data = `*「 USER - MYANIMELIST 」*
+
+• Username: ${jikan.username}
+• User ID: ${jikan.user_id}
+• Gender: ${jikan.gender}
+• Location: ${jikan.location}
+• Joined: ${jikan.joined}
+⭐️ Anime Stats ⭐️
+• Days Watched: ${jikan.anime_stats.days_watched}
+• Mean Score: ${jikan.anime_stats.mean_score}
+• Currently Watching: ${jikan.anime_stats.watching}
+• Completed: ${jikan.anime_stats.completed}
+• On Hold: ${jikan.anime_stats.on_hold}
+• Dropped: ${jikan.anime_stats.dropped}
+• Plan to Watch: ${jikan.anime_stats.plan_to_watch}
+🎯️ Manga Stats 🎯️
+• Days Read: ${jikan.manga_stats.days_read}
+• Mean Score: ${jikan.manga_stats.mean_score}
+• Currently Reading: ${jikan.manga_stats.reading}
+• Completed: ${jikan.manga_stats.completed}
+• On Hold: ${jikan.manga_stats.on_hold}
+• Dropped: ${jikan.manga_stats.dropped}
+• Plan to Read: ${jikan.manga_stats.plan_to_read}`
+
+                await kay.sendFileFromUrl(from, `${jikan.image_url}`,`user.png`, Data)
+                limitAdd(serial)
+            } catch (err) {
+                console.log(err)
+                await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+            }    
+            break
+        case prefix+'malanime':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const keyword = message.body.replace('#malanime', '')
+            try {
+            const data = await fetch(
+           `https://api.jikan.moe/v3/search/anime?q=${keyword}`
+            )
+            const parsed = await data.json()
+            if (!parsed) {
+              await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan', id)
+              return null
+              }
+            const { title, synopsis, episodes, url, rated, score, image_url } = parsed.results[0]
+            const content = `*Anime Ditemukan!*
+✨️ *Title:* ${title}
+🎆️ *Episodes:* ${episodes}
+💌️ *Rating:* ${rated}
+❤️ *Score:* ${score}
+💚️ *Synopsis:* ${synopsis}
+🌐️ *URL*: ${url}`
+
+            const image = await bent("buffer")(image_url)
+            const base64 = `data:image/jpg;base64,${image.toString("base64")}`
+            kay.sendImage(from, base64, title, content)
+             await limitAdd(serial)
+           } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan')
+           }
+          break
+        case prefix+'malcharacter':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const keywords = message.body.replace('#malcharacter', '')
+            try {
+            const data = await fetch(
+           `https://api.jikan.moe/v3/search/character?q=${keywords}`
+            )
+            const parsed = await data.json()
+            if (!parsed) {
+              await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan', id)
+              return null
+              }
+            const { name, alternative_names, url, image_url } = parsed.results[0]
+            const contentt = `*Anime Ditemukan!*
+
+✨️ *Name:* ${name}
+💌️ *Alternative Names:* ${alternative_names}
+🌐️ *URL*: ${url}`
+
+            const image = await bent("buffer")(image_url)
+            const base64 = `data:image/jpg;base64,${image.toString("base64")}`
+            kay.sendImage(from, base64, name, contentt)
+            await limitAdd(serial)
+           } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan')
+           }
+          break
+        // PRAY //
+        case prefix+'jadwalshalat':
+        case prefix+'jadwalsholat':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `[❗] Kirim perintah *#jadwalShalat [ Daerah ]*\ncontoh : *#jadwalShalat Tangerang*\nUntuk list daerah kirim perintah *#listDaerah*`)
+            const daerah = body.slice(14)
+            const jadwalShalat = await axios.get(`https://api.vhtear.com/jadwalsholat?query=${daerah}&apiKey=${vhtearkey}`)
+            if (jadwalShalat.data.error) return kay.reply(from, jadwalShalat.data.error, id)
+            const { Shubuh, Zduhur, Ashr, Magrib, Isya, kota } = await jadwalShalat.data
+            arrbulan = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+            tgl = new Date().getDate()
+            bln = new Date().getMonth()
+            thn = new Date().getFullYear()
+            const resultJadwal = `「 JADWAL SHALAT 」\n\nJadwal shalat di ${kota}, ${tgl}-${arrbulan[bln]}-${thn}\n\nSubuh : ${Shubuh}\nDzuhur : ${Zduhur}\nAshar : ${Ashr}\nMaghrib : ${Magrib}\nIsya : ${Isya}`
+            await limitAdd(serial)
+            break
+        case prefix+'quran':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah Surah Quran kamu dengan cara ketik perintah :\n*#quran* [ Urutan Surat ]\nContoh :\n*#quran 1*`, id)
+            const qura = `https://api.vhtear.com/quran?no=${args[1]}&apikey=${vhtearkey}`
+            const quraan = await axios.get(qura)
+            const quraann = quraan.data
+            let hasqu = `*「 AL-QURAN 」*\n\n*Surah : ${quraann.result.surah}*\n*Quran* : ${quraann.result.quran}*`
+            await kay.reply(from, `${hasqu}`, id).catch((e) => kay.reply(from, `*Terdapat kesalahan saat mencari surat ${args[1]}*`, id))
+            await limitAdd(serial)
+            break
+        case prefix+'listsurah': // ARUGAZ
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            try {
+                axios.get('https://raw.githubusercontent.com/ArugaZ/scraper-results/main/islam/surah.json')
+                .then((response) => {
+                    let hehex = '*「 DAFTAR SURAH 」*\n\n___________________________\n'
+                    let nmr = 1
+                    for (let i = 0; i < response.data.data.length; i++) {
+                        hehex += nmr + '. ' +  monospace(response.data.data[i].name.transliteration.id.toLowerCase()) + '\n'
+                        nmr++
+                            }
+                        hehex += '___________________________'
+                    kay.reply(from, hehex, id)
+                })
+            } catch(err) {
+                kay.reply(from, err, id)
+            }
+            break
+        case prefix+'infosurah': // ARUGAZ
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length == 1) return kay.reply(from, `Kirim perintah *#infosurah [ Nama Surah ]*\nContoh : *#infosurah al-fatihah*`, message.id)
+                var responseh = await axios.get('https://raw.githubusercontent.com/ArugaZ/scraper-results/main/islam/surah.json')
+                var { data } = responseh.data
+                var idx = data.findIndex(function(post, index) {
+                if((post.name.transliteration.id.toLowerCase() == args[1].toLowerCase())||(post.name.transliteration.en.toLowerCase() == args[1].toLowerCase()))
+                    return true;
+                });
+                try {
+                    var pesan = "*「 INFORMASI SURAH 」*\n\n___________________________\n\n"
+                    pesan = pesan + "➸ *Nama* : "+ data[idx].name.transliteration.id + "\n" + "➸ *Asma* : " +data[idx].name.short+"\n"+"➸ *Arti* : "+data[idx].name.translation.id+"\n"+"➸ *Jumlah ayat* : "+data[idx].numberOfVerses+"\n"+"➸ *Nomor surah* : "+data[idx].number+"\n"+"Jenis : "+data[idx].revelation.id+"\n"+"➸ *Keterangan* : "+data[idx].tafsir.id
+                    pesan += '\n\n___________________________'
+                    kay.reply(from, pesan, message.id)
+                    limitAdd(serial)
+                }catch{
+                    kay.reply(from, 'Data tidak ditemukan, atau nama surah salah', id)
+                }
+            break
+        case prefix+'tafsir': // ARUGAZ
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length == 1) return kay.reply(from, `Kirim perintah *#tafsir [ Nama Surah ] [ Ayat ]*\nContoh : *#tafsir al-fatihah 2*`, message.id)
+                var responsh = await axios.get('https://raw.githubusercontent.com/ArugaZ/scraper-results/main/islam/surah.json')
+                var {data} = responsh.data
+                var idx = data.findIndex(function(post, index) {
+                if((post.name.transliteration.id.toLowerCase() == args[1].toLowerCase())||(post.name.transliteration.en.toLowerCase() == args[1].toLowerCase()))
+                    return true;
+                });
+            try{
+                nmr = data[idx].number
+                if(!isNaN(nmr)) {
+                var responsih = await axios.get('https://api.quran.sutanlab.id/surah/'+nmr+"/"+args[2])
+                    var {data} = responsih.data
+                    pesan = ""
+                    pesan = pesan + "*「 TAFSIR 」*\n\nTafsir Q.S. "+data.surah.name.transliteration.id+":"+args[2]+"\n\n"
+                    pesan = pesan + data.text.arab + "\n\n"
+                    pesan = pesan + "_" + data.translation.id + "_" + "\n\n" +data.tafsir.id.long
+                    pesan += '\n\n___________________________'
+                    kay.reply(from, pesan, message.id)
+                    limitAdd(serial)
+                }
+            }catch{
+                kay.reply(from, 'Data tidak ditemukan, mungkin nama surah/ayat salah', id)
+            }
+            break
+        // MEDIA //
+        case prefix+'infogempa':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const bmkg = await axios.get('http://tobz-api.herokuapp.com/api/infogempa')
+            const { potensi, koordinat, lokasi, kedalaman, magnitude, waktu, map } = bmkg.data
+            const hasil = `*${waktu}*\n📍 *Lokasi* : *${lokasi}*\n〽️ *Kedalaman* : *${kedalaman}*\n💢 *Magnitude* : *${magnitude}*\n🔘 *Potensi* : *${potensi}*\n📍 *Koordinat* : *${koordinat}*`
+            kay.sendFileFromUrl(from, map, 'shakemap.jpg', hasil, id)
+            await limitAdd(serial)
+            break
+        case prefix+'ssphone':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#ssphone [linkWeb]*\nContoh : *#ssphone https://neonime.vip*', id)
+            const ssphone = body.slice(9)
+            kay.sendFileFromUrl(from, `https://api.vhtear.com/ssweb?link=${ssphone}&type=phone&apikey=${vhtearkey}`, 'ssphone.jpg', '', id)
+            await limitAdd(serial)
+            break
+        case prefix+'sspc':
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#sspc [linkWeb]*\nContoh : *#sspc https://neonime.vip*', id)
+            const sspc = body.slice(6)
+            kay.sendFileFromUrl(from, `https://api.vhtear.com/ssweb?link=${sspc}&type=pc&apikey=${vhtearkey}`, 'sspc.jpg', '', id)
+            await limitAdd(serial)
+            break
+         case prefix+'shorturl':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#shorturl [linkWeb]*\nContoh : *#shorturl https://neonime.vip*', id)
+            const sorturl = body.slice(10)
+            const surl = await axios.get('https://tobz-api.herokuapp.com/api/shorturl?url=' + sorturl)
+            const surll = surl.data
+            if (surll.error) return kay.reply(from, ssww.error, id)
+            const surl2 = `Link : ${sorturl}\nShort URL : ${surll.result}`
+            kay.sendText(from, surl2, id)
+            await limitAdd(serial)
+            break
+        case prefix+'cuaca':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#cuaca [tempat]*\nContoh : *#cuaca tangerang', id)
+            const tempat = body.slice(7)
+            const weather = await axios.get('https://mhankbarbars.herokuapp.com/api/cuaca?q='+ tempat +'&apiKey='+ barbarkey)
+            const weatherr = weather.data
+            if (weatherr.error) {
+                kay.reply(from, weatherr.error, id)
+            } else {
+                kay.reply(from, `➸ Tempat : ${weatherr.result.tempat}\n\n➸ Angin : ${weatherr.result.angin}\n➸ Cuaca : ${weatherr.result.cuaca}\n➸ Deskripsi : ${weatherr.result.desk}\n➸ Kelembapan : ${weatherr.result.kelembapan}\n➸ Suhu : ${weatherr.result.suhu}\n➸ Udara : ${weatherr.result.udara}`, id)
+                limitAdd(serial)
+            }
+             break
+        case prefix+'covid':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            argz = body.trim().split(' ')
+            console.log(...argz[1])
+            var slicedArgs = Array.prototype.slice.call(argz, 1);
+            console.log(slicedArgs)
+            const country = await slicedArgs.join(' ')
+            console.log(country)
+            const response2 = await axios.get('https://coronavirus-19-api.herokuapp.com/countries/' + country + '/')
+            const { cases, todayCases, deaths, todayDeaths, active } = response2.data
+                await kay.sendText(from, '🌎️ Covid Info - ' + country + ' 🌍️\n\n✨️ Total Cases: ' + `${cases}` + '\n📆️ Today\'s Cases: ' + `${todayCases}` + '\n☣️ Total Deaths: ' + `${deaths}` + '\n☢️ Today\'s Deaths: ' + `${todayDeaths}` + '\n⛩️ Active Cases: ' + `${active}` + '.')
+            break
+        case prefix+'spamcall':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
+            if (!isOwner, !isAdmin) return kay.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id)
+            argz = body.trim().split(' ')
+            console.log(...argz[1])
+            var slicedArgs = Array.prototype.slice.call(argz, 1);
+            console.log(slicedArgs)
+            const spam = await slicedArgs.join(' ')
+            console.log(spam)
+            const call2 = await axios.get('https://tobz-api.herokuapp.com/api/spamcall?no=' + spam)
+            const { logs } = call2.data
+                await kay.sendText(from, `Logs : ${logs}` + '.')
+            break
+        case prefix+'ytmp4':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#ytmp4 [ Link Yt ]*, untuk contoh silahkan kirim perintah *#readme*`)
+            let isLin = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
+            if (!isLin) return kay.reply(from, mess.error.Iv, id)
+            try {
+                kay.reply(from, mess.wait, id)
+                const ytvh = await fetch(`http://api.vhtear.com/ytdl?link=${args[1]}&apikey=${vhtearkey}`)
+                if (!ytvh.ok) throw new Error(`Error Get Video : ${ytvh.statusText}`)
+                const ytvh2 = await ytvh.json()
+                 if (ytvh2.status == false) {
+                    kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                } else {
+                    if (Number(ytvh2.result.size.split(' MB')[0]) > 30.00) return kay.sendFileFromUrl(from, ytvh2.result.UrlVideo, `${title}.mp4`, `*「 YOUTUBE MP4 」*\n\n• *Judul* : ${ytvh2.result.title}\n• *Filesize* : ${ytvh2.result.size}\n\n__Maaf, Durasi video melebihi 30 MB. Silahkan download video melalui link dibawah_.\n${ytvh2.result.UrlVideo}`, id)
+                    const { title, UrlVideo, imgUrl, size } = await ytvh2.result
+                    kay.sendFileFromUrl(from, imgUrl, 'thumb.jpg', `*「 YOUTUBE MP4 」*\n\n• *Judul* : ${title}\n• *Filesize* : ${size}\n\n_Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit_`, id)
+                    /await kay.sendFileFromUrl(from, UrlVideo, `${title}.mp4`, '', id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                    await limitAdd(serial)
+                }
+            } catch (err) {
+                kay.sendText(ownerNumber, 'Error ytmp4 : '+ err)
+                kay.reply(from, mess.error.Yt4, id)
+                console.log(err)
+            }
+            break
+        case prefix+'play':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #ceklimit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length == 1) return kay.reply(from, `Untuk mencari lagu dari youtube\n\nPenggunaan: #play judul lagu`, id)
+            try {
+                kay.reply(from, `mohon tunggu kalo delay,jangan spam ngntd`, id)
+                const serplay = body.slice(6)
+                const webplay = await fetch(`https://api.vhtear.com/ytmp3?query=${serplay}&apikey=${vhtearkey}`)
+                if (!webplay.ok) throw new Error(`Error Get Video : ${webplay.statusText}`)
+                const webplay2 = await webplay.json()
+                 if (webplay2.status == false) {
+                    kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                } else {
+                    if (Number(webplay2.result.size.split(' MB')[0]) >= 10.00) return kay.reply(from, 'Maaf durasi music sudah melebihi batas maksimal 10 MB!', id)
+                    const { image, mp3, size, ext, title, duration } = await webplay2.result
+                    const captplay = `*「 PLAY 」*\n\n➸ *Judul* : ${title}\n➸ *Durasi* : ${duration}\n➸ *Filesize* : ${size}\n➸ *Exp* : ${ext}\n\n_*Music Sedang Dikirim*_`
+                    kay.sendFileFromUrl(from, image, `thumb.jpg`, captplay, id)
+                    await kay.sendFileFromUrl(from, mp3, `${title}.mp3`, '', id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                    await limitAdd(serial)
+                }
+            } catch (err) {
+                kay.sendText(ownerNumber, 'Error Play : '+ err)
+                kay.reply(from, mess.error.Yt3, id)
+            }
+            break   
+        case prefix+'ytmp3':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#ytmp3 [ Link Yt ]*, untuk contoh silahkan kirim perintah *#readme*`, id)
+            let isLinks = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
+            if (!isLinks) return kay.reply(from, mess.error.Iv, id)
+            try {
+                kay.reply(from, mess.wait, id)
+                const vhtearyt3 = await fetch(`https://api.vhtear.com/ytdl?link=${args[1]}&apikey=${vhtearkey}`)
+                if (!vhtearyt3.ok) throw new Error(`Error ytmp3 3 : ${vhtearyt3.statusText}`)
+                const vhtearyt33 = await vhtearyt3.json()
+                 if (vhtearyt33.status == false) {
+                    kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                } else {
+                    if(Number(vhtearyt33.result.size.split(' MB')[0]) >= 10.00) return kay.sendFileFromUrl(from, vhtearyt33.result.imgUrl, `thumb.jpg`, `*「 YOUTUBE MP3 」*\n\n• *Judul* : ${vhtearyt33.result.title}\n• *Filesize* : ${vhtearyt33.result.size}\n\n_Maaf, Durasi audio melebihi 10 MB. Silahkan download audio melalui link dibawah_.\n${vhtearyt33.result.UrlMp3}`, id)
+                    const { title, ext, size, UrlMp3, status, imgUrl } = await vhtearyt33.result
+                    console.log(`VhTear Giliran ${ext}\n${size}\n${status}`)
+                    const captions = `*「 YOUTUBE MP3 」*\n\n• *Judul* : ${title}\n• *Filesize* : ${size}\n\n_Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit_`
+                    kay.sendFileFromUrl(from, imgUrl, `thumb.jpg`, captions, id)
+                    //await kay.sendFile(from, UrlMp3, `${title}.mp3`, '', id)
+                    await kay.sendFileFromUrl(from, UrlMp3, `${title}.mp3`, '', id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                    await limitAdd(serial)
+                }
+            } catch (err) {
+                kay.sendText(ownerNumber, 'Error ytmp3 : '+ err)
+                kay.reply(from, mess.error.Yt3, id)
+            }
+            break   
+        case prefix+'google':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            kay.reply(from, mess.wait, id)
+            const googleQuery = body.slice(8)
+            if(googleQuery == undefined || googleQuery == ' ') return kay.reply(from, `*Hasil Pencarian : ${googleQuery}* tidak ditemukan`, id)
+            google({ 'query': googleQuery }).then(results => {
+            let vars = `_*Hasil Pencarian : ${googleQuery}*_\n`
+            for (let i = 0; i < results.length; i++) {
+                vars +=  `\n═════════════════\n\n*Judul* : ${results[i].title}\n\n*Deskripsi* : ${results[i].snippet}\n\n*Link* : ${results[i].link}\n\n`
+            }
+                kay.reply(from, vars, id);
+                limitAdd(serial)
+            }).catch(e => {
+                console.log(e)
+                kay.sendText(ownerNumber, 'Google Error : ' + e);
+            })
+            break
+        case prefix+'translate':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if(args[1] == undefined || args[2] == undefined) return
+            if(args.length >= 2){
+                var codelang = args[1]
+                var texta = body.slice(11+codelang.length);
+                translatte(texta, {to: codelang}).then(res => {
+                    kay.sendText(from,res.text);
+                    limitAdd(serial)
+                }).catch(err => {
+                     kay.sendText(from,`[ERROR] Teks tidak ada, atau kode bahasa ${codelang} tidak support\n~> *${prefix}bahasa* untuk melihat list kode bahasa`);
+                });
+            }
+            break
+        case prefix+'video':
+                    if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#video* [video]')
+            const querv = body.slice(7)
+            kay.reply(from, mess.wait, id)
+            try {
+                const resmusv = await fetch(`https://api.vhtear.com/youtube?query=${encodeURIComponent(querv)}&apikey=${vhtearkey}`)
+                if (!resmusv.ok) throw new Error(`unexpected response ${resmusv.statusText}`)
+                const jsonsercmuv = await resmusv.json()
+                let berhitung1 = 1
+                const { result } = await jsonsercmuv
+                let xixixai = `*Hasil pencarian dari ${querv}*\n\nKetik #getvideo [angka] untuk mengambil ID, Contoh : #getvideo 2\n`
+                for (let i = 0; i < result.length; i++) {
+                    xixixai += `\n═════════════════\n\n*Urutan* : ${i+1}\n*Title* : ${result[i].title}\n*Channel* : ${result[i].channel}\n*Durasi* : ${result[i].duration}\n*Perintah download* : #getvideo ${result[i].id}\n`
+                }
+                    xixixai += `\n\n`
+                for (let ii = 0; ii < result.length; ii++) {
+                    xixixai += `(#)${result[ii].id}`
+                }
+                await kay.sendFileFromUrl(from, result[0].image, 'thumbserc.jpg', xixixai, id)
+            } catch (err){
+                console.log(err)
+            }
+            break
+        case prefix+'getvideo':
+                    if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#getvideo* [IdDownload], untuk contoh silahkan kirim perintah *#readme*', id)
+            try {    
+            if (quotedMsg && quotedMsg.type == 'image') {
+                if (!Number(args[1])) return kay.reply(from, `*Apabila ditag hanya cantumkan nomer urutan bukan ID Download!*\nContoh : *#getmusik 1*`, id)
+                const dataDownmp3 = quotedMsg.type == 'chat' ? quotedMsg.body : quotedMsg.type == 'image' ? quotedMsg.caption : ''
+                const pilur = dataDownmp3.split('(#)')
+                console.log(pilur[args[1]])
+                kay.reply(from, mess.wait, id)
+                const mhanky45 = await fetch(`https://api.vhtear.com/ytdl?link=https://youtu.be/${pilur[args[1]]}&apikey=${vhtearkey}`)
+                if (!mhanky45.ok) throw new Error(`Error Get Video : ${mhanky45.statusText}`)
+                const mhankyt45 = await mhanky45.json()
+                if (mhankyt45.status == false) {
+                    kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                } else {
+                    if (Number(mhankyt45.result.size.split(' MB')[0]) > 30.00) return kay.sendFileFromUrl(from, mhankyt45.result.imgUrl, `thumb.jpg`, `*「 YOUTUBE VIDEO DOWNLOADER 」*\n\n*Title* : ${mhankyt45.result.title}\n*Ext* : MP3\n*Filesize* : ${mhankyt45.result.size}\n\n_Untuk durasi lebih dari batas disajikan dalam bentuk link_\n${UrlVideo}`, id)
+                    const { title, ext, imgUrl, size, UrlVideo } = await mhankyt45.result
+                    const captions = `*「 YOUTUBE VIDEO DOWNLOADER 」*\n\n*Title* : ${title}\n*Ext* : MP4\n*Filesize* : ${size}\n\n*Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit*`                  
+                    kay.sendFileFromUrl(from, imgUrl, `thumb.jpg`, captions, id)
+                    await kay.sendFileFromUrl(from, UrlVideo, `${title}.mp4`, `Video telah terkirim ${pushname}`, id).catch(() => kay.reply(from, mess.error.Yt3, id))
+                    await limitAdd(serial)
+                }
+            } else if (quotedMsg && quotedMsg.type == 'chat') { 
+                    kay.reply(from, `*Salah tag! hanya tag pesan berisi data hasil dari penelusuran video.*`, id)
+            } else {
+                if (args.length === 1) return kay.reply(from, 'Kirim perintah *#getmusik [IdDownload]*, untuk contoh silahkan kirim perintah *#readme*')
+                if (args[1] <= 25) return kay.reply(from, `*Apabila ditag hanya cantumkan nomer urutan bukan ID Download!*\nContoh : *#getmusik 1*`,)
+                kay.reply(from, mess.wait, id)
+                const mhanky45 = await fetch(`https://api.vhtear.com/ytdl?link=https://youtu.be/${args[1]}&apikey=${vhtearkey}`)
+                if (!mhanky45.ok) throw new Error(`Error Get Video : ${mhanky45.statusText}`)
+                const mhankyt45 = await mhanky45.json()
+                if (mhankyt45.status == false) {
+                    kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                } else {
+                    if (Number(mhankyt45.result.size.split(' MB')[0]) > 30.00) return kay.sendFileFromUrl(from, mhankyt45.result.imgUrl, `thumb.jpg`, `*「 YOUTUBE VIDEO DOWNLOADER 」*\n\n*Title* : ${mhankyt45.result.title}\n*Ext* : MP3\n*Filesize* : ${mhankyt45.result.size}\n\n_Untuk durasi lebih dari batas disajikan dalam bentuk link_\n${UrlVideo}`, id)
+                    const { title, ext, imgUrl, size, UrlVideo } = await mhankyt45.result
+                    const captions = `*「 YOUTUBE VIDEO DOWNLOADER 」*\n\n*Title* : ${title}\n*Ext* : MP4\n*Filesize* : ${size}\n\n*Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit*`                  
+                    kay.sendFileFromUrl(from, imgUrl, `thumb.jpg`, captions, id)
+                    await kay.sendFileFromUrl(from, UrlVideo, `${title}.mp4`, `Video telah terkirim ${pushname}`, id).catch(() => kay.reply(from, mess.error.Yt3, id))
+                    await limitAdd(serial)
+                    }
+                }
+            } catch (err) {
+                kay.sendText(ownerNumber, 'Error Video : '+ err)
+                kay.reply(from, mess.error.Yt4, id)
+            }
+            break
+
+        case prefix+'music':
+                    if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#musik* [lagu]')
+            const quer = body.slice(7)
+            kay.reply(from, mess.wait, id)
+            try {
+                const resmus = await fetch(`https://api.vhtear.com/youtube?query=${encodeURIComponent(quer)}&apikey=${vhtearkey}`)
+                if (!resmus.ok) throw new Error(`unexpected response ${resmus.statusText}`)
+                const jsonsercmu = await resmus.json()
+                const { result } = await jsonsercmu
+                let berhitung = 1
+                let xixixi = `*Hasil pencarian dari ${quer}*\n\nKetik #getmusik [angka] untuk mengambil ID, Contoh : #getmusik 2\n`
+                for (let i = 0; i < result.length; i++) {
+                    xixixi += `\n═════════════════\n\n*Urutan* : ${berhitung+i}\n*Title* : ${result[i].title}\n*Channel* : ${result[i].channel}\n*Durasi* : ${result[i].duration}\n*Perintah download* : *#getmusik ${result[i].id}*\n`
+                }
+                    xixixi += `\n\n`
+                for (let ii = 0; ii < result.length; ii++) {
+                    xixixi += `(#)${result[ii].id}`
+                }
+                await kay.sendFileFromUrl(from, result[0].image, 'thumbserc.jpg', xixixi, id)
+            } catch (err){
+                console.log(err)
+                kay.sendFileFromUrl(from, errorurl, 'error.png', '💔️ Maaf, Music tidak ditemukan')
+                kay.sendText(ownerNumber, 'Music Error : ' + err)
+            }
+            break
+        case prefix+'getmusik':
+        case prefix+'getmusic':
+                    if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            try {
+                if (quotedMsg && quotedMsg.type == 'image') {
+                    if (args.length === 1) return kay.reply(from, 'Kirim perintah *#getmusik [IdDownload]*, untuk contoh silahkan kirim perintah *#readme*')
+                    if (!Number(args[1])) return kay.reply(from, `*Apabila ditag hanya cantumkan nomer urutan bukan ID Download!*\nContoh : *#getmusik 1*`, id)
+                    const dataDownmp3 = quotedMsg.type == 'chat' ? quotedMsg.body : quotedMsg.type == 'image' ? quotedMsg.caption : ''
+                    const pilur = dataDownmp3.split('(#)')
+                    console.log(pilur[args[1]])
+                    kay.reply(from, mess.wait, id)
+                    const mhanky35 = await fetch(`https://api.vhtear.com/ytdl?link=https://youtu.be/${pilur[args[1]]}&apikey=${vhtearkey}`)
+                    if (!mhanky35.ok) throw new Error(`Error Get Video : ${mhanky35.statusText}`)
+                    const mhankyt35 = await mhanky35.json()
+                     if (mhankyt35.status == false) {
+                        kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                    } else {
+                        try{
+                        if (Number(mhankyt35.result.size.split(' MB')[0]) >= 10.00) return kay.sendFileFromUrl(from, mhankyt35.result.imgUrl, `thumb.jpg`, `*「 YOUTUBE MUSIC DOWNLOADER 」*\n\n*Title* : ${mhankyt35.result.title}\n*Ext* : MP3\n*Filesize* : ${mhankyt35.result.size}\n\n*Untuk durasi lebih dari batas disajikan dalam bentuk link*\n${mhankyt35.result.UrlMp3}`, id)
+                        const { title, ext, size, UrlMp3, status, imgUrl } = await mhankyt35.result
+                        console.log(`CHANGE API BARBAR : ${ext}\n${size}\n${status}`)
+                        const captions = `*「 YOUTUBE MUSIC DOWNLOADER 」*\n\n*\n\n*Title* : ${title}\n*Ext* : MP3\n*Filesize* : ${size}\n\n_Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit_`
+                        kay.sendFileFromUrl(from, imgUrl, `thumb.jpg`, captions, id)
+                        await kay.sendFileFromUrl(from, UrlMp3, `${title}.mp3`, `DOWNLOADER MUSIC BY KAY `, id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                        await limitAdd(serial)
+                        } catch (err){
+                            console.log(err)
+                        }
+                    }    
+                } else if (quotedMsg && quotedMsg.type == 'chat') { 
+                    kay.reply(from, `*Salah tag! hanya tag pesan berisi data hasil dari penelusuran musik.*`, id)
+                } else {
+                    if (args.length === 1) return kay.reply(from, 'Kirim perintah *#getmusik [IdDownload]*, untuk contoh silahkan kirim perintah *#readme*')
+                    if (args[1] <= 25) return kay.reply(from, `*Apabila ingin mengambil data musik dengan nomor urutan, mohon tag pesan bot tentang pencarian musik!*`,)
+                    kay.reply(from, mess.wait, id)
+                    const mhanky35 = await fetch(`https://api.vhtear.com/ytdl?link=https://youtu.be/${args[1]}&apikey=${vhtearkey}`)
+                    if (!mhanky35.ok) throw new Error(`Error Get Video : ${mhanky35.statusText}`)
+                    const mhankyt35 = await mhanky35.json()
+                     if (mhankyt35.status == false) {
+                        kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                    } else {
+                        if (Number(mhankyt35.result.size.split(' MB')[0]) >= 10.00) return kay.sendFileFromUrl(from, mhankyt35.result.imgUrl, `thumb.jpg`, `*「 YOUTUBE MUSIC DOWNLOADER 」*\n\n*Title* : ${mhankyt35.result.title}\n*Ext* : MP3\n*Filesize* : ${mhankyt35.result.size}\n\n*Untuk durasi lebih dari batas disajikan dalam bentuk link*\n${mhankyt35.result.UrlMp3}`, id)
+                        const { title, ext, size, UrlMp3, status, imgUrl } = await mhankyt35.result
+                        console.log(`CHANGE API BARBAR : ${ext}\n${size}\n${status}`)
+                        const captions = `*「 YOUTUBE MUSIC DOWNLOADER 」*\n\n*\n\n*Title* : ${title}\n*Ext* : MP3\n*Filesize* : ${size}\n\n_Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit_`
+                        kay.sendFileFromUrl(from, imgUrl, `thumb.jpg`, captions, id)
+                        await kay.sendFileFromUrl(from, UrlMp3, `${title}.mp3`, `DOWNLOADER MUSIC BY KAY `, id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                        await limitAdd(serial)
+                   }
+                }
+            } catch (err) {
+                kay.sendText(ownerNumber, 'Error Get Music : '+ err)
+                kay.reply(from, `*Kesalahan! Pastikan id download sudah benar.*`, id)
+                console.log(err)
+            }
+            break
+        case prefix+'youtubesearch':
+                    if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#youtubesearch [query]*, Contoh : #youtubesearch alan walker alone')
+            const ytsher = body.slice(15)
+            kay.reply(from, mess.wait, id)
+            try {
+                const response2 = await fetch(`https://api.vhtear.com/youtube?query=${encodeURIComponent(ytsher)}&apikey=${vhtearkey}`)
+                if (!response2.ok) throw new Error(`unexpected response ${response2.statusText}`)
+                const jsonserc = await response2.json()
+                const { result } = await jsonserc
+                let xixixi = `*Hasil Pencarian : ${ytsher}*\n`
+                for (let i = 0; i < result.length; i++) {
+                    xixixi += `\n═════════════════\n\n*Judul* : ${result[i].title}\n*Ditonton* : ${result[i].views}\n*Durasi* : ${result[i].duration}\n*Channel* : ${result[i].channel}\n*URL* : ${result[i].urlyt}\n`
+                }
+                await kay.sendFileFromUrl(from, result[0].image, 'thumbserc.jpg', xixixi, id)
+            } catch (err) {
+                    console.log(err)
+                    await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Video tidak ditemukan')
+                    kay.sendText(ownerNumber, 'YT Search Error : ' + err)
+            }
+            break
+        case prefix+'brainlysearch':
+                    if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#brainlysearch [query]*, Contoh : *#brainlysearch Siapa itu KAY ?*')
+            const bser = body.slice(15)
+            kay.reply(from, mess.wait, id)
+            try {
+                const bser2 = await axios.get(`https://api.vhtear.com/brainly?query=${bser}&apikey=${vhtearkey}`)
+                const bser3 = bser2.data.result
+                 let keluarplay = `*Hasil Pencarian : ${bser}*\n`
+                for (let i = 0; i < bser3.result.length; i++) {
+                    keluarplay += `\n═════════════════\n\n*Judul* : ${bser3.result[i].title}\n*Link* : ${bser3.result[i].url}\n`
+                }
+                await kay.reply(from, keluarplay, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+        case prefix+'shopee':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#shopee [query]*, Contoh : *#shopee HP Samsul a20*')
+            const shopek = body.slice(8)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://api.vhtear.com/shopee?query=${shopek}&count=5&apikey=${vhtearkey}`)
+                const dataplay = dataplai.data.result
+                 let shopeq = `*Hasil Pencarian : ${shopek}*\n`
+                for (let i = 0; i < dataplay.items.length; i++) {
+                    shopeq += `\n═════════════════\n\n*Nama* : ${dataplay.items[i].nama}\nHarga* : ${dataplay.items[i].harga}\n*Terjual* : ${dataplay.items[i].terjual}\n*Lokasi Toko* : ${dataplay.items[i].shop_location}\n*Deskripsi* : ${dataplay.items[i].description}\n*Link Product : ${dataplay.items[i].link_product}*\n`
+                }
+                await kay.sendFileFromUrl(from, dataplay.items[0].image_cover, `shopee.jpg`, shopeq, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+        case prefix+'playstore':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#playstore [query]*, Contoh : *#playstore Mobile Legends*')
+            const keywotp = body.slice(11)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://api.vhtear.com/playstore?query=${keywotp}&apikey=${vhtearkey}`)
+                const dataplay = dataplai.data
+                 let keluarplay = `*Hasil Pencarian : ${keywotp}*\n`
+                for (let i = 0; i < dataplay.result.length; i++) {
+                    keluarplay += `\n═════════════════\n\n*Nama* : ${dataplay.result[i].title}\n*Developer* : ${dataplay.result[i].developer}\n*Deskripsi* : ${dataplay.result[i].description}\n*Paket ID* : ${dataplay.result[i].app_id}\n*Harga* : ${dataplay.result[i].price}\n*Link App* : https://play.google.com${dataplay.result[i].url}\n`
+                }
+                await kay.sendFileFromUrl(from, dataplay.result[0].icon, `iconapk.webp`, keluarplay, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+                case prefix+'jadwalbola':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://api.vhtear.com/jadwalbola&apikey=${vhtearkey}`)
+                const dataplay = dataplai.data.result
+                 let jadwalb = `*Jadwal Bola Hari Ini bozz*\n`
+                for (let i = 0; i < dataplay.data.length; i++) {
+                    jadwalb += `\n═════════════════\n\n*Kickoff* : ${dataplay.data[i].kickoff}\n*Pertandingan* : ${dataplay.data[i].pertandingan}\n*Stasiun tv* : ${dataplay.data[i].stasiuntv}\n`
+                }
+                await kay.reply(from, jadwalb, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+        case prefix+'newstickerline':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://api.vhtear.com/newsticker?&apikey=${vhtearkey}`)
+                const dataplay = dataplai.data.result
+                 let nwline = `*Noh*\n`
+                for (let i = 0; i < dataplay.hasil.length; i++) {
+                    nwline += `\n*Title* : ${dataplay.hasil[i].title}\n*Link* : ${dataplay.hasil[i].uri}\n`
+                }
+                await kay.sendFileFromUrl(from, dataplay.hasil[0].image, `nw.jpg`, nwline, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+        case prefix+'mostview':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://docs-jojo.herokuapp.com/api/mostviewfilm`)
+                const dataplay = dataplai.data
+                 let mosviev = `*THIS IS MOST VIEWED MOVIE*\n`
+                for (let i = 0; i < dataplay.result.length; i++) {
+                    mosviev += `\n═════════════════\n\n*Rank* : ${dataplay.result[i].rank}\n*Judul* : ${dataplay.result[i].title}\n*Penonton* : ${dataplay.result[i].penonton}\n*Information : ${dataplay.result[i].link}\n`
+                }
+                await kay.reply(from, mosviev, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+       case prefix+'loker':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://docs-jojo.herokuapp.com/api/infoloker`)
+                const dataplay = dataplai.data
+                 let lomker = `*INI MHANK*\n`
+                for (let i = 0; i < dataplay.result.length; i++) {
+                    lomker += `\n═════════════════\n\n*Lowongan* : ${dataplay.result[i].desc}\n*Profesi* : ${dataplay.result[i].profesi}\n*Syarat* : ${dataplay.result[i].syarat}\n*Lokasi dan Perusahaan* : ${dataplay.result[i].lokasi} di Perusahaan《 ${dataplay.result[i].perusahaan} 》\n *Informasi lebih lanjut, klik* : ${dataplay.result[i].link}\n`
+                }
+                await kay.reply(from, lomker, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+          case prefix+'alkitabsearch':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#alkitabsearch [query]*, Contoh : *#alkitabsearchmatius 207*')
+            const anjayff = body.slice(15)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://docs-jojo.herokuapp.com/api/alkitabsearch?q=${anjayff}`)
+                const dataplay = dataplai.data
+                 let anjayfr = `*Hasil PencarianAlkitab: ${anjayff}*\n`
+                for (let i = 0; i < dataplay.result.length; i++) {
+                    anjayfr += `\n═════════════════\n\n*Ayat* : ${dataplay.result[i].ayat}\n*Isi* : ${dataplay.result[i].isi}\n*Sumber* : ${dataplay.result[i].link}\n`
+                }
+                await kay.reply(from, anjayfr, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+         case prefix+'indoxxi':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#indoxxi [query]*, Contoh : *#indoxxi joker*')
+            const indocx = body.slice(9)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://api.vhtear.com/downloadfilm?judul=${indocx}&apikey=${vhtearkey}`)
+                const dataplay = dataplai.data.result
+                 let indofx = `*Hasil Pencarian Film : ${indocx}*\n`
+                for (let i = 0; i < dataplay.data.length; i++) {
+                    indofx += `\n═════════════════\n\n*Resolusi* : ${dataplay.data[i].resolusi}\n*Link* : ${dataplay.data[i].urlDownload}\nJudul akhir : ${dataplay.judul}`
+                }
+                await kay.reply(from, indofx, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+        case prefix+'trendtwitter':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://docs-jojo.herokuapp.com/api/trendingtwitter`)
+                const dataplay = dataplai.data
+                 let trtwt = `*INI MHANK*\n`
+                for (let i = 0; i < dataplay.result.length; i++) {
+                    trtwt += `\n*Trend* : ${dataplay.result[i].rank}\n*Hastag* : ${dataplay.result[i].hastag}\n*Tweet* : ${dataplay.result[i].tweet}\n*Link* : ${dataplay.result[i].link}\n`
+                }
+                await kay.reply(from, trtwt, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+           case prefix+'berita':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://api.vhtear.com/beritaterbaru&apikey=${vhtearkey}`)
+                const dataplay = dataplai.data.result
+                 let bemtem = `*BErita Hati iNI*\n`
+                for (let i = 0; i < dataplay.data.length; i++) {
+                    bemtem += `\n═════════════════\n\n*Judul* : ${dataplay.data[i].title}\n*Deskripsi* : ${dataplay.data[i].description} dipublish pada tanggal ${dataplay.data[i].publishedAt}\n*LinkUrl* : ${dataplay.data[i].url}\n`
+                }
+                await kay.sendFileFromUrl(from, dataplay.data[0].urlToImage, `cine.jpg`, bemtem, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+         case prefix+'cineplex':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://docs-jojo.herokuapp.com/api/cineplex`)
+                const dataplay = dataplai.data
+                 let cinexi = `*Coming Soon on Cineplex*\n`
+                for (let i = 0; i < dataplay.result.length; i++) {
+                    cinexi += `\n═════════════════\n\n*Movie* : ${dataplay.result[i].title}\n*Pemeran* : ${dataplay.result[i].casts}\n*Sinopsis* : ${dataplay.result[i].sinopsis}\n*Rating* : ${dataplay.result[i].rating}\n*Genre* : ${dataplay.result[i].genre}\n`
+                }
+                await kay.sendFileFromUrl(from, dataplay.result[0].poster, `cine.jpg`, cinexi, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+         case prefix+'ongoinganime':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://api.vhtear.com/ongoinganoboy&apikey=${vhtearkey}`)
+                const dataplay = dataplai.data
+                 let anoano = `*Ongoing on anoboy*\n`
+                for (let i = 0; i < dataplay.result.length; i++) {
+                    anoano += `\n═════════════════\n\n*Title* : ${dataplay.result[i].title}\n*Url* : ${dataplay.result[i].url}\n`
+                }
+                await kay.sendFileFromUrl(from, dataplay.result[0].image, `cine.jpg`, anoano, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+         case prefix+'gethoax':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://docs-jojo.herokuapp.com/api/infohoax`)
+                const dataplay = dataplai.data
+                 let hoacc = `*HOAXX*\n`
+                for (let i = 0; i < dataplay.result.length; i++) {
+                    hoacc += `\n═════════════════\n\n*Jumdul* : ${dataplay.result[i].title}\n*Beneran?* : ${dataplay.result[i].tag}\n*Link* : ${dataplay.result[i].link}\n`
+                }
+                await kay.reply(from, hoacc, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+        case prefix+'togel':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            try {
+                const dataplai = await axios.get(`https://api.vhtear.com/togel&apikey=${vhtearkey}`)
+                const dataplay = dataplai.data.result
+                 let tomgel = `*Huzzzzz*\n`
+                for (let i = 0; i < dataplay.hasil.length; i++) {
+                    tomgel += `\n═════════════════\n\n*Negara* : ${dataplay.hasil[i].Negara}\n*Result* : ${dataplay.hasil[i].Senin}\n*Result* : ${dataplay.hasil[i].Selasa}\n*Result* : ${dataplay.hasil[i].Rabu}\n*Result* : ${dataplay.hasil[i].Kamis}\n*Result* : ${dataplay.hasil[i].Jumat}\n*Result* : ${dataplay.hasil[i].Sabtu}\n*Result* : ${dataplay.hasil[i].Minggu}\n`
+                }
+                await kay.reply(from, tomgel, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+        
+   case prefix+'cekongkir':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#cekongkir [ |kurir|dari|tujuan ]*, contoh *#cekongkir |jne|dumai|pekanbaru*`, id)
+            await limitAdd(serial)
+            kay.reply(from, mess.wait, id)
+            argz = body.trim().split('|')
+            try {
+                const kumri = argz[1]
+                const formq = argz[2]
+                const toq = argz[3]
+                const dataplai = await axios.get(`https://api.vhtear.com/cekongkir?kurir=${kumri}&fromcity=${formq}&tocity=${toq}&apikey=${vhtearkey}`)
+                const dataplay = dataplai.data.result
+                 let haseel = `*pengiriman* = ${dataplay.title}\n*info* = ${dataplay.informasi}\n`
+                for (let i = 0; i < dataplay.data.length; i++) {
+                    haseel += `*perkiraan* : ${dataplay.data[i].etd}\n*tipe layanan* : ${dataplay.data[i].layanan}\n*tarif* : ${dataplay.data[i].tarif}\n`
+                }
+                await kay.reply(from, haseel, id)
+            }   catch (err){
+                console.log(err)
+            }
+            break
+        case prefix+'neonime':
+            //if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *${prefix}neonime [ Query ]*, Contoh : #neonime danmachi`)
+            const nenon = body.slice(9)
+            kay.reply(from, mess.wait, id)
+            try {
+                const response2 = await fetch('https://tobz-api.herokuapp.com/api/neonime?q=' + nenon)
+                if (!response2.ok) throw new Error(`unexpected response ${response2.statusText}`)
+                const jsonserc = await response2.json()
+                const { result } = await jsonserc
+                let xixixi = `*「 NEONIME 」*\n\n*Hasil Pencarian : ${nenon}*\n`
+                for (let i = 0; i < result.length; i++) {
+                    xixixi += `\n─────────────────\n\n• *Title* : ${result[i].title}\n• *Deskripsi* : ${result[i].desc}\n• *Link* : ${result[i].link}`
+                }
+                await kay.sendFileFromUrl(from, result[0].image, 'neon.jpg', xixixi, id)
+                await limitAdd(serial)
+            } catch (err) {
+                    console.log(err)
+                    await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Anime tidak ditemukan')
+            }
+            break
+        case prefix+'nhentai':
+                    if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#nhentai* [ Query ]')
+            const quernh = body.slice(9)
+            kay.reply(from, mess.wait, id)
+            try {
+                const resnh = await fetch(`https://api.vhtear.com/nhentaisearch?query=${encodeURIComponent(quernh)}&apikey=${vhtearkey}`)
+                if (!resnh.ok) throw new Error(`unexpected response ${resnh.statusText}`)
+                const jsonnh = await resnh.json()
+                const { doujins } = await jsonnh.result
+                let berhitung = 1
+                let xixixi = `*「 NHENTAI 」*\n\n*Hasil Pencarian* : ${quernh}\n*Sort* : ${jsonnh.result.sort}\n*Total Pencarian* : ${jsonnh.result.totalResults}\n\n─────────────────\n\nKetik #getnhentai [ Angka ] untuk mengambil ID, Contoh : #getnhentai 2\n`
+                for (let i = 0; i < doujins.length; i++) {
+                    xixixi += `\n─────────────────\n\n*Urutan* : ${berhitung+i}\n*Title* : ${doujins[i].title}\n*Bahasa* : ${doujins[i].lang}\n*Perintah download* : *#getnhentai ${doujins[i].id}*\n`
+                }
+                    xixixi += `\n\n`
+                for (let ii = 0; ii < doujins.length; ii++) {
+                    xixixi += `(#)${doujins[ii].id}`
+                }
+                await kay.sendFileFromUrl(from, doujins[0].cover, 'thumbnh.jpg', xixixi, id)
+                await limitAdd(serial)
+            } catch (err){
+                console.log(err)
+                kay.sendFileFromUrl(from, errorurl, 'error.png', '💔️ Maaf, Nhentai tidak ditemukan')
+                kay.sendText(ownerNumber, 'Nhentai Error : ' + err)
+            }
+            break
+        case prefix+'getnhentai':
+                    if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+           try {
+                if (quotedMsg && quotedMsg.type == 'image') {
+                    if (args.length === 1) return kay.reply(from, `Kirim perintah *#getnhentai [ Id Download ]*, untuk contoh silahkan kirim perintah *#readme*`, id)
+                    if (!Number(args[1])) return kay.reply(from, `*Apabila ditag hanya cantumkan nomer urutan bukan ID Download!*\nContoh : *#getnhentai 1*`, id)
+                    const dataDownmp3 = quotedMsg.type == 'chat' ? quotedMsg.body : quotedMsg.type == 'image' ? quotedMsg.caption : ''
+                    const pilur = dataDownmp3.split('(#)')
+                    console.log(pilur[args[1]])
+                    kay.reply(from, mess.wait, id)
+                    const vezasukadoujin = await fetch(`https://api.vhtear.com/nhentaidoujin?query=${pilur[args[1]]}&apikey=${vhtearkey}`)
+                    if (!vezasukadoujin.ok) throw new Error(`Error barbaryt3 ${vezasukadoujin.statusText}`)
+                    const doujinveza = await vezasukadoujin.json()
+                    if (doujinveza.error) {
+                        kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                    } else {
+                        try{
+                        const { title, artists, categories, secondary_title, languages, images, tags, pages } = await doujinveza.result
+                        console.log(`CHANGE API BARBAR : ${artists}\n${categories}\n${title}`)
+                        const captions = `*「 NHENTAI DOWNLOADER 」*\n\n*Title* : ${title}\n*Secondary Title* : ${secondary_title}\n*Artist* : ${artists}\n*Categories* : ${categories}\n*Pages* : ${pages}\n*Languages* : ${languages}\n*Tags* : ${tags}\n\n*Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit*`
+                        //kay.sendFileFromUrl(from, thumb, `thumb.jpg`, captions, id)
+                        const urlnh = `https://nhder.herokuapp.com/download/nhentai/${pilur[args[1]]}/zip`
+                        const shorttr = []
+                        const shortenernh = await urlShortener(urlnh)
+                        urlnh['short'] = shortenernh
+                        shorttr.push(urlnh)
+                        kay.sendText(from, captions, id)
+                        kay.sendFileFromUrl(from, shortenernh, `${title}.zip`, '_NHENTAI DOWNLOADER BY KAY _', id)
+                        } catch (err){
+                            console.log(err)
+                        }
+                    }    
+                } else if (quotedMsg && quotedMsg.type == 'chat') { 
+                    kay.reply(from, `*Salah tag! hanya tag pesan berisi data hasil dari penelusuran nhentai.*`, id)
+                } else {
+                    if (args.length === 1) return kay.reply(from, `Kirim perintah *#getnhentai [ Id Download ]*, untuk contoh silahkan kirim perintah *#readme*`)
+                    if (args[1] <= 25) return kay.reply(from, `*Apabila ingin mengambil data nhentai dengan nomor urutan, mohon tag pesan bot tentang pencarian nhentai!*`,)
+                    kay.reply(from, mess.wait, id)
+                    const vezasukadoujin = await fetch(`https://api.vhtear.com/nhentaidoujin?query=${args[1]}&apikey=${vhtearkey}`)
+                    if (!vezasukadoujin.ok) throw new Error(`Error barbaryt3 ${vezasukadoujin.statusText}`)
+                    const doujinveza = await vezasukadoujin.json()
+                    if (doujinveza.error) {
+                        kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                    } else {
+                        const { title, artists, categories, secondary_title, languages, images, tags, pages } = await doujinveza.result
+                        console.log(`CHANGE API BARBAR : ${artists}\n${categories}\n${title}`)
+                        const captions = `*「 NHENTAI DOWNLOADER 」*\n\n*Title* : ${title}\n*Secondary Title* : ${secondary_title}\n*Artist* : ${artists}\n*Categories* : ${categories}\n*Pages* : ${pages}\n*Languages* : ${languages}\n*Tags* : ${tags}\n\n*Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit*`
+                        //kay.sendFileFromUrl(from, thumb, `thumb.jpg`, captions, id)
+                        const urlnh = `https://nhder.herokuapp.com/download/nhentai/${args[1]}/zip`
+                        const shorttr = []
+                        const shortenernh = await urlShortener(urlnh)
+                        urlnh['short'] = shortenernh
+                        shorttr.push(urlnh)
+                        kay.sendText(from, captions, id)
+                        kay.sendFileFromUrl(from, shortenernh, `${title}.zip`, '_NHENTAI DOWNLOADER BY KAY _', id)
+                        //await kay.sendFileFromUrl(from, result, `${title}.pdf`, `*NHENTAI BY rashid*`, id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                        //await limitAdd(serial)
+                   }
+                }
+            } catch (err) {
+                kay.sendText(ownerNumber, 'Error Nhentai : '+ err)
+                kay.reply(from, `*Kesalahan! Pastikan id download sudah benar.*`, id)
+                console.log(err)
+            }
+            break
+        case prefix+'xvideos':
+            if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (!isNsfw) return kay.reply(from, `command/Perintah NSFW belum di aktifkan di group ini!`, id)
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#xvideos* [ Lagu ]`)
+            const querVID = body.slice(9)
+            kay.reply(from, mess.wait, id)
+            try {
+                const resvid = await fetch(`https://mnazria.herokuapp.com/api/porn?search=${encodeURIComponent(querVID)}`)
+                if (!resvid.ok) throw new Error(`unexpected response ${resvid.statusText}`)
+                const jsonserxvid = await resvid.json()
+                const { result } = await jsonserxvid
+                let berhitung = 1
+                let xixixi = `*「 XVIDEOS 」*\n\n*Hasil Pencarian : ${querVID}*\n\n─────────────────\n\nKetik #getxvideos [angka] untuk mengambil ID, Contoh : #getxvideos 2\n`
+                for (let i = 0; i < result.length; i++) {
+                    xixixi += `\n─────────────────\n\n*Urutan* : ${berhitung+i}\n*Title* : ${result[i].title}\n*Actors* : ${result[i].actors}\n*Durasi* : ${result[i].duration}\n*Perintah download* : *#getxvideos ${result[i].url}*\n`
+                }
+                    xixixi += `\n\n`
+                for (let ii = 0; ii < result.length; ii++) {
+                    xixixi += `(#)${result[ii].url}`
+                }
+                await kay.sendFileFromUrl(from, result[0].image, 'thumbxvid.jpg', xixixi, id)
+                await limitAdd(serial)
+            } catch (err){
+                console.log(err)
+                kay.sendFileFromUrl(from, errorurl, 'error.png', '💔️ Maaf, Xvideos tidak ditemukan')
+                kay.sendText(ownerNumber, 'Xvideos Error : ' + err)
+            }
+            break
+        case prefix+'getxvideos':
+            if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (!isNsfw) return kay.reply(from, `command/Perintah NSFW belum di aktifkan di group ini!`, id)
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            try {
+                if (quotedMsg && quotedMsg.type == 'image') {
+                    if (args.length === 1) return kay.reply(from, `Kirim perintah *#getxvideos [ Id Download ]*, untuk contoh silahkan kirim perintah *#readme*`)
+                    if (!Number(args[1])) return kay.reply(from, `*Apabila ditag hanya cantumkan nomer urutan bukan ID Download!*\nContoh : *#getxvideos 1*`, id)
+                    const datavideo = quotedMsg.type == 'chat' ? quotedMsg.body : quotedMsg.type == 'image' ? quotedMsg.caption : ''
+                    const pilur = datavideo.split('(#)')
+                    console.log(pilur[args[1]])
+                    kay.reply(from, mess.wait, id)
+                    const vidxvid = await fetch(`https://mnazria.herokuapp.com/api/porndownloadxvideos?url=${pilur[args[1]]}`)
+                    if (!vidxvid.ok) throw new Error(`Error Get Video : ${vidxvid.statusText}`)
+                    const vidxvideo = await vidxvid.json()
+                     if (vidxvideo.status == false) {
+                        kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                    } else {
+                        try{
+                        const { mp4 } = await vidxvideo
+                        const shortvidxv = await urlShortener(mp4)
+                        const captions = `*「 XVIDEOS DOWNLOADER 」*\n\n*Website* : XVideos\n*Ext* : MP3\n\n*Silahkan download file media sedang melalui link yang tersedia.*\n${shortvidxv}`
+                        kay.sendFileFromUrl(from, `https://sensorstechforum.com/wp-content/uploads/2019/07/xvideos-virus-image-sensorstechforum-com.jpg`, ``, captions, id)
+                        // await kay.sendFileFromUrl(from, result, `${title}.mp3`, `XVIDEOS BY KAY `, id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                        await limitAdd(serial)
+                        } catch (err){
+                            console.log(err)
+                        }
+                    }    
+                } else if (quotedMsg && quotedMsg.type == 'chat') { 
+                    kay.reply(from, `*Salah tag! hanya tag pesan berisi data hasil dari penelusuran videp.*`, id)
+                } else {
+                    if (args.length === 1) return kay.reply(from, `Kirim perintah *#getxvideos [ Id Download ]*, untuk contoh silahkan kirim perintah *#readme*`)
+                    if (args[1] <= 25) return kay.reply(from, `*Apabila ingin mengambil data video dengan nomor urutan, mohon tag pesan bot tentang pencarian videp!*`,)
+                    kay.reply(from, mess.wait, id)
+                    const getvide = await get.get(`https://mnazria.herokuapp.com/api/porndownloadxvideos?url=${pilur[args[1]]}`).json
+                    if (getvide.error) {
+                        kay.reply(from, getvide.error, id)
+                    } else {
+                        const { mp4 } = await mhankyt35
+                        const shortvidxv2 = await urlShortener(mp4)
+                        console.log(`CHANGE API BARBAR : ${ext}\n${filesize}\n${status}`)
+                        const captions = `*「 XVIDEOS DOWNLOADER 」*\n\n*Website* : XVideos\n\n*Ext* : MP4\n*Link* : ${shortvidxv2}\n*Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit*`
+                        kay.sendFileFromUrl(from, `https://sensorstechforum.com/wp-content/uploads/2019/07/xvideos-virus-image-sensorstechforum-com.jpg`, ``, captions, id)
+                        // await kay.sendFileFromUrl(from, result, `${title}.mp3`, `Music telah terkirim ${pushname}`, id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                        await limitAdd(serial)
+                   }
+                }
+            } catch (err) {
+                kay.sendText(ownerNumber, 'Error XVideos : '+ err)
+                kay.reply(from, `*Kesalahan! Pastikan id download sudah benar.*`, id)
+                console.log(err)
+            }
+            break
+        case prefix+'xxx':
+            if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (!isNsfw) return kay.reply(from, `command/Perintah NSFW belum di aktifkan di group ini!`, id)
+
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#xxx* [ Judul ]`)
+            const querXXX = body.slice(9)
+            kay.reply(from, mess.wait, id)
+            try {
+                const resxxx = await fetch(`https://api.vhtear.com/xxxsearch?query=${encodeURIComponent(querXXX)}&apikey=${vhtearkey}`)
+                if (!resxxx.ok) throw new Error(`unexpected response ${resxxx.statusText}`)
+                const resxxx2 = await resxxx.json()
+                const { data } = await resxxx2.result
+                let berhitung = 1
+                let xixixi = `*「 XVIDEOS 」*\n\n*Hasil Pencarian : ${querXXX}*\n\n─────────────────\n\nKetik #getxxx [angka] untuk mengambil ID, Contoh : #getxxx 2\n`
+                for (let i = 0; i < data.length; i++) {
+                    xixixi += `\n─────────────────\n\n*Urutan* : ${berhitung+i}\n*Title* : ${data[i].title}\n*Duration* : ${data[i].duration}\n*Perintah download* : *#getxxx ${data[i].url}*\n`
+                }
+                    xixixi += `\n\n`
+                for (let ii = 0; ii < data.length; ii++) {
+                    xixixi += `(#)${data[ii].url}`
+                }
+                await kay.sendFileFromUrl(from, data[0].image, 'thumbxxx.jpg', xixixi, id)
+                await limitAdd(serial)
+            } catch (err){
+                console.log(err)
+                kay.sendFileFromUrl(from, errorurl, 'error.png', '💔️ Maaf, XXX tidak ditemukan')
+                kay.sendText(ownerNumber, 'XXX Error : ' + err)
+            }
+            break
+        case prefix+'getxxx':
+            if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (!isNsfw) return kay.reply(from, `command/Perintah NSFW belum di aktifkan di group ini!`, id)
+
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
+            try {
+                if (quotedMsg && quotedMsg.type == 'image') {
+                    if (args.length === 1) return kay.reply(from, `Kirim perintah *#getxxx [ Id Download ]*, untuk contoh silahkan kirim perintah *#readme*`)
+                    if (!Number(args[1])) return kay.reply(from, `*Apabila ditag hanya cantumkan nomer urutan bukan ID Download!*\nContoh : *#getxxx 1*`, id)
+                    const datavideo = quotedMsg.type == 'chat' ? quotedMsg.body : quotedMsg.type == 'image' ? quotedMsg.caption : ''
+                    const pilur = datavideo.split('(#)')
+                    console.log(pilur[args[1]])
+                    kay.reply(from, mess.wait, id)
+                    const getxxx = await fetch(`https://api.vhtear.com/xxxdownload?link=${pilur[args[1]]}&apikey=${vhtearkey}`)
+                    if (!getxxx.ok) throw new Error(`Error XXX : ${getxxx.statusText}`)
+                    const getxxx2 = await getxxx.json()
+                     if (getxxx2.status == false) {
+                        kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                    } else {
+                        try{
+                        const { title, urlVideo, response } = await getxxx2.result
+                        console.log(`STATUS API : ${response}`)
+                        let xixixi = `*「 XXX DOWNLOADER 」*\n\n${title}`
+                        for (let i = 0; i < urlVideo.length; i++) {
+                            xixixi += `\n─────────────────\n\n*Title* : ${urlVideo[i].title}\n*Default Quality* : ${urlVideo[i].defaultQuality}\n*Format* : ${urlVideo[i].format}\n*Quality* : ${urlVideo[i].quality}\n*Url Video* : ${urlVideo[i].videoUrl}\n\n`
+                        }
+                        const captions = `*「 XXX DOWNLOADER 」*\n\n*Title* : ${title}\n\n*Ext* : MP4\n\n*Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit*`
+                        kay.sendFileFromUrl(from, `https://thumbs.dreamstime.com/b/xxx-neon-sign-dark-background-xxx-neon-sign-dark-background-vector-illustration-129829099.jpg`, `xxx.jpg`, xixixi, id)
+                        // await kay.sendFileFromUrl(from, result, `${title}.mp3`, `Music telah terkirim ${pushname}`, id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                        await limitAdd(serial)
+                        } catch (err){
+                            console.log(err)
+                        }
+                    }    
+                } else if (quotedMsg && quotedMsg.type == 'chat') { 
+                    kay.reply(from, `*Salah tag! hanya tag pesan berisi data hasil dari penelusuran videp.*`, id)
+                } else {
+                    if (args.length === 1) return kay.reply(from, `Kirim perintah *#getxvideos [ Id Download ]*, untuk contoh silahkan kirim perintah *#readme*`)
+                    if (args[1] <= 25) return kay.reply(from, `*Apabila ingin mengambil data video dengan nomor urutan, mohon tag pesan bot tentang pencarian video!*`,)
+                    kay.reply(from, mess.wait, id)
+                    const getxxx = await fetch(`https://api.vhtear.com/xxxsearch?link=${pilur[args[1]]}&apikey=${vhtearkey}`)
+                    if (!getxxx.ok) throw new Error(`Error XXX : ${getxxx.statusText}`)
+                    const getxxx2 = await getxxx.json()
+                     if (getxxx2.status == false) {
+                        kay.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
+                    } else {
+                        //if (Number(getxxx2.result.data.duration.split(':')[0]) > 5) return kay.sendFileFromUrl(from, imgUrl, `thumb.jpg`, `*「 XXX DOWNLOADER 」*\n\n*Website* : XVideos\n\n*Ext* : MP4\n*Link* : ${shortvidxv2}\n*Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit*`, id)
+                        const { title, urlVideo, response } = await getxxx2.result
+                        console.log(`STATUS API : ${response}`)
+                        let xixixi = `*「 XXX DOWNLOADER 」*\n\n*Title* : ${title}`
+                        for (let i = 0; i < urlVideo.length; i++) {
+                            xixixi += `\n─────────────────\n\n*Default Quality* : ${urlVideo[i].defaultQuality}\n*Format* : ${urlVideo[i].format}\n*Quality* : ${urlVideo[i].quality}\n*Url Video* : ${urlVideo[i].videoUrl}\n\n`
+                        }
+                        const captions = `*「 XXX DOWNLOADER 」*\n\n*Title* : ${title}\n\n*Ext* : MP4\n\n*Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit*`
+                        kay.sendFileFromUrl(from, `https://thumbs.dreamstime.com/b/xxx-neon-sign-dark-background-xxx-neon-sign-dark-background-vector-illustration-129829099.jpg`, `xxx.jpg`, xixixi, id)
+                        // await kay.sendFileFromUrl(from, result, `${title}.mp3`, `Music telah terkirim ${pushname}`, id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                        await limitAdd(serial)
+                   }
+                }
+            } catch (err) {
+                kay.sendText(ownerNumber, 'Error XVideos : '+ err)
+                kay.reply(from, `*Kesalahan! Pastikan id download sudah benar.*`, id)
+                console.log(err)
+            }
+            break
+        case prefix+'xnxx':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#xnxx [linkXnxx]*, untuk contoh silahkan kirim perintah *#readme*')
+            if (!args[1].match(isUrl) && !args[1].includes('xnxx.com')) return kay.reply(from, mess.error.Iv, id)
+            try {
+                kay.reply(from, mess.wait, id)
+                const resq = await axios.get('https://mhankbarbars.herokuapp.com/api/xnxx?url='+ args[1] +'&apiKey='+ barbarkey)
+                const resp = resq.data
+                 if (resp.error) {
+                    kay.reply(from, ytvv.error, id)
+                } else {
+                    if (Number(resp.result.size.split(' MB')[0]) > 20.00) return kay.reply(from, 'Maaf durasi video sudah melebihi batas maksimal 20 menit!', id)
+                    kay.sendFileFromUrl(from, resp.result.thumb, 'thumb.jpg', `➸ *Judul* : ${resp.result.judul}\n➸ *Deskripsi* : ${resp.result.desc}\n➸ *Filesize* : ${resp.result.size}\n\nSilahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit.`, id)
+                    await kay.sendFileFromUrl(from, resp.result.vid, `${resp.result.title}.mp4`, '', id)}
+                    await limitAdd(serial)
+            } catch (err) {
+                console.log(err)
+                await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Video tidak ditemukan')
+                kay.sendText(ownerNumber, 'Xnxx Error : ' + err)
+            }
+            break
+        case prefix+'ramalpasangan':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#ramalpasangan [kamu|pasangan]*\nContoh : *#ramalpasangan rashid|KAY *', id)
+            arg = body.trim().split('|')
+            if (arg.length >= 2) {
+            kay.reply(from, mess.wait, id)
+            const kamu = arg[0]
+            const pacar = arg[1]
+            const rpmn = rate[Math.floor(Math.random() * (rate.length))]
+            const rpmn2 = rate[Math.floor(Math.random() * (rate.length))]
+            const rpmn3 = rate[Math.floor(Math.random() * (rate.length))]
+            const rpmn4 = rate[Math.floor(Math.random() * (rate.length))]
+            const rpmn5 = rate[Math.floor(Math.random() * (rate.length))]
+            const rpmn6 = rate[Math.floor(Math.random() * (rate.length))]
+            const rjh2 = `*Hasil Pengamatan!*\nPasangan dengan nama ${kamu} dan ${pacar}\n\n➸ Cinta : ${rpmn}\n➸ Jodoh : ${rpmn2}\n➸ Kemiripan : ${rpmn3}\n➸ Kesukaan : ${rpmn4}\n➸ Kesamaan : ${rpmn5}\n➸ Kebucinan ${rpmn6}`
+            kay.reply(from, rjh2, id)
+            limitAdd(serial)
+            } else {
+            await kay.reply(from, 'Wrong Format!', id)
+            }
+            break
+        case prefix+'artinama':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#artinama [query]*\nContoh : *#artinama rashid*', id)
+            try {
+            const resp = await axios.get('https://api.vhtear.com/artinama?nama=' + body.slice(9) + '&apikey=' + vhtearkey)
+            if (resp.data.error) return kay.reply(from, resp.data.error, id)
+            const anm2 = `➸ Artinama : ${resp.data.result.hasil}`
+            kay.reply(from, anm2, id)
+            limitAdd(serial)
+            } catch (err) {
+                console.error(err.message)
+                await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+                kay.sendText(ownerNumber, 'Artinama Error : ' + err)
+           }
+            break
+        case prefix+'zodiak':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#zodiak [zodiak kamu]*\nContoh : *#zodiak scorpio*', id)
+            try {
+            const resp = await axios.get('https://api.vhtear.com/zodiak?query=' + body.slice(8) + '&apikey=' + vhtearkey)
+            if (resp.data.error) return kay.reply(from, resp.data.error, id)
+            const anm2 = `➸ Zodiak : ${resp.data.result.zodiak}\n➸ Ramalan : ${resp.data.result.ramalan}\n➸ Nomor Keberuntungan : ${resp.data.result.nomorKeberuntungan}\n➸ Motivasi : ${resp.data.result.motivasi}\n➸ Inspirasi : ${resp.data.result.inspirasi}`
+            kay.reply(from, anm2, id)
+            limitAdd(serial)
+            } catch (err) {
+                console.error(err.message)
+                await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Zodiak tidak ditemukan')
+                kay.sendText(ownerNumber, 'Zodiak Error : ' + err)
+           }
+           break
+        case prefix+'caklontong':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            try {
+            const resp = await axios.get('https://api.vhtear.com/funkuis&apikey=' + vhtearkey)
+            if (resp.data.error) return kay.reply(from, resp.data.error, id)
+            const anm2 = `➸ Soal : ${resp.data.result.soal}\n➸ Poin : ${resp.data.result.poin}`
+            const jwban = `➸ Jawaban : ${resp.data.result.desk}`
+            kay.reply(from, anm2, id)
+            kay.sendText(from, `30 Detik Lagi...`, id)
+            await sleep(10000)
+            kay.sendText(from, `20 Detik Lagi...`, id)
+            await sleep(10000)
+            kay.sendText(from, `10 Detik Lagi...`, id)
+            await sleep(10000)
+            kay.reply(from, jwban, id)
+            limitAdd(serial)
+            } catch (err) {
+                console.error(err.message)
+                await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Soal Quiz tidak ditemukan')
+                kay.sendText(ownerNumber, 'Zodiak Error : ' + err)
+           }
+           break
+         case prefix+'tebakgambar':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            try {
+            const resp = await axios.get('https://api.vhtear.com/tebakgambar&apikey=' + vhtearkey)
+            if (resp.data.error) return kay.reply(from, resp.data.error, id)
+            const jwban = `➸ Jawaban : ${resp.data.result.jawaban}`
+            kay.sendFileFromUrl(from, resp.data.result.soalImg, 'tebakgambar.jpg', '_Silahkan Jawab Maksud Dari Gambar Ini_', id)
+            kay.sendText(from, `30 Detik Lagi...`, id)
+            await sleep(10000)
+            kay.sendText(from, `20 Detik Lagi...`, id)
+            await sleep(10000)
+            kay.sendText(from, `10 Detik Lagi...`, id)
+            await sleep(10000)
+            kay.reply(from, jwban, id)
+            limitAdd(serial)
+            } catch (err) {
+                console.error(err.message)
+                await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Soal Quiz tidak ditemukan')
+                kay.sendText(ownerNumber, 'Tebak Gambar Error : ' + err)
+           }
+           break
+         case prefix+'family100':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            try {
+            const resp = await axios.get('https://api.vhtear.com/family100&apikey=' + vhtearkey)
+            if (resp.data.error) return kay.reply(from, resp.data.error, id)
+            const anm2 = `➸ Soal : ${resp.data.result.soal}\n_Silahkan DiJawab_`
+            const jwban = `➸ Jawaban : ${resp.data.result.jawaban}`
+            kay.reply(from, anm2, id)
+            kay.sendText(from, `30 Detik Lagi...`, id)
+            await sleep(10000)
+            kay.sendText(from, `20 Detik Lagi...`, id)
+            await sleep(10000)
+            kay.sendText(from, `10 Detik Lagi...`, id)
+            await sleep(10000)
+            kay.reply(from, jwban, id)
+            limitAdd(serial)
+            } catch (err) {
+                console.error(err.message)
+                await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Soal Quiz tidak ditemukan')
+                kay.sendText(ownerNumber, 'Family100 Error : ' + err)
+           }
+           break
+        case prefix+'heroml':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#heroml [nama hero]*\nContoh : *#heroml akai*', id)
+            try {
+            const resp = await axios.get('https://api.vhtear.com/herodetail?query=' + body.slice(8) + '&apikey=' + vhtearkey)
+            if (resp.data.error) return kay.reply(from, resp.data.error, id)
+            const anm2 = `➸ Title : ${resp.data.result.title}\n➸ Quotes : ${resp.data.result.quotes}\n➸ Info : ${resp.data.result.info}\n➸ Atribut : ${resp.data.result.attributes}`
+            kay.sendFileFromUrl(from, resp.data.result.pictHero, 'hero.jpg', anm2, id)
+            limitAdd(serial)
+            } catch (err) {
+                console.error(err.message)
+                await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Hero tidak ditemukan')
+                kay.sendText(ownerNumber, 'Heroml Error : ' + err)
+           }
+            break
+        case prefix+'nomorhoki':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#nomorhoki [no hp kamu]*\nContoh : *#nomorhoki 0895384009405*', id)
+            try {
+            const resp = await axios.get('https://api.vhtear.com/nomerhoki?no=' + body.slice(11) + '&apikey=' + vhtearkey)
+            if (resp.data.error) return kay.reply(from, resp.data.error, id)
+            const anm2 = `➸ Hasil :\n ${resp.data.result.hasil}`
+            kay.reply(from, anm2, id)
+            limitAdd(serial)
+            } catch (err) {
+                console.error(err.message)
+                await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Nomor Hoki tidak ditemukan')
+                kay.sendText(ownerNumber, 'Nomorhoki Error : ' + err)
+           }
+            break
+        case prefix+'artimimpi':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#artimimpi [mimpi]*\nContoh : *#artimimpi ular*', id)
+            try {
+            const resp = await axios.get('https://api.vhtear.com/artimimpi?query=' + body.slice(10) + '&apikey=' + vhtearkey)
+            if (resp.data.error) return kay.reply(from, resp.data.error, id)
+            const anm2 = `➸ Artimimpi : ${resp.data.result.hasil}`
+            kay.reply(from, anm2, id)
+            limitAdd(serial)
+            } catch (err) {
+                console.error(err.message)
+                await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Mimpi tidak ditemukan')
+                kay.sendText(ownerNumber, 'Artimimpi Error : ' + err)
+           }
+            break
+        case prefix+'wiki':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#wiki [ Query ]*\nContoh : *#wiki asu*`, id)
+            const queryz_ = body.slice(6)
+            const wiki = await axios.get(`https://api.vhtear.com/wikipedia?query=${queryz_}&apikey=${vhtearkey}`)
+            if (wiki.data.error) {
+                kay.reply(from, wiki.data.error, id)
+            } else {
+                kay.sendFileFromUrl(from, wiki.data.result.ImgResult, '', `*「 WIKI 」*\n\n➸ *Query* : ${queryz_}\n\n➸ *Result* : ${wiki.data.result.Info}`, id)
+                await limitAdd(serial)
+            }
+        case prefix+'kbbi':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#kbbi [ Query ]*\nContoh : *#kbbi asu*`, id)
+            const kbbl = body.slice(6)
+            const kbbl2 = await axios.get(`https://api.vhtear.com/kbbi?query=${kbbl}&apikey=${vhtearkey}`)
+
+            if (kbbl2.data.error) {
+                kay.reply(from, kbbl2.data.error, id)
+            } else {
+                kay.sendText(from, `*「 KBBI 」*\n\n➸ *Query* : ${kbbl}\n\n➸ *Result* : ${kbbl2.data.result.hasil}`, id)
+                await limitAdd(serial)
+            }
+            break
+       case prefix+'googleimage':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            argz = body.trim().split('|')
+            if (argz.length >= 2) {
+            const qwery = argz[1]
+            const jum = argz[2]
+            if(!qwery) return await kay.reply(from, `Kirim perintah *#googleimage [ |Query|Jumlah ]*, contoh = #googleimage |loli|3`, id)
+            if(!jum) return await kay.reply(from, `Jumlah gambar diperlukan, contoh = #googleimage |loli|3`, id)
+            if(jum >= 5) return await kay.reply(from, 'Jumlah terlalu banyak! Max 4', id)
+            var gis = require('g-i-s');
+            var opts = {
+                searchTerm: qwery
+                };
+                gis(opts, logResults);
+                    
+                function logResults(error, results) {
+                    if (error) {
+                        kay.reply(from, 'Maaf, Fitur Sedang Error', id)
+                    } else {
+                        const item = results.slice(0, jum)
+                        item.forEach(async(res) => {
+                        console.log(res)
+                        const yurl = await urlShortener(res.url)
+                        kay.sendImage(from, res.url, null, `➸ Link : ${yurl}\n➸ Image size : ${res.height} x ${res.width}`)  
+                        limitAdd(serial) 
+                        })
+                    }
+                }
+            }
+            break
+        case prefix+'sandwriting': 
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1)  return kay.reply(from, 'Kirim perintah *#sandwriting [ Teks ]*\nContoh *#sandwriting KAY  Cantik*', id)
+            const swrt = body.slice(13)
+            try {
+            const swrt2 = await axios.get('https://api.vhtear.com/sand_writing?text1=' + swrt + '&apikey=' + vhtearkey)
+            const { imgUrl } = swrt2.data.result
+            const swrt3 = `*「 SAND WRITING 」*
+
+*Text : ${swrt}*`
+            const pictk = await bent("buffer")(imgUrl)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            kay.sendImage(from, base64, swrt3)
+            await limitAdd(serial)
+            } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+             kay.sendText(ownerNumber, 'Sand Writing Error : ' + err)
+           }
+          break
+         case prefix+'tahta':
+             if(isReg(obj)) return
+             if(cekumur(cekage)) return
+             if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+             if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+             const jreng = body.slice(7)
+             if (!jreng) return kay.reply(from, 'Kirim perintah *#tahta [teks]*\n\nContoh *#tahta KAY *', id)
+             if (jreng.length > 10) return kay.reply(from, 'Maksimal 10 Huruf!', id)
+             kay.sendText(from, '_Sedang diproses, mohon tunggu sebentar!..._', id)
+             await kay.sendFileFromUrl(from, `https://api.vhtear.com/hartatahta?text=${jreng}&apikey=${vhtearkey}`,`${jreng}.jpg`,`Harta Tahta ${jreng}`, id)        
+             await limitAdd(serial)
+             break
+         case prefix+'resepmasakan':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1)  return kay.reply(from, 'Kirim perintah *#resepmasakan [optional]*\nContoh *#resepmasakan rawon*', id)
+            argz = body.trim().split(' ')
+            console.log(...argz[1])
+            var slicedArgs = Array.prototype.slice.call(argz, 1);
+            console.log(slicedArgs)
+            const rmk = await slicedArgs.join(' ')
+            console.log(rmk)
+            try {
+            const resp = await axios.get('https://api.vhtear.com/resepmasakan?query=' + rmk + '&apikey=' + vhtearkey)
+            const { bahan, cara, image, title  } = resp.data.result
+            const rmk3 = `*Resep Ditemukan!*
+➸ *Judul:* ${title}
+➸ *Bahan:* ${bahan}
+➸ *Cara:* ${cara}`
+
+            const pictk = await bent("buffer")(image)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            kay.sendImage(from, base64, title, rmk3)
+            await limitAdd(serial)
+            } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, Resep tidak ditemukan')
+             kay.sendText(ownerNumber, 'Resepmasakan Error : ' + err)
+           }
+           break
+        case prefix+'twitterstalk':
+        case prefix+'twtstalk':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1)  return kay.reply(from, 'Kirim perintah *#twtstalk @username*\nContoh *#twtstalk @miakhalifah*', id)
+            argz = body.trim().split(' ')
+            console.log(...argz[1])
+            var slicedArgs = Array.prototype.slice.call(argz, 1);
+            console.log(slicedArgs)
+            const twstalk = await slicedArgs.join(' ')
+            console.log(twstalk)
+            try {
+            const twstalk2 = await axios.get('https://mhankbarbars.herokuapp.com/api/twstalk?username=' + twstalk + '&apiKey=' + barbarkey)
+            const { followers_count, full_name, name, profile_pic, status_count } = twstalk2.data
+            const twstalk3 = `*User Ditemukan!*
+
+➸ *Nama:* ${name}
+➸ *Nama Panjang:* ${full_name}
+➸ *Jumlah Pengikut:* ${followers_count}
+➸ *Jumlah Postingan:* ${status_count}`
+
+            const pictk = await bent("buffer")(profile_pic)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            kay.sendImage(from, base64, name, twstalk3)
+            await limitAdd(serial)
+            } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+             kay.sendText(ownerNumber, 'Twitter Error : ' + err)
+           }
+          break
+       case prefix+'igstalk':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1)  return kay.reply(from, 'Kirim perintah *#igstalk @username*\nContoh *#igstalk duar_amjay*', id)
+            argz = body.trim().split(' ')
+            console.log(...argz[1])
+            var slicedArgs = Array.prototype.slice.call(argz, 1);
+            console.log(slicedArgs)
+            const istalk = await slicedArgs.join(' ')
+            console.log(istalk)
+            try {
+            const istalk2 = await axios.get('https://api.vhtear.com/igprofile?query=' + istalk + '&apikey=' + vhtearkey)
+            const { biography, follower, follow, post_count, full_name, username, picture, is_private } = istalk2.data.result
+            const istalk3 = `*User Ditemukan!*
+➸ *Username:* ${username}
+➸ *Nama:* ${full_name}
+➸ *Bio:* ${biography}
+➸ *Mengikuti:* ${follow}
+➸ *Pengikut:* ${follower}
+➸ *Jumlah Postingan:* ${post_count}`
+
+            const pictk = await bent("buffer")(picture)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            kay.sendImage(from, base64, username, istalk3)
+            } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(self, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+             kay.sendText(ownerNumber, 'Igstalk Error : ' + err)
+           }
+          break
+        case prefix+'tiktokstalk':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1)  return kay.reply(from, 'Kirim perintah *#tiktokstalk @username*\nContoh *#tiktokstalk @duar_amjay*', id)
+            argz = body.trim().split(' ')
+            console.log(...argz[1])
+            var slicedArgs = Array.prototype.slice.call(argz, 1);
+            console.log(slicedArgs)
+            const tstalk = await slicedArgs.join(' ')
+            console.log(tstalk)
+            try {
+            const tstalk2 = await axios.get('https://api.vhtear.com/tiktokprofile?query=' + tstalk + '&apikey=' + vhtearkey)
+            const { username, bio, follow, follower, title, like_count, video_post, description, picture, url_account } = tstalk2.data.result
+            const tiktod = `*User Ditemukan!*
+➸ *Username:* ${username}
+➸ *Judul:* ${title}
+➸ *Bio:* ${bio}
+➸ *Mengikuti:* ${follow}
+➸ *Pengikut:* ${follower}
+➸ *Jumlah Like*: ${like_count}
+➸ *Jumlah Postingan:* ${video_post}
+➸ *Deskripsi:* ${description}
+➸ *Link:* ${url_account}`
+
+            const pictk = await bent("buffer")(picture)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            kay.sendImage(from, base64, title, tiktod)
+            await limitAdd(serial)
+            } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+             kay.sendText(ownerNumber, 'Error Tiktokstalk : '+ err)
+           }
+          break
+        case prefix+'smulestalk':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#smulestalk [@username]*\nContoh : *#smulestalk loli*', id)
+            argz = body.trim().split(' ')
+            console.log(...argz[1])
+            var slicedArgs = Array.prototype.slice.call(argz, 1);
+            console.log(slicedArgs)
+            const sstalk = await slicedArgs.join(' ')
+            console.log(sstalk)
+            try {
+            const sstalk2 = await axios.get('https://api.vhtear.com/smuleprofile?query=' + sstalk + '&apikey=' + vhtearkey)
+            const { username, full_name, follower, follow, biography, is_vip, picture, recording } = sstalk2.data.result
+            const smule = `*User Ditemukan!*
+➸ *Username:* ${username}
+➸ *Full Name:* ${title}
+➸ *Biografi:* ${biography}
+➸ *Mengikuti:* ${follow}
+➸ *Pengikut:* ${follower}
+➸ *VIP*: ${is_vip}
+➸ *Total Rekaman:* ${recording}`
+
+            const pictk = await bent("buffer")(picture)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            kay.sendImage(from, base64, title, smule)
+            await limitAdd(serial)
+            } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+             kay.sendText(ownerNumber, 'Error Smulestalk : '+ err)
+            }
+          break
+        case prefix+'':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isSimi) return kay.reply(from, 'command/Perintah Simi belum di aktifkan di group ini!', id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *# [teks]*\nContoh : *# halo*')
+            const que = body.slice(2)
+            const sigo = await axios.get(`http://simsumi.herokuapp.com/api?text=${que}&lang=id`)
+            const sigot = sigo.data
+            kay.reply(from, sigot.success, id)
+            console.log(sigot)
+            break
+        case prefix+'ig': 
+        case prefix+'instagram':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#ig [ Link Instagram ]* untuk contoh silahkan kirim perintah *#readme*`)
+            if (!args[1].match(isUrl) && !args[1].includes('instagram.com')) return kay.reply(from, `Maaf, link yang kamu kirim tidak valid. [Invalid Link]`, id)
+            await kay.reply(from, mess.wait, id);
+            instagram(args[1]).then(async(res) => {
+                let username = res.owner_username;
+                for (let i = 0; i < res.post.length; i++) {
+                if (res.post[i].type == "image") {
+                        await kay.sendFileFromUrl(from, res.post[i].urlDownload, "ig.jpg", `*「 INSTAGRAM 」*\n\n➸ *Username* : ${username}\n➸ *Tipe* : Image/Jpg`, id);
+                        limitAdd(serial)
+                    } else if (res.post[i].type == "video") {
+                        await kay.sendFileFromUrl(from, res.post[i].urlDownload, "ig.mp4", `*「 INSTAGRAM 」*\n\n➸ *Username* : ${username}\n➸ *Tipe* : Video/MP4`);
+                        limitAdd(serial)
+                    }
+                }
+            }).catch((err) => {
+                console.log(err);
+                kay.reply(from, `Maaf, Terjadi Kesalahan`, id)
+            })
+            break
+        case prefix+'fb':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#fb [ Link Fb ]*\nContoh : *#fb https://www.facebook.com/24609282673/posts/10158628585367674/*`, id)
+            kay.reply(from, mess.wait, id)
+            facebook(args[1]).then(async(res) => {
+                let { VideoUrl } = await res
+                const epbe2 = `*「 FACEBOOK DOWNLOADER 」*\n➸ *Aplikasi*: Facebook\n\n_Silahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit._`
+                kay.sendFileFromUrl(from, VideoUrl, `Facebook.mp4`, epbe2, id)
+                await limitAdd(serial)
+            }).catch((err) => {
+                console.log(err);
+                kay.reply(from, `Maaf, Terjadi Kesalahan`, id)
+            })
+            break
+        case prefix+'waktu':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            await kay.sendText(from, `Waktu Indonesia Barat: *${moment().utcOffset('+0700').format('HH:mm')}* WIB \nWaktu Indonesia Tengah: *${moment().utcOffset('+0800').format('HH:mm')}* WITA \nWaktu Indonesia Timur: *${moment().utcOffset('+0900').format('HH:mm')}* WIT`)
+            await limitAdd(serial)
+            break
+        case prefix+'tiktok':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#tiktok [linkTiktok]*\nContoh : *#tiktok https://vt.tiktok.com/yqyjPX/*', id)
+            kay.reply(from, mess.wait, id)
+            tiktok(args[1]).then(async(res) => {
+                let { video, title, image, desk, dibuat, duration } = await res
+                let ttiktok = `*「 TIKTOK DOWNLOADER 」*\n\n➸ *Judul* : ${title}\n➸ Deskripsi : ${desk}\n➸ Durasi : ${duration}\n➸ Dibuat : ${dibuat}\n\n_Silahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit._`
+                kay.sendFileFromUrl(from, image, 'thumb.jpg', ttiktok, id)
+                await kay.sendFileFromUrl(from, video, `${title}.mp4`, '', id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                await limitAdd(serial)
+            }).catch((err) => {
+                console.log(err);
+                kay.reply(from, `Maaf, Terjadi Kesalahan`, id)
+            })
+            break
+        case prefix+'smule':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#smule [linkSmule]*\nContoh : *#smule https://www.smule.com/p/767512225_3062360163*', id)
+            kay.reply(from, mess.wait, id)
+            smule(args[1]).then(async(res) => {
+                let { Type, title, url, image } = await res
+                let tsmule = `*「 SMULE DOWNLOADER 」*\n\n➸ *Judul* : ${title}\n➸ *Type:* ${Type}\n\n_Silahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit._`
+                kay.sendFileFromUrl(from, image, 'thumb.jpg', tsmule, id)
+                await kay.sendFileFromUrl(from, url, `${title}.mp3`, '', id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                await limitAdd(serial)
+            }).catch((err) => {
+                console.log(err);
+                kay.reply(from, `Maaf, Terjadi Kesalahan`, id)
+            })
+            break
+        case prefix+'starmaker':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#starmaker [linkStarmaker]* untuk contoh silahkan kirim perintah *#readme*')
+            kay.reply(from, mess.wait, id)
+            starmaker(args[1]).then(async(res) => {
+                let { image, desc, url, title } = await res
+                let tstarmaker = `*「 STARMAKER DOWNLOADER 」*\n\n➸ *Judul* : ${title}\n➸ *Deskripsi:* ${desc}\n\n_Silahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit._`
+                kay.sendFileFromUrl(from, image, 'thumb.jpg', tstarmaker, id)
+                await kay.sendFileFromUrl(from, url, `${title}.mp3`, '', id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                await limitAdd(serial)
+            }).catch((err) => {
+                console.log(err);
+                kay.reply(from, `Maaf, Terjadi Kesalahan`, id)
+            })
+            break
+        case prefix+'twitter':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#twitter [ Link Twitter ]* untuk contoh silahkan kirim perintah *#readme*`)
+            kay.reply(from, mess.wait, id)
+            twitter(args[1]).then(async(res) => {
+                let { desk, urlVideo } = await res
+                let ttwitter = `*「 TWITTER DOWNLOADER 」*\n\n➸ *Aplikasi:* Twitter\n➸ *Deskripsi:* ${desk}\n\n_Silahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit._`
+                await kay.sendFileFromUrl(from, urlVideo, `twit.mp3`, ttwitter, id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                await limitAdd(serial)
+            }).catch((err) => {
+                console.log(err);
+                kay.reply(from, `Maaf, Terjadi Kesalahan`, id)
+            })
+            break
+        case prefix+'maps':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#maps [optional]*, Contoh : *#maps Jakarta*')
+            argz = body.trim().split(' ')
+            console.log(...argz[1])
+            var slicedArgs = Array.prototype.slice.call(argz, 1);
+            console.log(slicedArgs)
+            const mapz = await slicedArgs.join(' ')
+            console.log(mapz)
+            try {
+            const mapz2 = await axios.get('https://mnazria.herokuapp.com/api/maps?search=' + mapz)
+            const { gambar } = mapz2.data
+            const pictk = await bent("buffer")(gambar)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            kay.sendImage(from, base64, 'maps.jpg', `*Hasil Maps : ${mapz}*`)
+            limitAdd(serial)
+            } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+             kay.sendText(ownerNumber, 'Error Maps : '+ err)
+           }
+          break
+        case prefix+'joox':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, `Kirim perintah *#joox [ Optional ]*\nContoh : *#joox Alan Walker*`, id)
+            kay.reply(from, mess.wait, id)
+            joox(args[1]).then(async(res) => {
+                let { penyanyi, judul, album, linkImg, linkMp3, filesize, ext, duration } = await res
+                let tjoox = `*「 JOOX DOWNLOADER 」*\n\n➸ *Penyanyi:* ${penyanyi}\n➸ *Judul:* ${judul}\n➸ *Album:* ${album}\n➸ *Ext:* ${ext}\n➸ *Size:* ${filesize}\n➸ *Durasi:* ${duration}\n\n_Silahkan tunggu sebentar proses pengiriman file membutuhkan waktu beberapa menit._`
+                kay.sendImage(from, linkImg, judul, tjoox)
+                kay.sendFileFromUrl(from, linkMp3, `${judul}.${ext}`, '', id).catch(() => kay.reply(from, mess.error.Yt4, id))
+                await limitAdd(serial)
+            }).catch((err) => {
+                console.log(err);
+                kay.reply(from, `Maaf, Terjadi Kesalahan`, id)
+            })
+            break
+         case prefix+'checkip':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#checkip [ipaddress]*\nContoh : *#checkip 182.0.144.145*', id)
+            kay.reply(from, mess.wait, id)
+            argz = body.trim().split(' ')
+            console.log(...argz[1])
+            var slicedArgs = Array.prototype.slice.call(argz, 1);
+            console.log(slicedArgs)
+            const cekip = await slicedArgs.join(' ')
+            console.log(cekip)
+            try {
+            const cekip2 = await axios.get('https://mnazria.herokuapp.com/api/check?ip=' + cekip)
+            const { city, continent_name, country_name, ip, latitude, location, longitude, region_name } = cekip2.data
+            const cekip3 = `*User Ditemukan!*
+
+➸ *Kota:* ${city}
+➸ *Benua:* ${continent_name}
+➸ *Negara:* ${country_name}
+➸ *Ip Address:* ${ip}
+➸ *Garis Lintang:* ${latitude}
+➸ *Kode Telepon:* +${location.calling_code}
+➸ *Ibu Kota:* ${location.capital}
+➸ *Bahasa:* ${location.languages[0].name}
+➸ *Garis Bujur:* ${longitude}
+➸ *Wilayah:* ${region_name}`
+
+            const pictk = await bent("buffer")(location.country_flag)
+            const base64 = `data:image/jpg;base64,${pictk.toString("base64")}`
+            kay.sendText(from, cekip3)
+            await limitAdd(serial)
+            } catch (err) {
+             console.error(err.message)
+             await kay.sendFileFromUrl(from, errorurl2, 'error.png', '💔️ Maaf, User tidak ditemukan')
+             kay.sendText(ownerNumber, 'Error Check IP : '+ err)
+           }
+          break
+        case prefix+'brainly':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length >= 2){
+                const BrainlySearch = require('./lib/brainly')
+                let tanya = body.slice(9)
+                let jum = Number(tanya.split('.')[1]) || 2
+                if (jum > 10) return kay.reply(from, 'Max 10!', id)
+                if (Number(tanya[tanya.length-1])){
+                    tanya
+                }
+                kay.reply(from, `➸ *Pertanyaan* : ${tanya.split('.')[0]}\n\n➸ *Jumlah jawaban* : ${Number(jum)}`, id)
+                await BrainlySearch(tanya.split('.')[0],Number(jum), function(res){
+                    res.forEach(x=>{
+                        if (x.jawaban.fotoJawaban.length == 0) {
+                            kay.reply(from, `➸ *Pertanyaan* : ${x.pertanyaan}\n\n➸ *Jawaban* : ${x.jawaban.judulJawaban}\n`, id)
+                            limitAdd(serial)
+                        } else {
+                            kay.reply(from, `➸ *Pertanyaan* : ${x.pertanyaan}\n\n➸ *Jawaban* 〙: ${x.jawaban.judulJawaban}\n\n➸ *Link foto jawaban* : ${x.jawaban.fotoJawaban.join('\n')}`, id)
+                            limitAdd(serial)
+                        }
+                    })
+                })
+            } else {
+                kay.reply(from, 'Usage :\n!brainly [pertanyaan] [.jumlah]\n\nEx : \n!brainly NKRI .2', id)
+            }
+            break
+        case prefix+'math':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, '[❗] Kirim perintah *#math [ Angka ]*\nContoh : #math 12*12\n*NOTE* :\n- Untuk Perkalian Menggunakan *\n- Untuk Pertambahan Menggunakan +\n- Untuk Pengurangan Mennggunakan -\n- Untuk Pembagian Menggunakan /')
+            const mtk = body.slice(6)
+            if (typeof Math_js.evaluate(mtk) !== "number") {
+            kay.reply(from, `"${mtk}", bukan angka!\n[❗] Kirim perintah *#math [ Angka ]*\nContoh : #math 12*12\n*NOTE* :\n- Untuk Perkalian Menggunakan *\n- Untuk Pertambahan Menggunakan +\n- Untuk Pengurangan Mennggunakan -\n- Untuk Pembagian Menggunakan /`, id)
+            limitAdd(serial)
+        } else {
+            kay.reply(from, `*「 MATH 」*\n\n*Kalkulator*\n${mtk} = ${Math_js.evaluate(mtk)}`, id)
+        }
+        break
+        case prefix+'wait':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (isMedia && type === 'image' || quotedMsg && quotedMsg.type === 'image') {
+                if (isMedia) {
+                    var mediaData = await decryptMedia(message, uaOverride)
+                } else {
+                    var mediaData = await decryptMedia(quotedMsg, uaOverride)
+                }
+                const fetch = require('node-fetch')
+                const imgBS4 = `data:${mimetype};base64,${mediaData.toString('base64')}`
+                kay.reply(from, 'Searching....', id)
+                fetch('https://trace.moe/api/search', {
+                    method: 'POST',
+                    body: JSON.stringify({ image: imgBS4 }),
+                    headers: { "Content-Type": "application/json" }
+                })
+                .then(respon => respon.json())
+                .then(resolt => {
+                    if (resolt.docs && resolt.docs.length <= 0) {
+                        kay.reply(from, 'Maaf, saya tidak tau ini anime apa', id)
+                    }
+                    const { is_adult, title, title_chinese, title_romaji, title_english, episode, similarity, filename, at, tokenthumb, anilist_id } = resolt.docs[0]
+                    teks = ''
+                    if (similarity < 0.92) {
+                        teks = '*Saya memiliki keyakinan rendah dalam hal ini* :\n\n'
+                    }
+                    teks += `➸ *Title Japanese* : ${title}\n➸ *Title chinese* : ${title_chinese}\n➸ *Title Romaji* : ${title_romaji}\n➸ *Title English* : ${title_english}\n`
+                    teks += `➸ *Ecchi* : ${is_adult}\n`
+                    teks += `➸ *Eps* : ${episode.toString()}\n`
+                    teks += `➸ *Kesamaan* : ${(similarity * 100).toFixed(1)}%\n`
+                    var video = `https://media.trace.moe/video/${anilist_id}/${encodeURIComponent(filename)}?t=${at}&token=${tokenthumb}`;
+                    kay.sendFileFromUrl(from, video, 'nimek.mp4', teks, id).catch(() => {
+                        kay.reply(from, teks, id)
+                        limitAdd(serial)
+                    })
+                })
+                .catch(() => {
+                    kay.reply(from, 'Error !', id)
+                })
+            } else {
+                kay.sendFileFromUrl(from, tutor, 'Tutor.jpg', 'Neh contoh mhank!', id)
+            }
+            break
+        //TEXT MAKER NIH BOSS EH SALAH IMAGE MAKER MAKSUDNYA APA BACOT KOCOK MAU WKWK
+        case prefix+'textmaker':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+          case prefix+'phcomment':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+        case prefix+'threats':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+          case prefix+'deepfry':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+           case prefix+'blurpify':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+         case prefix+'captcha':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+           case prefix+'magik':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+          case prefix+'trigged':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+		    case prefix+'trash':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'jail':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+		    case prefix+'wanted':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+		    case prefix+'circle':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'rip':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'gay':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'shit':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'deletedd':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'affect':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'whoosh':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'wasted':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'hitler':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'cute':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+			case prefix+'palm':
+                kay.reply(from, 'beli fitur nya dulu cuk di gw wa.me/6285648253605', id)
+                break
+            //FITUR BUCIN AJIM GW JOMBLO
+            case prefix+'kiss':
+              if(isReg(obj)) return
+                if(cekumur(cekage)) return
+                if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+                 if (args.length === 1) return kay.reply(from, 'Hanya Owner yang bisa memasukan Bot ke dalam Grup!', id)
+                        const texnugmfq = body.slice(6)
+                       const getnomberr =  await kay.checkNumberStatus(texnugmfq)
+                    const useriqf = getnomberr.id.replace('@','') + '@c.us'
+                    const jnccck = await kay.getProfilePicFromServer(useriqf)
+                        const kissqpp = await kay.getProfilePicFromServer(sender.id)
+                        if (jnccck === undefined) {
+                            var ppFirst = errorImg
+                        } else {
+                            var ppFirst = jnccck
+                        }
+                        canvas.Canvas.kiss(ppFirst, kissqpp)
+                            .then(async (buffer) => {
+                                canvas.write(buffer, `${sender.id}_kiss.png`)
+                                await kay.sendFile(from, `${sender.id}_kiss.png`, `${sender.id}_kiss.png`, '', id)
+                                fs.unlinkSync(`${sender.id}_kiss.png`)
+                                await limitAdd(serial)
+                            })
+                      break
+				case prefix+'slapp':
+              if(isReg(obj)) return
+                if(cekumur(cekage)) return
+                if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+                 if (args.length === 1) return kay.reply(from, 'Hanya Owner yang bisa memasukan Bot ke dalam Grup!', id)
+                        const texnugbmf = body.slice(6)
+                       const getnomberrr =  await kay.checkNumberStatus(texnugbmf)
+                    const userifb = getnomberrr.id.replace('@','') + '@c.us'
+                    const jncckb = await kay.getProfilePicFromServer(userifb)
+                        const kissppa = await kay.getProfilePicFromServer(sender.id)
+                        if (jncckb === undefined) {
+                            var ppFirst = errorImg
+                        } else {
+                            var ppFirst = jncckb
+                        }
+                        canvas.Canvas.batslap(ppFirst, kissppa)
+                            .then(async (buffer) => {
+                                canvas.write(buffer, `${sender.id}_kiss.png`)
+                                await kay.sendFile(from, `${sender.id}_kiss.png`, `${sender.id}_kiss.png`, '', id)
+                                fs.unlinkSync(`${sender.id}_kiss.png`)
+                                await limitAdd(serial)
+                            })
+                      break
+				case prefix+'spank':
+              if(isReg(obj)) return
+                if(cekumur(cekage)) return
+                if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+                 if (args.length === 1) return kay.reply(from, 'Hanya Owner yang bisa memasukan Bot ke dalam Grup!', id)
+                        const texnm = body.slice(6)
+                       const getnomberrrr =  await kay.checkNumberStatus(texnm)
+                    const userf = getnomberrrr.id.replace('@','') + '@c.us'
+                    const jnccek = await kay.getProfilePicFromServer(userf)
+                        const kissppt = await kay.getProfilePicFromServer(sender.id)
+                        if (jnccek === undefined) {
+                            var ppFirst = errorImg
+                        } else {
+                            var ppFirst = jnccek
+                        }
+                        canvas.Canvas.spank(ppFirst, kissppt)
+                            .then(async (buffer) => {
+                                canvas.write(buffer, `${sender.id}_kiss.png`)
+                                await kay.sendFile(from, `${sender.id}_kiss.png`, `${sender.id}_kiss.png`, '', id)
+                                fs.unlinkSync(`${sender.id}_kiss.png`)
+                                await limitAdd(serial)
+                            })
+                      break
+				case prefix+'distracted':
+              if(isReg(obj)) return
+                if(cekumur(cekage)) return
+                if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+                if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+                 if (args.length === 1) return kay.reply(from, 'Hanya Owner yang bisa memasukan Bot ke dalam Grup!', id)
+                        const texqnugmf = body.slice(6)
+                       const getnomberrrrr =  await kay.checkNumberStatus(texqnugmf)
+                    const userife = getnomberrrrr.id.replace('@','') + '@c.us'
+                    const jncckqq = await kay.getProfilePicFromServer(userife)
+                        const kissppqq = await kay.getProfilePicFromServer(sender.id)
+                        if (jncckqq === undefined) {
+                            var ppFirst = errorImg
+                        } else {
+                            var ppFirst = jncckqq
+                        }
+                        canvas.Canvas.distracted(ppFirst, kissppqq)
+                            .then(async (buffer) => {
+                                canvas.write(buffer, `${sender.id}_kiss.png`)
+                                await kay.sendFile(from, `${sender.id}_kiss.png`, `${sender.id}_kiss.png`, '', id)
+                                fs.unlinkSync(`${sender.id}_kiss.png`)
+                                await limitAdd(serial)
+                            })
+                      break
+         case prefix+'quotemaker':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            argz = body.trim().split('|')
+            if (argz.length >= 3) {
+                kay.reply(from, mess.wait, id)
+                const quotes = argz[1]
+                const author = argz[2]
+                const theme = argz[3]
+                await quotemaker(quotes, author, theme).then(amsu => {
+                    limitAdd(serial)
+                    kay.sendFile(from, amsu, 'quotesmaker.jpg','neh...').catch(() => {
+                       kay.reply(from, mess.error.Qm, id)
+                    })
+                })
+            } else {
+                kay.reply(from, 'Usage: \n#quotemaker |teks|watermark|theme\n\nEx :\n#quotemaker |ini contoh|bicit|random', id)
+            }
+            break
+        case prefix+'listchannel':
+            kay.reply(from, listChannel, id)
+            break
+        case prefix+'jadwaltv':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#jadwalTv [channel]*', id)
+            const query = body.slice(10).toLowerCase()
+            const jadwal = await jadwalTv(query)
+            kay.reply(from, jadwal, id)
+            break
+        case prefix+'jadwaltvnow': // API MATI
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            const jadwalNow = await axios.get('https://docs-jojo.herokuapp.com/api//jadwaltvnow')
+            kay.reply(from, `Jam : ${jadwalNow.data.result.jam}\n\nJadwalTV : ${jadwalNow.data.result.jadwalTV}`, id)
+            break
+        case prefix+'fckmylife': // API MATI
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            const fckmyl = await axios.get('https://docs-jojo.herokuapp.com/api/fml')
+            kay.reply(from, `${fckmyl.data.result.fml}\n`, id)
+            break
+        case prefix+'renungharian': // API MATI
+            
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)       
+            await limitAdd(serial)
+            const rennh = await axios.get('https://docs-jojo.herokuapp.com/api/renungan')
+            kay.reply(from, `*Judul* = ${rennh.data.judul}\n*Pesan* = ${rennh.data.pesan}\n*Isi* = ${rennh.data.Isi}`, id)
+            break
+        case prefix+'alkitabharian': // API MATI
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            
+            await limitAdd(serial)
+            const alkith = await axios.get('https://docs-jojo.herokuapp.com/api/alkitab')
+            kay.reply(from,` ayat = ${alkith.data.result.ayat}\n isi = ${alkith.data.result.isi}\n link = ${alkith.data.result.link}`, id)
+            break
+        case prefix+'nulis2':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#nulis2 [teks]*, contoh *#nulis2 aku bukan boneka*', id)
+           kay.reply(from, mess.wait, id)
+            const ngettiik = body.slice(8)
+            await kay.sendFileFromUrl(from, `https://api.vhtear.com/write?text=${ngettiik}&apikey=${vhtearkey}`, 'nulis.jpg', '', id)
+            await limitAdd(serial)
+            break
+        case prefix+'inu':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const list = ["https://cdn.shibe.online/shibes/247d0ac978c9de9d9b66d72dbdc65f2dac64781d.jpg","https://cdn.shibe.online/shibes/1cf322acb7d74308995b04ea5eae7b520e0eae76.jpg","https://cdn.shibe.online/shibes/1ce955c3e49ae437dab68c09cf45297d68773adf.jpg","https://cdn.shibe.online/shibes/ec02bee661a797518d37098ab9ad0c02da0b05c3.jpg","https://cdn.shibe.online/shibes/1e6102253b51fbc116b887e3d3cde7b5c5083542.jpg","https://cdn.shibe.online/shibes/f0c07a7205d95577861eee382b4c8899ac620351.jpg","https://cdn.shibe.online/shibes/3eaf3b7427e2d375f09fc883f94fa8a6d4178a0a.jpg","https://cdn.shibe.online/shibes/c8b9fcfde23aee8d179c4c6f34d34fa41dfaffbf.jpg","https://cdn.shibe.online/shibes/55f298bc16017ed0aeae952031f0972b31c959cb.jpg","https://cdn.shibe.online/shibes/2d5dfe2b0170d5de6c8bc8a24b8ad72449fbf6f6.jpg","https://cdn.shibe.online/shibes/e9437de45e7cddd7d6c13299255e06f0f1d40918.jpg","https://cdn.shibe.online/shibes/6c32141a0d5d089971d99e51fd74207ff10751e7.jpg","https://cdn.shibe.online/shibes/028056c9f23ff40bc749a95cc7da7a4bb734e908.jpg","https://cdn.shibe.online/shibes/4fb0c8b74dbc7653e75ec1da597f0e7ac95fe788.jpg","https://cdn.shibe.online/shibes/125563d2ab4e520aaf27214483e765db9147dcb3.jpg","https://cdn.shibe.online/shibes/ea5258fad62cebe1fedcd8ec95776d6a9447698c.jpg","https://cdn.shibe.online/shibes/5ef2c83c2917e2f944910cb4a9a9b441d135f875.jpg","https://cdn.shibe.online/shibes/6d124364f02944300ae4f927b181733390edf64e.jpg","https://cdn.shibe.online/shibes/92213f0c406787acd4be252edb5e27c7e4f7a430.jpg","https://cdn.shibe.online/shibes/40fda0fd3d329be0d92dd7e436faa80db13c5017.jpg","https://cdn.shibe.online/shibes/e5c085fc427528fee7d4c3935ff4cd79af834a82.jpg","https://cdn.shibe.online/shibes/f83fa32c0da893163321b5cccab024172ddbade1.jpg","https://cdn.shibe.online/shibes/4aa2459b7f411919bf8df1991fa114e47b802957.jpg","https://cdn.shibe.online/shibes/2ef54e174f13e6aa21bb8be3c7aec2fdac6a442f.jpg","https://cdn.shibe.online/shibes/fa97547e670f23440608f333f8ec382a75ba5d94.jpg","https://cdn.shibe.online/shibes/fb1b7150ed8eb4ffa3b0e61ba47546dd6ee7d0dc.jpg","https://cdn.shibe.online/shibes/abf9fb41d914140a75d8bf8e05e4049e0a966c68.jpg","https://cdn.shibe.online/shibes/f63e3abe54c71cc0d0c567ebe8bce198589ae145.jpg","https://cdn.shibe.online/shibes/4c27b7b2395a5d051b00691cc4195ef286abf9e1.jpg","https://cdn.shibe.online/shibes/00df02e302eac0676bb03f41f4adf2b32418bac8.jpg","https://cdn.shibe.online/shibes/4deaac9baec39e8a93889a84257338ebb89eca50.jpg","https://cdn.shibe.online/shibes/199f8513d34901b0b20a33758e6ee2d768634ebb.jpg","https://cdn.shibe.online/shibes/f3efbf7a77e5797a72997869e8e2eaa9efcdceb5.jpg","https://cdn.shibe.online/shibes/39a20ccc9cdc17ea27f08643b019734453016e68.jpg","https://cdn.shibe.online/shibes/e67dea458b62cf3daa4b1e2b53a25405760af478.jpg","https://cdn.shibe.online/shibes/0a892f6554c18c8bcdab4ef7adec1387c76c6812.jpg","https://cdn.shibe.online/shibes/1b479987674c9b503f32e96e3a6aeca350a07ade.jpg","https://cdn.shibe.online/shibes/0c80fc00d82e09d593669d7cce9e273024ba7db9.jpg","https://cdn.shibe.online/shibes/bbc066183e87457b3143f71121fc9eebc40bf054.jpg","https://cdn.shibe.online/shibes/0932bf77f115057c7308ef70c3de1de7f8e7c646.jpg","https://cdn.shibe.online/shibes/9c87e6bb0f3dc938ce4c453eee176f24636440e0.jpg","https://cdn.shibe.online/shibes/0af1bcb0b13edf5e9b773e34e54dfceec8fa5849.jpg","https://cdn.shibe.online/shibes/32cf3f6eac4673d2e00f7360753c3f48ed53c650.jpg","https://cdn.shibe.online/shibes/af94d8eeb0f06a0fa06f090f404e3bbe86967949.jpg","https://cdn.shibe.online/shibes/4b55e826553b173c04c6f17aca8b0d2042d309fb.jpg","https://cdn.shibe.online/shibes/a0e53593393b6c724956f9abe0abb112f7506b7b.jpg","https://cdn.shibe.online/shibes/7eba25846f69b01ec04de1cae9fed4b45c203e87.jpg","https://cdn.shibe.online/shibes/fec6620d74bcb17b210e2cedca72547a332030d0.jpg","https://cdn.shibe.online/shibes/26cf6be03456a2609963d8fcf52cc3746fcb222c.jpg","https://cdn.shibe.online/shibes/c41b5da03ad74b08b7919afc6caf2dd345b3e591.jpg","https://cdn.shibe.online/shibes/7a9997f817ccdabac11d1f51fac563242658d654.jpg","https://cdn.shibe.online/shibes/7221241bad7da783c3c4d84cfedbeb21b9e4deea.jpg","https://cdn.shibe.online/shibes/283829584e6425421059c57d001c91b9dc86f33b.jpg","https://cdn.shibe.online/shibes/5145c9d3c3603c9e626585cce8cffdfcac081b31.jpg","https://cdn.shibe.online/shibes/b359c891e39994af83cf45738b28e499cb8ffe74.jpg","https://cdn.shibe.online/shibes/0b77f74a5d9afaa4b5094b28a6f3ee60efcb3874.jpg","https://cdn.shibe.online/shibes/adccfdf7d4d3332186c62ed8eb254a49b889c6f9.jpg","https://cdn.shibe.online/shibes/3aac69180f777512d5dabd33b09f531b7a845331.jpg","https://cdn.shibe.online/shibes/1d25e4f592db83039585fa480676687861498db8.jpg","https://cdn.shibe.online/shibes/d8349a2436420cf5a89a0010e91bf8dfbdd9d1cc.jpg","https://cdn.shibe.online/shibes/eb465ef1906dccd215e7a243b146c19e1af66c67.jpg","https://cdn.shibe.online/shibes/3d14e3c32863195869e7a8ba22229f457780008b.jpg","https://cdn.shibe.online/shibes/79cedc1a08302056f9819f39dcdf8eb4209551a3.jpg","https://cdn.shibe.online/shibes/4440aa827f88c04baa9c946f72fc688a34173581.jpg","https://cdn.shibe.online/shibes/94ea4a2d4b9cb852e9c1ff599f6a4acfa41a0c55.jpg","https://cdn.shibe.online/shibes/f4478196e441aef0ada61bbebe96ac9a573b2e5d.jpg","https://cdn.shibe.online/shibes/96d4db7c073526a35c626fc7518800586fd4ce67.jpg","https://cdn.shibe.online/shibes/196f3ed10ee98557328c7b5db98ac4a539224927.jpg","https://cdn.shibe.online/shibes/d12b07349029ca015d555849bcbd564d8b69fdbf.jpg","https://cdn.shibe.online/shibes/80fba84353000476400a9849da045611a590c79f.jpg","https://cdn.shibe.online/shibes/94cb90933e179375608c5c58b3d8658ef136ad3c.jpg","https://cdn.shibe.online/shibes/8447e67b5d622ef0593485316b0c87940a0ef435.jpg","https://cdn.shibe.online/shibes/c39a1d83ad44d2427fc8090298c1062d1d849f7e.jpg","https://cdn.shibe.online/shibes/6f38b9b5b8dbf187f6e3313d6e7583ec3b942472.jpg","https://cdn.shibe.online/shibes/81a2cbb9a91c6b1d55dcc702cd3f9cfd9a111cae.jpg","https://cdn.shibe.online/shibes/f1f6ed56c814bd939645138b8e195ff392dfd799.jpg","https://cdn.shibe.online/shibes/204a4c43cfad1cdc1b76cccb4b9a6dcb4a5246d8.jpg","https://cdn.shibe.online/shibes/9f34919b6154a88afc7d001c9d5f79b2e465806f.jpg","https://cdn.shibe.online/shibes/6f556a64a4885186331747c432c4ef4820620d14.jpg","https://cdn.shibe.online/shibes/bbd18ae7aaf976f745bc3dff46b49641313c26a9.jpg","https://cdn.shibe.online/shibes/6a2b286a28183267fca2200d7c677eba73b1217d.jpg","https://cdn.shibe.online/shibes/06767701966ed64fa7eff2d8d9e018e9f10487ee.jpg","https://cdn.shibe.online/shibes/7aafa4880b15b8f75d916b31485458b4a8d96815.jpg","https://cdn.shibe.online/shibes/b501169755bcf5c1eca874ab116a2802b6e51a2e.jpg","https://cdn.shibe.online/shibes/a8989bad101f35cf94213f17968c33c3031c16fc.jpg","https://cdn.shibe.online/shibes/f5d78feb3baa0835056f15ff9ced8e3c32bb07e8.jpg","https://cdn.shibe.online/shibes/75db0c76e86fbcf81d3946104c619a7950e62783.jpg","https://cdn.shibe.online/shibes/8ac387d1b252595bbd0723a1995f17405386b794.jpg","https://cdn.shibe.online/shibes/4379491ef4662faa178f791cc592b52653fb24b3.jpg","https://cdn.shibe.online/shibes/4caeee5f80add8c3db9990663a356e4eec12fc0a.jpg","https://cdn.shibe.online/shibes/99ef30ea8bb6064129da36e5673649e957cc76c0.jpg","https://cdn.shibe.online/shibes/aeac6a5b0a07a00fba0ba953af27734d2361fc10.jpg","https://cdn.shibe.online/shibes/9a217cfa377cc50dd8465d251731be05559b2142.jpg","https://cdn.shibe.online/shibes/65f6047d8e1d247af353532db018b08a928fd62a.jpg","https://cdn.shibe.online/shibes/fcead395cbf330b02978f9463ac125074ac87ab4.jpg","https://cdn.shibe.online/shibes/79451dc808a3a73f99c339f485c2bde833380af0.jpg","https://cdn.shibe.online/shibes/bedf90869797983017f764165a5d97a630b7054b.jpg","https://cdn.shibe.online/shibes/dd20e5801badd797513729a3645c502ae4629247.jpg","https://cdn.shibe.online/shibes/88361ee50b544cb1623cb259bcf07b9850183e65.jpg","https://cdn.shibe.online/shibes/0ebcfd98e8aa61c048968cb37f66a2b5d9d54d4b.jpg"]
+            let kya = list[Math.floor(Math.random() * list.length)]
+            kay.sendFileFromUrl(from, kya, 'Dog.jpeg', 'Inu')
+            await limitAdd(serial)
+            break
+        case prefix+'qrcode':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if(!args.lenght >= 2) return
+            let qrcodes = body.slice(8)
+            await kay.sendFileFromUrl(from, `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${qrcodes}`, 'gambar.png', 'Process sukses!')
+            await limitAdd(serial)
+            break
+        case prefix+'ptl':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const pptl = ["https://i.pinimg.com/564x/b2/84/55/b2845599d303a4f8fc4f7d2a576799fa.jpg","https://i.pinimg.com/236x/98/08/1c/98081c4dffde1c89c444db4dc1912d2d.jpg","https://i.pinimg.com/236x/a7/e2/fe/a7e2fee8b0abef9d9ecc8885557a4e91.jpg","https://i.pinimg.com/236x/ee/ae/76/eeae769648dfaa18cac66f1d0be8c160.jpg","https://i.pinimg.com/236x/b2/84/55/b2845599d303a4f8fc4f7d2a576799fa.jpg","https://i.pinimg.com/564x/78/7c/49/787c4924083a9424a900e8f1f4fdf05f.jpg","https://i.pinimg.com/236x/eb/05/dc/eb05dc1c306f69dd43b7cae7cbe03d27.jpg","https://i.pinimg.com/236x/d0/1b/40/d01b40691c68b84489f938b939a13871.jpg","https://i.pinimg.com/236x/31/f3/06/31f3065fa218856d7650e84b000d98ab.jpg","https://i.pinimg.com/236x/4a/e5/06/4ae5061a5c594d3fdf193544697ba081.jpg","https://i.pinimg.com/236x/56/45/dc/5645dc4a4a60ac5b2320ce63c8233d6a.jpg","https://i.pinimg.com/236x/7f/ad/82/7fad82eec0fa64a41728c9868a608e73.jpg","https://i.pinimg.com/236x/ce/f8/aa/cef8aa0c963170540a96406b6e54991c.jpg","https://i.pinimg.com/236x/77/02/34/77023447b040aef001b971e0defc73e3.jpg","https://i.pinimg.com/236x/4a/5c/38/4a5c38d39687f76004a097011ae44c7d.jpg","https://i.pinimg.com/236x/41/72/af/4172af2053e54ec6de5e221e884ab91b.jpg","https://i.pinimg.com/236x/26/63/ef/2663ef4d4ecfc935a6a2b51364f80c2b.jpg","https://i.pinimg.com/236x/2b/cb/48/2bcb487b6d398e8030814c7a6c5a641d.jpg","https://i.pinimg.com/236x/62/da/23/62da234d941080696428e6d4deec6d73.jpg","https://i.pinimg.com/236x/d4/f3/40/d4f340e614cc4f69bf9a31036e3d03c5.jpg","https://i.pinimg.com/236x/d4/97/dd/d497dd29ca202be46111f1d9e62ffa65.jpg","https://i.pinimg.com/564x/52/35/66/523566d43058e26bf23150ac064cfdaa.jpg","https://i.pinimg.com/236x/36/e5/27/36e52782f8d10e4f97ec4dbbc97b7e67.jpg","https://i.pinimg.com/236x/02/a0/33/02a033625cb51e0c878e6df2d8d00643.jpg","https://i.pinimg.com/236x/30/9b/04/309b04d4a498addc6e4dd9d9cdfa57a9.jpg","https://i.pinimg.com/236x/9e/1d/ef/9e1def3b7ce4084b7c64693f15b8bea9.jpg","https://i.pinimg.com/236x/e1/8f/a2/e18fa21af74c28e439f1eb4c60e5858a.jpg","https://i.pinimg.com/236x/22/d9/22/22d9220de8619001fe1b27a2211d477e.jpg","https://i.pinimg.com/236x/af/ac/4d/afac4d11679184f557d9294c2270552d.jpg","https://i.pinimg.com/564x/52/be/c9/52bec924b5bdc0d761cfb1160865b5a1.jpg","https://i.pinimg.com/236x/1a/5a/3c/1a5a3cffd0d936cd4969028668530a15.jpg"]
+            let pep = pptl[Math.floor(Math.random() * pptl.length)]
+            kay.sendFileFromUrl(from, pep, 'pptl.jpg', 'Follow ig : https://www.instagram.com/ptl_repost untuk mendapatkan penyegar timeline lebih banyak', message.id)
+            await limitAdd(serial)
+            break
+        case prefix+'neko':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            q2 = Math.floor(Math.random() * 900) + 300;
+            q3 = Math.floor(Math.random() * 900) + 300;
+            kay.sendFileFromUrl(from, 'http://placekitten.com/'+q3+'/'+q2, 'neko.png','Neko ')
+            await limitAdd(serial)
+            break
+        case prefix+'pokemon':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            q7 = Math.floor(Math.random() * 890) + 1;
+            kay.sendFileFromUrl(from, 'https://assets.pokemon.com/assets/cms2/img/pokedex/full/'+q7+'.png','Pokemon.png',)
+            await limitAdd(serial)
+            break
+        case prefix+'quote':
+        case prefix+'quotes':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const quotez2 = await axios.get('https://tobz-api.herokuapp.com/api/randomquotes')
+            kay.reply(from, `➸ *Quotes* : ${quotez2.data.quotes}\n➸ *Author* : ${quotez2.data.author}`, id)
+            await limitAdd(serial)
+            break
+        case prefix+'lirik':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length == 1) return kay.reply(from, 'Kirim perintah *#lirik [optional]*, contoh *#lirik aku bukan boneka*', id)
+            const lagu = body.slice(7)
+            const lirik = await liriklagu(lagu)
+            kay.reply(from, lirik, id)
+            await limitAdd(serial)
+            break
+        case prefix+'chord':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (args.length === 1) return kay.reply(from, 'Kirim perintah *#chord [query]*, contoh *#chord aku bukan boneka*', id)
+            const query__ = body.slice(7)
+            const chord = await axios.get('https://tobz-api.herokuapp.com/api/chord?q='+ query__)
+            if (chord.data.error) return kay.reply(from, chord.data.error, id)
+            kay.reply(from, chord.data.result, id)
+            await limitAdd(serial)
+            break
+        case prefix+'listdaerah':
+            const listDaerah = await axios.get('https://tobz-api.herokuapp.com/api/daerah')
+            kay.reply(from, listDaerah.data.result, id)
+            await limitAdd(serial)
+            break
+        case prefix+'slap':
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            const slap = arg.split(' ')
+            const person = author.replace('@c.us', '')
+            await kay.sendGiphyAsSticker(from, 'https://media.giphy.com/media/S8507sBJm1598XnsgD/source.gif')
+            kay.sendTextWithMentions(from, '@' + person + ' *slapped* ' + slap)
+            limitAdd(serial)
+            break
+        case prefix+'tagme':
+            if(isLimit(serial)) return
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            const tagm = arg.split(' ')
+            const persqw = author.replace('@c.us', '')
+            kay.sendTextWithMentions(from, '@' + persqw + ' *tagged* ' + tagm)
+            limitAdd(serial)
+            break
+        case `${prefix}babi`:
+                    const gmek = await kay.getGroupMembersId(groupId)
+                    let gmik = gmek[Math.floor(Math.random() * gmek.length)]
+                    const mmkk = `YANG PALING BABI DISINI ADALAH @${gmik.replace(/@c.us/g, '')}`
+                    kay.sendTextWithMentions(from, mmkk, id)
+                    break
+                case `${prefix}ganteng`:
+                    const gmekk = await kay.getGroupMembersId(groupId)
+                    let gmikk = gmekk[Math.floor(Math.random() * gmekk.length)]
+                    const mmkkkk = `YANG PALING GANTENG DISINI ADALAH @${gmikk.replace(/@c.us/g, '')}`
+                    kay.sendTextWithMentions(from, mmkkkk, id)
+                    break
+        case prefix+'howgay':
+	        if (args.length === 1) return kay.reply(from, `Untuk mengetahui seberapa gay seseorang gunakan ${prefix}howgay namanya\n\nContoh: ${prefix}howgay burhan`, id)
+            
+            axios.get(`https://arugaz.herokuapp.com/api/howgay`)
+            .then((res) => {
+                let hasil = `${res.data.desc}\n Persen = ${res.data.persen} %`
+                kay.reply(from, hasil, id)
+            })
+            break
+        case prefix+'whipped':
+	        if (args.length === 1) return kay.reply(from, `Untuk mengetahui seberapa bucin seseorang gunakan ${prefix}whipped namanya\n\nContoh: ${prefix}whipped burhan`, id)
+            
+            axios.get(`https://arugaz.herokuapp.com/api/howbucins`)
+            .then((res) => {
+                let hasil = `${res.data.desc}\n Persen = ${res.data.persen} %`
+                kay.reply(from, hasil, id)
+            })
+            break
+         /*case prefix+'cersex':
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            kay.reply(from, `silahkan command dengan pilihan *#️cersex1* atau *#️cersex2*`, id)
+            break*/
+        case prefix+'motivasi':
+            fetch('https://raw.githubusercontent.com/selyxn/motivasi/main/motivasi.txt')
+            .then(res => res.text())
+            .then(body => {
+                let splitmotivasi = body.split('\n')
+                let randommotivasi = splitmotivasi[Math.floor(Math.random() * splitmotivasi.length)]
+                kay.reply(from, randommotivasi, id)
+            })
+            .catch(() => {
+                kay.reply(from, 'Ada yang Error!', id)
+            })
+            break
+        case prefix+'katabijak':
+            fetch('https://raw.githubusercontent.com/ArugaZ/grabbed-results/main/random/katabijax.txt')
+            .then(res => res.text())
+            .then(body => {
+                let splitbijak = body.split('\n')
+                let randombijak = splitbijak[Math.floor(Math.random() * splitbijak.length)]
+                kay.reply(from, randombijak, id)
+            })
+            .catch(() => {
+                kay.reply(from, 'Ada yang Error!', id)
+            })
+            break
+        case prefix+'pantun':
+            fetch('https://raw.githubusercontent.com/ArugaZ/grabbed-results/main/random/pantun.txt')
+            .then(res => res.text())
+            .then(body => {
+                let splitpantun = body.split('\n')
+                let randompantun = splitpantun[Math.floor(Math.random() * splitpantun.length)]
+                kay.reply(from, randompantun.replace(/aruga-line/g,"\n"), id)
+            })
+            .catch(() => {
+                kay.reply(from, 'Ada yang Error!', id)
+            })
+            break
+        case prefix+'kpop':
+            if (args.length == 1) return aruga.reply(from, `Untuk menggunakan ${prefix}kpop\nSilahkan ketik: ${prefix}kpop [query]\nContoh: ${prefix}kpop bts\n\nquery yang tersedia:\nblackpink, exo, bts`, id)
+            if (args[1] == ' ' || args[1] == 'exo' || args[1] == 'bts') {
+                fetch('https://raw.githubusercontent.com/ArugaZ/grabbed-results/main/random/kpop/' + args[1] + '.txt')
+                .then(res => res.text())
+                .then(body => {
+                    let randomkpop = body.split('\n')
+                    let randomkpopx = randomkpop[Math.floor(Math.random() * randomkpop.length)]
+                    kay.sendFileFromUrl(from, randomkpopx, 'kpop.jpg', 'Nee..', id)
+                })
+                .catch(() => {
+                    kay.reply(from, 'Ada yang Error!', id)
+                })
+            } else {
+                kay.reply(from, `Maaf query tidak tersedia. Silahkan ketik ${prefix}kpop untuk melihat list query`)
+            }
+            break
+        case prefix+'ptlvid':
+             if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            
+            try {
+                fetch('http://sansekai.my.id/sansekai.txt')
+                .then(res => res.text())
+                .then(body => {
+                    let randompptp = body.split('\n')
+                    let randompptpl = randompptp[Math.floor(Math.random() * randompptp.length)]
+                    kay.sendFileFromUrl(from, `http://sansekai.my.id/ptl_repost/${randompptpl}`, 'kpop.mp4', 'Nee..', id)
+                })
+                .catch(() => {
+                    kay.reply(from, 'Ada yang Error!', id)
+                })
+            } catch {
+                kay.reply(from, `Maaf query tidak tersedia. Silahkan ketik ${prefix}kpop untuk melihat list query`)
+            }
+            break
+        case prefix+'fakta':
+            fetch('https://raw.githubusercontent.com/arugaZ/grabbed-results/main/random/faktaunix.txt')
+            .then(res => res.text())
+            .then(body => {
+                let splitnix = body.split('\n')
+                let randomnix = splitnix[Math.floor(Math.random() * splitnix.length)]
+                kay.reply(from, randomnix, id)
+            })
+            .catch(() => {
+                kay.reply(from, 'Ada yang Error!', id)
+            })
+            break
+        case prefix+'pesankosong':
+            kay.reply(from, ` ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏`, id)
+            break
+        /*case prefix+'cerpen': // ARUGAZ
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const cerpen = await get.get('https://arugaz.herokuapp.com/api/cerpen').json()
+            kay.reply(from, `• *Cerpen*: ${cerpen.data.result}`, id)
+            break
+        case prefix+'puisi': // ARUGAZ
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            const puisi = await get.get('https://arugaz.herokuapp.com/api/puisi1').json()
+            kay.reply(from, `• *Puisi*: ${puisi.data.result}`, id)
+            break
+        case prefix+'puisi2': // ARUGAZ
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const puisi2 = await get.get('https://arugaz.herokuapp.com/api/puisi2').json()
+            kay.reply(from, `• *Puisi*: ${puisi2.data.result}`, id)
+            break
+        case prefix+'puisi3': // ARUGAZ
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const puisi3 = await get.get('https://arugaz.herokuapp.com/api/puisi3').json()
+            kay.reply(from, `• *Puisi*: ${puisi3.data.result}`, id)
+            break
+        case prefix+'cersex1': // ARUGAZ
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const cersex1 = await get.get('https://arugaz.herokuapp.com/api/cersex1').json()
+            kay.reply(from, `• *CERSEX*: ${cersex1.data.result.article}`, id)
+            break
+        case prefix+'cersex2': // ARUGAZ
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            const cersex2 = await get.get('https://arugaz.herokuapp.com/api/cersex1').json()
+            kay.reply(from, `• *CERSEX*: ${cersex2.data.result.article}`, id)
+            break*/
+        case prefix+'indohot': // ARUGAZ
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            if (isLimit(serial)) return kay.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik ${prefix}limit Untuk Mengecek Kuota Limit Kamu`, id)
+            axios.get(`https://arugaz.herokuapp.com/api/indohot`)
+            .then((res) => {
+                let hasil = `Judul = ${res.data.result.judul}\n Genre = ${res.data.result.genre}\n Durasi = ${res.data.result.durasi}\n Link= ${res.data.result.url}`
+                kay.reply(from, hasil, id)
+            })
+            break
+         case `${prefix}mock`:
+            const mock1 = body.slice(6)
+            axios.get('https://arugaz.herokuapp.com/api/bapakfont?kata=' + mock1)
+            .then((res) => {
+                let hasil = `${res.data.result}`
+                kay.reply(from, hasil, id)
+            })
+            break
+         case `${prefix}hilih`:
+            const hilk1 = body.slice(7)
+            axios.get('https://freerestapi.herokuapp.com/api/v1/hilih?kata=' + hilk1)
+            .then((res) => {
+                let hasil = `${res.data.result}`
+                kay.reply(from, hasil, id)
+            })
+            break
+            /*case prefix+'halah':
+             const hala = body.slice(7)
+            const halah = hala.replace(/i,u,e,o/g, "a")
+              kay.reply(from, halah, id)
+              break
+
+            case prefix+'huluh':
+            const hulu = body.slice(7)
+            const huluh = hulu.replace(/a,i,e,o/g, "u")
+            kay.reply(from, huluh, id)
+            break
+
+            case prefix+'heleh':
+            const hele = body.slice(7)
+            const heleh = hele.replace(/a,u,i,o/g, "e")
+            kay.reply(from, heleh, id)
+            break
+
+            case prefix+'holoh':
+            const holo = body.slice(7)
+            const holoh = holo.replace(/a,u,e,i/g, "o")
+            kay.reply(from, holoh, id)
+            break*/
+        // ADMIN & OWNER
+        case `cekprefix`:
+			kay.reply(from, `*KAYSA is Use ( ${prefix} ) Prefix!.* 
+_Prefix adalah tanda di awal perintah._
+_Contoh: ${prefix}menu_`, id)
+			break
+		case `${prefix}setprefix`:
+			if (!isOwner && !isAdmin) return kay.reply(from, 'Maaf, Fitur ini hanya untuk OWNER dan ADMIN Sasha!', id)
+			if (args.length === 1) return kay.reply(from, `*Kirim Perintah ${prefix}setprefix [prefix baru]*. 
+Contoh: ${prefix}setprefix #`, id)
+			const pf = body.slice(7)  
+			setting.prefix = `${pf}`
+			prefix = `${pf}`
+			fs.writeFileSync('./lib/database/setting.json', JSON.stringify(setting, null,2))
+			kay.reply(from, `Change Prefix To ${pf} SUCCESS!`, id)
+			break
+        case prefix+'addbadword':
+            if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+            if (!args.length >= 1) return kay.reply(from, `Masukkan kata kasar yang akan di blacklist `, id) 
+            const word = body.slice(12)
+            var cek = dbbadword.includes(word);
+            if(cek){
+                return kay.reply(from, `Badword Sudah Ada Di Database`, id)
+            } else { 
+                dbbadword.push(word)
+                fs.writeFileSync('./lib/database/katakasar.json', JSON.stringify(dbbadword))
+                kay.reply(from, `Success Menambahkan Blacklist Badword\nTotal Data Badword Sekarang : *${dbbadword.length - 1}*`, id)
+            }
+            break
+        case prefix+'delbadword':
+            if (!isOwner) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh Owner KAY!`, id)
+                const delbd = dbbadword.indexOf(body.slice(12))
+                dbbadword.splice(delbd, 1)
+                fs.writeFileSync('./lib/database/katakasar.json', JSON.stringify(dbbadword))
+                kay.reply(from, `Success Menghapus Badword!`, id)
+            break
+        case prefix+'listbadword':
+            if (!isAdmin) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh User VIP!`, id)
+                const bad = fs.readFileSync('./lib/database/katakasar.json')
+                const liste = JSON.parse(bad)
+                let listz = '*「 LIST BADWORD 」*\n'
+                listz += `*Total : ${liste.length}*\n`
+                let nomre = 1
+                     for (let i = 0; i < liste.length; i++){
+                        listz += `\n*${nomre}.* ${liste[i]}`
+                        nomre++
+                    }
+                    kay.sendText(from, listz) 
+                    break
+        case prefix+'bc': // KASIH CREDIT DONG KALO COPAS
+            if (!isOwner) return kay.reply(from, `Perintah ini hanya untuk Owner KAY`, id)
+                bctxt = body.slice(4)
+                txtbc = `*「 KAY BROADCAST 」*\n\n${bctxt}`
+                const urlbc = 'https://a.top4top.io/p_1828ceih11.jpeg'
+                const semuagrup = await kay.getAllChatIds();
+                if(quotedMsg && quotedMsg.type == 'image'){
+                    const mediaData = await decryptMedia(quotedMsg)
+                    const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
+                    for(let grupnya of semuagrup){
+                        var cekgrup = await kay.getChatById(grupnya)
+                        if(!cekgrup.isReadOnly) kay.sendImage(grupnya, imageBase64, 'gambar.jpeg', txtbc)
+                    }
+                    kay.reply('Broadcast sukses!')
+                }else{
+                    for(let grupnya of semuagrup){
+                        var cekgrup = await kay.getChatById(grupnya)
+                        if(!cekgrup.isReadOnly && isMuted(grupnya)) kay.sendFileFromUrl(grupnya, `${urlbc}`,'bc.jpg', txtbc)
+                    }
+                            kay.reply('Broadcast Success!')
+                }
+                break
+        case prefix+'adminlist':
+            let mimin = ''
+            for (let admon of groupAdmins) {
+                mimin += `➸ @${admon.replace(/@c.us/g, '')}\n` 
+            }
+            await sleep(2000)
+            await kay.sendTextWithMentions(from, mimin)
+            break
+        case prefix+'ownergroup':
+            const Owner_ = chat.groupMetadata.owner
+            await kay.sendTextWithMentions(from, `Owner Group : @${Owner_}`)
+            break
+        case prefix+'otagall': // FOR OWNER & User VIP
+        case prefix+'omentionall':
+            if (!isOwner, !isAdmin) return kay.reply(from, 'Perintah ini hanya untuk Owner KAY ', id)
+            const groupMek = await kay.getGroupMembers(groupId)
+            let heho = '╔══✪〘 Mention All 〙✪══\n'
+            for (let i = 0; i < groupMek.length; i++) {
+                heho += '╠➥'
+                heho += ` @${groupMek[i].id.replace(/@c.us/g, '')}\n`
+            }
+            heho += '╚═〘 KAY BOT 〙'
+            await sleep(2000)
+            await kay.sendTextWithMentions(from, heho)
+            break
+        case prefix+'tagall': // FOR GROUP ADMINS
+        case prefix+'mentionall':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh admin group', id)
+            const groupMem = await kay.getGroupMembers(groupId)
+            let hehe = '╔══✪〘 Mention All 〙✪══\n'
+            for (let i = 0; i < groupMem.length; i++) {
+                hehe += '╠➥'
+                hehe += ` @${groupMem[i].id.replace(/@c.us/g, '')}\n`
+            }
+            hehe += '╚═〘 KAY KATO BOT 〙'
+            await sleep(2000)
+            await kay.sendTextWithMentions(from, hehe)
+            break
+                case prefix+'hidetagall': // FOR GROUP ADMINS
+        case prefix+'hidementionall':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh admin group', id)
+            const groupMeh = await kay.getGroupMembers(groupId)
+            let hehem = ' ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏╔══✪〘 Mention All 〙✪══\n'
+            for (let i = 0; i < groupMeh.length; i++) {
+                hehem += ' ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏ ͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏͏╠➥'
+                hehem += ` @${groupMeh[i].id.replace(/@c.us/g, '')}\n`
+            }
+            hehem += '╚═〘 KAY KATO BOT 〙'
+            await sleep(2000)
+            await kay.sendTextWithMentions(from, hehem)
+            break
+        case prefix+'ekickall':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isOwner, !isOwner2) return kay.reply(from, 'Perintah ini hanya untuk Owner KAY ', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            const allMem = await kay.getGroupMembers(groupId)
+            for (let i = 0; i < allMem.length; i++) {
+                if (ownerNumber.includes(allMem[i].id)) {
+                    console.log('Upss this is Admin group')
+                } else {
+                    await kay.removeParticipant(groupId, allMem[i].id)
+                }
+            }
+            kay.reply(from, 'Success kick all member', id)
+            break
+        case prefix+'okickall':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            if (!isOwner) return kay.reply(from, 'Perintah ini hanya untuk User VIP', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            const allMeq = await kay.getGroupMembers(groupId)
+            for (let i = 0; i < allMeq.length; i++) {
+                if ((adminNumber, ownerNumber).includes(allMeq[i].id)) {
+                    console.log('Upss this is Admin group')
+                } else {
+                    await kay.removeParticipant(groupId, allMeq[i].id)
+                }
+            }
+            kay.reply(from, 'Succes kick all member', id)
+            break
+        case prefix+'kickall':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group!', id)
+            const isGroupOwner = sender.id === chat.groupMetadata.owner
+            if (!isGroupOwner) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh Owner group', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            const allMek = await kay.getGroupMembers(groupId)
+            for (let i = 0; i < allMek.length; i++) {
+                if ((adminNumber, ownerNumber).includes(allMek[i].id)) {
+                    console.log('Upss this is Admin group')
+                } else {
+                    await kay.removeParticipant(groupId, allMek[i].id)
+                }
+            }
+            kay.reply(from, 'Success kick all member', id)
+            break
+        case prefix+'leaveall':
+            if (!isOwner) return kay.reply(from, 'Perintah ini hanya untuk Owner KAY ', id)
+            const allChats = await kay.getAllChatIds()
+            const allGroups = await kay.getAllGroups()
+            for (let gclist of allGroups) {
+                await kay.sendText(gclist.contact.id, `Maaf bot sedang pembersihan, total chat aktif : ${allChats.length}`)
+                await kay.leaveGroup(gclist.contact.id)
+            }
+            kay.reply(from, 'Succes leave all group!', id)
+            break
+        case prefix+'clearall':
+            if (!isOwner) return kay.reply(from, 'Perintah ini hanya untuk Owner KAY ', id)
+            const allChatz = await kay.getAllChats()
+            for (let dchat of allChatz) {
+                await kay.deleteChat(dchat.id)
+            }
+            kay.reply(from, 'Succes clear all chat!', id)
+            break
+        case prefix+'oadd':
+            const orang = args[1]
+            if (!isGroupMsg) return kay.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
+            if (args.length === 1) return kay.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#add* 628xxxxx', id)
+            if (!isOwner, !isAdmin) return kay.reply(from, 'Perintah ini hanya untuk User VIP', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            try {
+                await kay.addParticipant(from,`${orang}@c.us`)
+            } catch {
+                kay.reply(from, mess.error.Ad, id)
+            }
+            break
+        case prefix+'add':
+            const orgh = body.slice(5)
+            if (!isGroupMsg) return kay.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
+            if (args.length === 1) return kay.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#add* 628xxxxx', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh admin group', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            try {
+                await kay.addParticipant(from,`${orgh}@c.us`)
+            } catch {
+                kay.reply(from, mess.error.Ad, id)
+            }
+            break
+        case prefix+'okick':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
+            if (!isOwner) return kay.reply(from, 'Perintah ini hanya untuk Owner KAY ', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            if (mentionedJidList.length === 0) return kay.reply(from, 'Untuk menggunakan Perintah ini, kirim perintah *#okick* @tagmember', id)
+            await kay.sendText(from, `Perintah Owner diterima, mengeluarkan:\n${mentionedJidList.join('\n')}`)
+            for (let i = 0; i < mentionedJidList.length; i++) {
+                if ((adminNumber, ownerNumber).includes(mentionedJidList[i])) return kay.reply(from, mess.error.Sp, id)
+                await kay.removeParticipant(groupId, mentionedJidList[i])
+            }
+            break
+        case prefix+'kick':
+            if (!isGroupMsg) return kay.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh admin group', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            if (mentionedJidList.length === 0) return kay.reply(from, 'Untuk menggunakan Perintah ini, kirim perintah *#kick* @tagmember', id)
+            await kay.sendText(from, `Perintah diterima, mengeluarkan:\n${mentionedJidList.join('\n')}`)
+            for (let i = 0; i < mentionedJidList.length; i++) {
+                if ((adminNumber, groupAdmins).includes(mentionedJidList[i])) return kay.reply(from, mess.error.Sp, id)
+                await kay.removeParticipant(groupId, mentionedJidList[i])
+            }
+            break
+        case prefix+'oleave':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
+            if (!isOwner, !isAdmin) return kay.reply(from, 'Perintah ini hanya untuk User VIP', id)
+            await kay.sendText(from,'KAY  DIPERINTAHKAN KELUAR OLEH OWNER!!').then(() => kay.leaveGroup(groupId))
+            break
+        case prefix+'leave':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh admin group', id)
+            await kay.sendText(from,'Sayonara').then(() => kay.leaveGroup(groupId))
+            break
+        case prefix+'opromote':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
+            if (!isOwner, !isAdmin) return kay.reply(from, 'Perintah ini hanya untuk User VIP', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Fitur ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            if (mentionedJidList.length === 0) return kay.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#promote* @tagmember', id)
+            if (mentionedJidList.length >= 2) return kay.reply(from, 'Maaf, perintah ini hanya dapat digunakan kepada 1 user.', id)
+            if (groupAdmins.includes(mentionedJidList[0])) return kay.reply(from, 'Maaf, user tersebut sudah menjadi admin.', id)
+            await kay.promoteParticipant(groupId, mentionedJidList[0])
+            await kay.sendTextWithMentions(from, `Perintah Owner diterima, menambahkan @${mentionedJidList[0]} sebagai admin.`)
+            break
+        case prefix+'promote':
+            if (!isGroupMsg) return kay.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Fitur ini hanya bisa di gunakan oleh admin group', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Fitur ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            if (mentionedJidList.length === 0) return kay.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#promote* @tagmember', id)
+            if (mentionedJidList.length >= 2) return kay.reply(from, 'Maaf, perintah ini hanya dapat digunakan kepada 1 user.', id)
+            if (groupAdmins.includes(mentionedJidList[0])) return kay.reply(from, 'Maaf, user tersebut sudah menjadi admin.', id)
+            await kay.promoteParticipant(groupId, mentionedJidList[0])
+            await kay.sendTextWithMentions(from, `Perintah diterima, menambahkan @${mentionedJidList[0]} sebagai admin.`)
+            break
+        case prefix+'odemote':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
+            if (!isOwner, !isAdmin) return kay.reply(from, 'Perintah ini hanya untuk User VIP', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Fitur ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            if (mentionedJidList.length === 0) return kay.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#demote* @tagadmin', id)
+            if (mentionedJidList.length >= 2) return kay.reply(from, 'Maaf, perintah ini hanya dapat digunakan kepada 1 orang.', id)
+            if (!groupAdmins.includes(mentionedJidList[0])) return kay.reply(from, 'Maaf, user tersebut tidak menjadi admin.', id)
+            await kay.demoteParticipant(groupId, mentionedJidList[0])
+            await kay.sendTextWithMentions(from, `Perintah Owner diterima, menghapus jabatan @${mentionedJidList[0]}.`)
+            break
+        case prefix+'demote':
+            if (!isGroupMsg) return kay.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Fitur ini hanya bisa di gunakan oleh admin group', id)
+            if (!isBotGroupAdmins) return kay.reply(from, 'Fitur ini hanya bisa di gunakan ketika bot menjadi admin', id)
+            if (mentionedJidList.length === 0) return kay.reply(from, 'Untuk menggunakan fitur ini, kirim perintah *#demote* @tagadmin', id)
+            if (mentionedJidList.length >= 2) return kay.reply(from, 'Maaf, perintah ini hanya dapat digunakan kepada 1 orang.', id)
+            if (!groupAdmins.includes(mentionedJidList[0])) return kay.reply(from, 'Maaf, user tersebut tidak menjadi admin.', id)
+            await kay.demoteParticipant(groupId, mentionedJidList[0])
+            await kay.sendTextWithMentions(from, `Perintah diterima, menghapus jabatan @${mentionedJidList[0]}.`)
+            break
+        case prefix+'join':
+            if (args.length === 1) return kay.reply(from, 'Hanya Owner yang bisa memasukan Bot ke dalam Grup!', id)
+            if (!isOwner) return kay.reply(from, 'Perintah ini hanya untuk Owner KAY ', id)
+            const link = body.slice(6)
+            const tGr = await kay.getAllGroups()
+            const minMem = 5
+            const isLink = link.match(/(https:\/\/chat.whatsapp.com)/gi)
+            const check = await kay.inviteInfo(link)
+            if (!isLink) return kay.reply(from, 'Ini link? 👊🤬', id)
+            if (tGr.length > 256) return kay.reply(from, 'Maaf jumlah group sudah maksimal!', id)
+            if (check.size < minMem) return kay.reply(from, 'Member group tidak melebihi 5, bot tidak bisa masuk', id)
+            if (check.status === 200) {
+                await kay.joinGroupViaLink(link).then(() => kay.reply(from, 'Bot akan segera masuk!'))
+            } else {
+                kay.reply(from, 'Link group tidak valid!', id)
+            }
+            break
+        case prefix+'odelete':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
+            if (!isOwner, !isAdmin) return kay.reply(from, 'Perintah ini hanya untuk User VIP', id)
+            if (!quotedMsg) return kay.reply(from, 'Salah!!, kirim perintah *#delete [tagpesanbot]*', id)
+            if (!quotedMsgObj.fromMe) return kay.reply(from, 'Salah!!, Bot tidak bisa mengahpus chat user lain!', id)
+            kay.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false)
+            break
+        case prefix+'delete':
+            if (!isGroupMsg) return kay.reply(from, 'Fitur ini hanya bisa di gunakan dalam group', id)
+            if (!isGroupAdmins) return kay.reply(from, 'Fitur ini hanya bisa di gunakan oleh admin group', id)
+            if (!quotedMsg) return kay.reply(from, 'Salah!!, kirim perintah *#delete [tagpesanbot]*', id)
+            if (!quotedMsgObj.fromMe) return kay.reply(from, 'Salah!!, Bot tidak bisa mengahpus chat user lain!', id)
+            kay.deleteMessage(quotedMsgObj.chatId, quotedMsgObj.id, false)
+            break
+        case prefix+'sider':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)                
+            if (!quotedMsg) return kay.reply(from, `Tolong Reply Pesan KAY `, id)
+            if (!quotedMsgObj.fromMe) return kay.reply(from, `Tolong Reply Pesan KAY `, id)
+            try {
+                const reader = await kay.getMessageReaders(quotedMsgObj.id)
+                let list = ''
+                for (let pembaca of reader) {
+                list += `- @${pembaca.id.replace(/@c.us/g, '')}\n` 
+            }
+                kay.sendTextWithMentions(from, `Ciee, Ngeread...\n${list}`)
+            } catch(err) {
+                console.log(err)
+                kay.reply(from, `Maaf, Belum Ada Yang Membaca Pesan KAY  atau Mereka Menonaktifkan Read Receipts`, id)    
+            }
+            break
+        case prefix+'linkgroup':
+            if (!isGroupMsg) return kay.reply(from, `Fitur ini hanya bisa di gunakan dalam group`, id)
+            if (!isGroupAdmins) return kay.reply(from, `Fitur ini hanya bisa di gunakan oleh admin group`, id)
+            if (!isBotGroupAdmins) return kay.reply(from, `Fitur ini hanya bisa di gunakan ketika bot menjadi admin`, id)
+            const namagcnye = chat.formattedTitle
+            var gclink = await kay.getGroupInviteLink(groupId)
+            var linkgc  = `Link group : *${namagcnye}*\n\n ${gclink}`
+            kay.reply(from, linkgc, id)
+            break
+        case prefix+'resetlinkgroup':
+            if (!isGroupMsg) return kay.reply(from, `Fitur ini hanya bisa di gunakan dalam group`, id)
+            if (!isGroupAdmins) return kay.reply(from, `Fitur ini hanya bisa di gunakan oleh admin group`, id)
+            if (!isBotGroupAdmins) return kay.reply(from, `Fitur ini hanya bisa di gunakan ketika bot menjadi admin`, id)
+            if (isGroupMsg) {
+                await kay.revokeGroupInviteLink(groupId);
+                kay.sendTextWithMentions(from, `Link group telah direset oleh admin @${sender.id.replace('@c.us', '')}`)
+            }
+            break
+        case prefix+'getses':
+            if (!isOwner) return kay.reply(from, 'Perintah ini hanya untuk Owner KAY ', id)            
+            const sesPic = await kay.getSnapshot()
+            kay.sendFile(from, sesPic, 'session.png', 'Nih boss', id)
+            break
+        case prefix+`viplist`:
+            let admn = `This is list of VIP USER\nTotal : ${adminNumber.length}\n`
+            for (let i of adminNumber) {
+                admn += `➸ ${i.replace(/@c.us/g,'')}\n`
+            }
+            await kay.reply(from, admn, id)
+            break
+        case prefix+'limit':
+            if (!isGroupMsg) return kay.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
+            if (isAdmin) return kay.reply(from, `Sisa limit request anda tersisa : *UNLIMITED*\n\n_Note : Limit akan direset setiap jam 21:00!_`, id)
+                    var found = false
+                const limidat = JSON.parse(fs.readFileSync('./lib/database/limit.json'))
+            for(let lmt of limidat){
+                if(lmt.id === serial){
+                    let limitCounts = limitCount-lmt.limit
+                    if(limitCounts <= 0) return kay.reply(from, `Limit request anda sudah habis\n\n_Note : Limit akan direset setiap jam 21:00!_`, id)
+                    kay.reply(from, `Sisa limit request anda tersisa : *${limitCounts}*\n\n_Note : Limit akan direset setiap jam 21:00!_`, id)
+                    found = true
+                }
+            }
+            console.log(limit)
+            console.log(limidat)
+            if (found === false){
+                let obj = {id: `${serial}`, limit:1};
+                limit.push(obj);
+                fs.writeFileSync('./lib/database/limit.json',JSON.stringify(limit, 1));
+                kay.reply(from, `Sisa limit request anda tersisa : *${limitCount}*\n\n_Note : Limit akan direset setiap jam 21:00!_`, id)
+            }
+            break
+       case prefix+'giftlimit': // Hanya Admin & Owner Elaina yang bisa gift Limit
+            if (!isAdmin) return kay.reply(from, `Maaf, perintah ini hanya dapat dilakukan oleh user vip!`, id)
+                    const nomerr = arg.split(' ')[0]
+                    const jmla = arg.split(' ')[1]
+                    if(!nomerr) return kay.reply(from, `Masukkan nomor yang akan di gift, ${prefix}gift [ @tagmember Jumlah ]\n=> Contoh : ${prefix}gift @62813118507151 15`, id)
+                    let textam = nomerr.replace(/[-\s+@c.us]/g,'')
+                    const cusz = textam + '@c.us'
+                    if(!jmla) return kay.reply(from, `Masukkan Jumlah gift quota, ${prefix}gift [ @tagmember Jumlah ]\n=> Contoh : ${prefix}gift @62813118507151 15`, id)
+                    if(jmla > 20) return await kay.reply(from, `Maximal  20!`, id)
+                        var found = false
+                        Object.keys(limit).forEach((i) => {
+                            if(limit[i].id == cusz){
+                                found = i
+                            }
+                        })
+                        if (found !== false) {
+                            limit[found].limit = Math.max(0, limit[found].limit);
+                            if(limit[found].limit <= 20) return kay.reply(from, `Kuota Limit pada nomor tersebut masih penuh\nUntuk gift pastikan kuota limit target sudah habis`, id)
+                            if(limit[found].limit <= 0) { // JIKA LIMIT 0 MAKA BISA GIFT
+                                return kay.reply(from, `Kuota limit pada nomor tersebut sudah penuh!`, id)
+                            }else{
+                            limit[found].limit -= jmla
+                            const updated = limit[found]
+                            const result = `Gift kuota limit sukses dengan SN: ${SN} pada ${moment().format('DD/MM/YY HH:mm:ss')}
+*「 GIFT KUOTA LIMIT 」*
+
+• User : @${updated.id.replace('@c.us','')}
+• Limit: ${limitCount-updated.limit}`
+                            console.log(limit[found])
+                            fs.writeFileSync('./lib/database/limit.json',JSON.stringify(limit));
+                            kay.sendTextWithMentions(from, result)
+                            }
+                        } else {
+                                kay.reply(from, `Maaf, nomor itu tidak terdaftar di database!`, id)
+                        }
+                break
+        case prefix+'eval':
+            const q = args.join(' ')
+            if (!isOwner, !isOwner2) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh Owner KAY !', id)
+            if (!q) return kay.reply(from, 'Harap masukkan code JavaScript!', id)
+            try {
+                let evaled = await eval(q)
+                if (typeof evaled !== 'string') evaled = require('util').inspect(evaled)
+                kay.sendText(from, evaled)
+            } catch (err) {
+                kay.reply(from, err, id)
+            }
+        break
+        case prefix+'restart': // WORK IF YOU RUN USING PM2
+            if(isOwner){
+                kay.sendText(from, '*[WARN]* Restarting ...')
+                setting.restartState = true
+                setting.restartId = chatId
+                var obj = []
+                //fs.writeFileSync('./lib/setting.json', JSON.stringify(obj, null,2));
+                fs.writeFileSync('./lib/database/limit.json', JSON.stringify(obj));
+                fs.writeFileSync('./lib/database/muted.json', JSON.stringify(obj));
+                fs.writeFileSync('./lib/database/msgLimit.json', JSON.stringify(obj));
+                fs.writeFileSync('./lib/database/banned.json', JSON.stringify(obj));
+                fs.writeFileSync('./lib/database/welcome.json', JSON.stringify(obj));
+                fs.writeFileSync('./lib/database/left.json', JSON.stringify(obj));
+                fs.writeFileSync('./lib/database/Simsimi.json', JSON.stringify(obj));
+                fs.writeFileSync('./lib/database/nsfwz.json', JSON.stringify(obj));
+                const spawn = require('child_process').exec;
+                function os_func() {
+                    this.execCommand = function (command) {
+                        return new Promise((resolve, reject)=> {
+                        spawn(command, (error, stdout, stderr) => {
+                            if (error) {
+                                reject(error);
+                                return;
+                            }
+                            resolve(stdout)
+                        });
+                    })
+                }}
+                var oz = new os_func();
+                oz.execCommand('pm2 restart index').then(res=> {
+                }).catch(err=> {
+                    console.log("os >>>", err);
+                })
+            }
+            break
+       case prefix+'addvip': //asumsikan admin itu premium member ya!
+                    if (!isOwner) return kay.reply(from, 'Perintah ini hanya bisa digunakan oleh Owner', id)
+                    //var sia = mentionedJidList.name
+                    for (let i = 0; i < mentionedJidList.length; i++) {
+                        adminNumber.push(mentionedJidList[i])
+                        fs.writeFileSync('./lib/database/admin.json', JSON.stringify(adminNumber))
+                        kay.reply(from, `
+╭────「 *PREMIUM👑* 」──
+│+ *Number*\t: ${mentionedJidList[i].replace(/@c.us/g,'')}
+│+ *Status*\t\t: *ACTIVE*
+│+ *Since*\t\t\t: ${timu}
+│+ *Expired*\t\t: ${timi}
+│ Thx for Upgrade to Premium🥰
+╰──────「 *KAYSA* 」────`, id)
+                    }
+                    break
+        case prefix+'addowner': //asumsikan admin itu premium member ya!
+                    if (!isOwner) return kay.reply(from, 'Perintah ini hanya bisa digunakan oleh Owner', id)
+                    //var sia = mentionedJidList.name
+                    for (let i = 0; i < mentionedJidList.length; i++) {
+                        adminNumber.push(mentionedJidList[i])
+                        fs.writeFileSync('./lib/database/owner2.json', JSON.stringify(adminNumber))
+                        kay.reply(from, `
+╭────「 *OWNER👑* 」──
+│+ *Number*\t: ${mentionedJidList[i].replace(/@c.us/g,'')}
+│+ *Status*\t\t: *ACTIVE*
+│+ *Since*\t\t\t: ${timu}
+│+ *Expired*\t\t: ${timi}
+│ Thx for Upgrade to Owner🥰
+╰──────「 *KAYSA* 」────`, id)
+                    }
+                    break
+                case prefix+'delvip':
+                    if (!isOwner) return kay.reply(from, 'Perintah ini hanya bisa digunakan oleh Owner', id)
+                    let inq = adminNumber.indexOf(mentionedJidList[0])
+                    adminNumber.splice(inq, 1)
+                    fs.writeFileSync('./lib/database/admin.json', JSON.stringify(adminNumber))
+                    kay.reply(from, `
+╭────「 *PREMIUM👑* 」──
+│+ *Number* : ${mentionedJidList[0].replace(/@c.us/g,'')}
+│+ *Status* : *DEACTIVE*
+│ See u for next order🙂
+╰──────「 *KAYSA* 」────`, id)
+                    break
+        case prefix+'block':
+            if (!isOwner, !isOwner2) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh Owner KAY !', id)
+            for (let i = 0; i < mentionedJidList.length; i++) {
+                let unblock = `${mentionedJidList[i]}`
+                await kay.contactBlock(unblock).then((a)=>{
+                    console.log(a)
+                    kay.reply(from, `Success block ${args[1]}!`, id)
+                })
+            }
+            break
+        case prefix+'unblock':
+            if (!isOwner, !isOwner2) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh Owner KAY !', id)
+            for (let i = 0; i < mentionedJidList.length; i++) {
+                let unblock = `${mentionedJidList[i]}`
+                await kay.contactUnblock(unblock).then((a)=>{
+                    console.log(a)
+                    kay.reply(from, `Success unblok ${args[1]}!`, id)
+                })
+            } 
+            break
+        case prefix+'setname':
+            if (!isOwner) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh Owner KAY !`, id)
+                const setnem = body.slice(9)
+                await kay.setMyName(setnem)
+                kay.sendTextWithMentions(from, `Makasih Nama Barunya @${sender.id.replace('@c.us','')} 😘`)
+            break
+        case prefix+'setstatus':
+            if (!isOwner) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh Owner KAY !`, id)
+                const setstat = body.slice(11)
+                await kay.setMyStatus(setstat)
+                kay.sendTextWithMentions(from, `Makasih Status Barunya @${sender.id.replace('@c.us','')} 😘`)
+            break
+        case prefix+'setprofilepic':
+            if (!isOwner) return kay.reply(from, `Perintah ini hanya bisa di gunakan oleh Owner KAY !`, id)
+            if (isMedia) {
+                const mediaData = await decryptMedia(message)
+                const imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
+                await kay.setProfilePic(imageBase64)
+                kay.sendTextWithMentions(`Makasih @${sender.id.replace('@c.us','')} Foto Profilenya 😘`)
+            } else if (quotedMsg && quotedMsg.type == 'image') {
+                const mediaData = await decryptMedia(quotedMsg)
+                const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
+                await kay.setProfilePic(imageBase64)
+                kay.sendTextWithMentions(from, `Makasih @${sender.id.replace('@c.us','')} Foto Profilenya 😘`)
+            } else {
+                kay.reply(from, `Wrong Format!\n⚠️ Harap Kirim Gambar Dengan #setprofilepic`, id)
+            }
+            break
+        case prefix+'getpic':
+            if (!isGroupMsg) return kay.reply(from, `Fitur ini hanya bisa di gunakan dalam group`, id)
+            const texnugm = body.slice(8)
+            const getnomber =  await kay.checkNumberStatus(texnugm)
+            const useriq = getnomber.id.replace('@','') + '@c.us'
+                try {
+                    var jnck = await kay.getProfilePicFromServer(useriq)
+
+                    kay.sendFileFromUrl(from, jnck, `awok.jpg`)
+                } catch {
+                    kay.reply(from, `Tidak Ada Foto Profile!`, id)
+                }
+            break
+        case prefix+'ban':
+            if (!isAdmin) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh User VIP!', id)
+            for (let i = 0; i < mentionedJidList.length; i++) {
+                if ((adminNumber).includes(mentionedJidList[i])) return kay.reply(from,`Maaf ${pushname}, Kamu tidak bisa banned User VIP!`, id)
+                banned.push(mentionedJidList[i])
+                fs.writeFileSync('./lib/banned.json', JSON.stringify(banned))
+                kay.reply(from, `Succes ban target!`,id)
+            }
+            break
+        case prefix+'unban':
+            if (!isAdmin) return kay.reply(from, 'Perintah ini hanya bisa di gunakan oleh User VIP!', id)
+                let inz = banned.indexOf(mentionedJidList[0])
+                banned.splice(inz, 1)
+                fs.writeFileSync('./lib/database/banned.json', JSON.stringify(banned))
+                kay.reply(from, 'Unbanned User!', id)
+            break
+        case prefix+'listgroup':
+                kay.getAllGroups().then((res) => {
+                let berhitung1 = 1
+                let gc = `*This is list of group* :\n`
+                for (let i = 0; i < res.length; i++) {
+                    gc += `\n═════════════════\n\n*No : ${i+1}*\n*Nama* : ${res[i].name}\n*Pesan Belum Dibaca* : ${res[i].unreadCount} chat\n*Tidak Spam* : ${res[i].notSpam}\n`
+                }
+                kay.reply(from, gc, id)
+            })
+            break
+        case prefix+'listbanned':
+            let bened = `This is list of banned number\nTotal : ${banned.length}\n`
+            for (let i of banned) {
+                bened += `➸ ${i.replace(/@c.us/g,'')}\n`
+            }
+            await kay.reply(from, bened, id)
+            break
+        case prefix+'listblock':
+            let hih = `This is list of blocked number\nTotal : ${blockNumber.length}\n`
+            for (let i of blockNumber) {
+                hih += `➸ ${i.replace(/@c.us/g,'')}\n`
+            }
+            await kay.reply(from, hih, id)
+            break
+       case prefix+'ping':
+            function format(seconds){
+            function pad(s){
+            return (s < 10 ? '0' : '') + s;
+            }
+            var hours = Math.floor(seconds / (60*60));
+             var minutes = Math.floor(seconds % (60*60) / 60);
+             var seconds = Math.floor(seconds % 60);
+
+             return pad(hours) + ' Jam,' + pad(minutes) + ' Menit,' + pad(seconds) + ' Detik';
+              }
+
+            var uptime = process.uptime();
+            const loadedMsg = await kay.getAmountOfLoadedMessages()
+            const botadmins = await kay.iAmAdmin()
+            const blockedd = await kay.getBlockedIds()
+            const chatIds = await kay.getAllChatIds()
+            const groups = await kay.getAllGroups()
+            const me = await kay.getMe()
+            const battery = await kay.getBatteryLevel()
+            const isCharging = await kay.getIsPlugged()
+            const timestamp = speed();
+            const latensi = speed() - timestamp
+            await kay.sendFileFromUrl(from,`https://a.top4top.io/p_1828ceih11.jpeg`, `info.jpg`,  `*「 𝗦𝗧𝗔𝗧𝗨𝗦 𝗣𝗖 」*\nPenggunaan RAM: ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB / ${Math.round(require('os').totalmem / 1024 / 1024)}MB\nCPU: ${os.cpus()[0].model}\n\n*「 𝗦𝗧𝗔𝗧𝗨𝗦 𝗠𝗘𝗦𝗦𝗔𝗚𝗘 」* :\n- *${loadedMsg}* Loaded Messages\n- *${chatIds.length - groups.length}* Total Chats\n  ├ *${groups.length}* Group Chats\n  └ *${chatIds.length}* Personal Chats\n- *${groups.length}* Groups Joined\n\n*「 𝗦𝗧𝗔𝗧𝗨𝗦 𝗨𝗦𝗘𝗥 」*\n- *${pendaftar.length}* Registered User\n  ├ *${banned.length}* Banned User\n  ├ *${blockedd.length}* Blocked User\n  └ *${adminNumber.length}* VIP User\n\n*「 𝗦𝗧𝗔𝗧𝗨𝗦 𝗗𝗘𝗩𝗜𝗖𝗘 」*\n*Battery :* ${battery}% ${isCharging ? 'Lagi Di Cas...' : 'Ga Di Cas!'}\nwa_version : 2.20.206.6\nmcc : 510\nmnc : 010\nos_version : 11.0\ndevice_manufacture : J7PRO SAMSUNG\ndevice_model : ZH661KS\nos_build_number : SM-G230-user 11.0 20200621.276299 release-key\n\n\n*Speed:* ${latensi.toFixed(4)} _Second_\nBot telah berjalan selama *${format(uptime)}*`, id)
+            break
+        case prefix+'runtime':
+            function format(seconds){
+            function pad(s){
+            return (s < 10 ? '0' : '') + s;
+            }
+            var hours = Math.floor(seconds / (60*60));
+             var minutes = Math.floor(seconds % (60*60) / 60);
+             var seconds = Math.floor(seconds % 60);
+
+             return pad(hours) + ' Jam,' + pad(minutes) + ' Menit,' + pad(seconds) + ' Detik';
+              }
+
+            var uptime = process.uptime();
+            kay.reply(from, `Bot telah berjalan selama *${format(uptime)}*`, id)
+            break
+        case prefix+'setgroupname':
+            if (!isGroupMsg) return kay.reply(from, `Fitur ini hanya bisa di gunakan dalam group`, id)
+            if (!isGroupAdmins) return kay.reply(from, `Fitur ini hanya bisa di gunakan oleh admin group`, id)
+            if (!isBotGroupAdmins) return kay.reply(from, `Fitur ini hanya bisa di gunakan ketika bot menjadi admin`, id)
+            const namagrup = body.slice(14)
+            let sebelum = chat.groupMetadata.formattedName
+            let halaman = global.page ? global.page : await kay.getPage()
+            await halaman.evaluate((chatId, subject) =>
+            Store.WapQuery.changeSubject(chatId, subject),groupId, `${namagrup}`)
+            kay.sendTextWithMentions(from, `Nama group telah diubah oleh admin @${sender.id.replace('@c.us','')}\n\n• Before: ${sebelum}\n• After: ${namagrup}`)
+            break
+        case prefix+'setgroupicon':
+            if (!isGroupMsg) return kay.reply(from, `Fitur ini hanya bisa di gunakan dalam group`, id)
+            if (!isGroupAdmins) return kay.reply(from, `Fitur ini hanya bisa di gunakan oleh admin group`, id)
+            if (!isBotGroupAdmins) return kay.reply(from, `Fitur ini hanya bisa di gunakan ketika bot menjadi admin`, id)
+            if (isMedia) {
+                const mediaData = await decryptMedia(message)
+                const imageBase64 = `data:${mimetype};base64,${mediaData.toString('base64')}`
+                await kay.setGroupIcon(from, imageBase64)
+                kay.sendTextWithMentions(from, `Profile group telah diubah oleh admin @${sender.id.replace('@c.us','')}`)
+            } else if (quotedMsg && quotedMsg.type == 'image') {
+                const mediaData = await decryptMedia(quotedMsg)
+                const imageBase64 = `data:${quotedMsg.mimetype};base64,${mediaData.toString('base64')}`
+                await kay.setGroupIcon(from, imageBase64)
+                kay.sendTextWithMentions(from, `Profile group telah diubah oleh admin @${sender.id.replace('@c.us','')}`)
+            } else {
+                kay.reply(from, `Wrong Format!\n⚠️ Harap Kirim Gambar Dengan #setgroupicon`, id)
+            }
+            break
+        case prefix+'bugreport':
+            if (args.length === 1) return kay.reply(from, '[❗] Kirim perintah *#bugreport [teks]*\ncontoh : *#bugreport Permisi Owner, Ada bug pada command #otakudesu, Tolong diperbaiki*')
+            const bug = body.slice(11)
+            if(!bug) return
+            if(isGroupMsg){
+                kay.sendText(ownerNumber, `*[BUG REPORT]*\n*WAKTU* : ${time}\nNO PENGIRIM : wa.me/${sender.id.match(/\d+/g)}\nGroup : ${formattedTitle}\n\n${bug}`)
+                kay.reply(from, 'Masalah telah di laporkan ke owner BOT, laporan palsu/main2 tidak akan ditanggapi.' ,id)
+            }else{
+                kay.sendText(ownerNumber, `*[BUG REPORT]*\n*WAKTU* : ${time}\nNO PENGIRIM : wa.me/${sender.id.match(/\d+/g)}\n\n${bug}`)
+                kay.reply(from, 'Masalah telah di laporkan ke owner BOT, laporan palsu/main2 tidak akan ditanggapi.', id)
+            }
+            break
+        case prefix+'profile':
+            if (isGroupMsg) {
+                if (!quotedMsg) {
+                    var block = blockNumber.includes(author)
+                    var bend = banned.includes(author)
+                    var sts = await kay.getStatus(author)
+                    var adm = isGroupAdmins
+                    var donate = isAdmin
+                    var ctt = await kay.getContact(author)
+                    const { status } = sts
+                    var found = false
+                    Object.keys(pendaftar).forEach((i) => {
+                        if(pendaftar[i].id == author){
+                            found = i
+                        }
+                    })
+                    if (found !== false) {
+                        pendaftar[found].id = author;
+                        var registe = '✔'
+                    } else {
+                        var registe = '❌'
+                    }
+                    if (ctt == null) {
+                    return await kay.reply(from, `Nomor WhatsApp tidak valid [ Tidak terdaftar di WhatsApp ]`, id) 
+                    } else {
+                        const contact = ctt.pushname
+                        const dpd = await kay.getProfilePicFromServer(author)
+                    if (dpd == undefined) {
+                        var pfp = errorurl
+                        } else {
+                            var pfp = dpd
+                        } 
+                    if (contact == undefined) {
+                        var namae = '*Tidak Ada Nama*' 
+                    } else {
+                        var namae = contact
+                    } 
+                        await kay.sendContact(chatId, author)
+                        kay.sendFileFromUrl(from, pfp, 'pfp.jpg', `*「 PROFILE 」*\n\n• *Username: ${namae}*\n• *User Info: ${status}*\n*• Block : ${block}*\n*• Banned : ${bend}*\n• *Admin Group: ${adm}*\n• *User VIP: ${donate}*\n• *Registered User :* ${registe}\n• *Number*: ${sender.id.replace('@c.us', '')}\n• *Chat Link*: wa.me/${sender.id.replace('@c.us', '')}`)
+                    }
+                } else if (quotedMsg) {
+                    var qmid = quotedMsgObj.sender.id
+                    var block = blockNumber.includes(qmid)
+                    var bend = banned.includes(qmid)
+                    var gpic = await kay.getProfilePicFromServer(qmid)
+                    var namae = quotedMsgObj.sender.name
+                    var sts = await kay.getStatus(qmid)
+                    var ctt = await kay.getContact(qmid)
+                    var adm = isGroupAdmins
+                    var donate = isAdmin
+                    const { status } = sts
+                    Object.keys(pendaftar).forEach((i) => {
+                        if(pendaftar[i].id == qmid){
+                            found = i
+                        }
+                    })
+                    if (found !== false) {
+                        pendaftar[found].id = qmid;
+                        var registe = '✔'
+                    } else {
+                        var registe = '❌'
+                    }
+                    if (ctt == null) {
+                    return await kay.reply(from, `Nomor WhatsApp tidak valid [ Tidak terdaftar di WhatsApp ]`, id) 
+                    } else {
+                        const contact = ctt.pushname
+                        const dpd = await kay.getProfilePicFromServer(qmid)
+                    if (dpd == undefined) {
+                        var pfp = errorurl
+                        } else {
+                            var pfp = dpd
+                        } 
+                    if (contact == undefined) {
+                        var namae = '*Tidak Ada Nama*' 
+                    } else {
+                        var namae = contact
+                    } 
+                    await kay.sendContact(chatId, qmid)
+                    kay.sendFileFromUrl(from, pfp, 'pfp.jpg', `*「 PROFILE 」*\n\n• *Username: ${namae}*\n• *User Info: ${status}*\n*• Block : ${block}*\n*• Banned : ${bend}*\n• *Admin Group: ${adm}*\n• *User VIP: ${donate}*\n• *Registered User :* ${registe}`)
+                    }
+                }
+            }
+            break
+        // LIST MENU
+        case prefix+'menu':
+        case prefix+'help':
+            kay.sendText(from, help)
+            break
+        case prefix+`kaysagroup`:
+            kay.reply(from, `di tutup dulu Kak ${pushname}`, id)
+            break
+        case prefix+'groupmenu':
+            kay.sendText(from, groupcmd)
+            break
+        case prefix+'mediamenu':
+            kay.sendText(from, mediacmd)
+            break
+        case prefix+'funcmd':
+            kay.sendText(from, funcmd)
+            break
+        case prefix+'vipcmd':
+            kay.sendText(from, VIPcmd)
+            break
+        case prefix+'animemenu':
+            kay.sendText(from, animecmd)
+            break
+        case prefix+'kerangmenu':
+            kay.sendText(from, kerangcmd)
+            break
+        case prefix+'downloadmenu':
+            kay.sendText(from, downloadcmd)
+            break
+        case prefix+'othermenu':
+            kay.sendText(from, othercmd)
+            break
+        case prefix+'iklan':
+            kay.sendText(from, sewa)
+            break
+        case prefix+'adminmenu':
+            if (!isAdmin) return kay.reply(from, 'Perintah ini hanya untuk User VIP', id)
+            kay.sendText(from, admincmd)
+            break
+        case prefix+'ownermenu':
+            if (!isOwner) return kay.reply(from, 'Perintah ini hanya untuk Owner KAY ', id)
+            kay.sendText(from, ownercmd)
+            break
+        case prefix+'praymenu':
+            kay.reply(from, praycmd, id)
+            break
+        case prefix+'nsfwmenu':
+            if (!isGroupMsg) return kay.reply(from, 'Perintah ini hanya untuk di dalam group ', id)
+            if (!isNsfw) return kay.reply(from, 'command/Perintah NSFW belum di aktifkan di group ini!', id)
+            kay.sendText(from, nsfwcmd)
+            break
+        // INFORMATION
+        case prefix+'donate':
+            kay.sendText(from, sumbang)
+            break
+        case prefix+'readme':
+            kay.reply(from, readme, id)
+            break
+        case prefix+'info':
+            kay.sendText(from, info)
+            break
+        case prefix+'bahasa':
+            kay.sendText(from, bahasalist)
+            break
+// By Gimenz
+       
+        case prefix+'wa.me':
+        case prefix+'wame':
+                    kay.reply(from, `wa.me/${serial.replace(/@c.us/g,'')}`, id)
+                    break
+                case `${prefix}cekprem`:
+                    if (!isAdmin) return kay.reply(from, 'Anda bukan Member Premium, silakan hubungi owner untuk membeli akses Premium!', id)
+                    var pic = await kay.getProfilePicFromServer(author)
+                    if (pic == undefined) {
+                        var pfpp = errorurl
+                    } else {
+                        var pfpp = pic
+                    }
+                    kay.sendFileFromUrl(from, pfpp, 'photo.jpg', `
+╭────「 *PREMIUM👑* 」──
+│+ *Name* : ${pushname}
+│+ *Number* : ${serial.replace(/@c.us/g,'')}
+│+ *Status* : *ACTIVE*
+╰──────「 *KAY * 」────`, id)
+                    break
+// By Gimenz
+        case prefix+'snk':
+            kay.reply(from, snk, id)
+            break
+        default:
+            //if (!isGroupMsg) return kay.reply(from, 'Jika Ingin Menggunakan Bot Harap Masuk Ke Dalam Grup KAY , Link Ada Di Bio atau Bisa Mengetik #KAY group!\nJika Ingin Sewa Bot atau Bikin Bot Harap Ketik *#iklan*', id)
+            if (command.startsWith(`${prefix}`)) {
+                kay.reply(from, `Maaf ${pushname}, Command *${args[0]}* Tidak Terdaftar Di Dalam *#menu*!`, id)
+            }
+            await kay.sendSeen(from) 
+            }
+        }
+    } catch (err) {
+        console.log(color('[ERROR]', 'red'), err)
+        //kay.kill().then(a => console.log(a))
+    }
+}
+
